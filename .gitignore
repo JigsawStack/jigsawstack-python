@@ -1,0 +1,6 @@
+venv/
+.venv/
+.pytest_cache/
+jigsawstack.egg-info/
+
+.env
