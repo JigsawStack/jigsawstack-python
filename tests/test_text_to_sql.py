@@ -16,7 +16,7 @@ import jigsawstack.translate._translate
 
 class TestTextToSQLAPI(unittest.TestCase):
 
-    def test_sentiment_response_success(self) -> None:
+    def test_sql_response_success(self) -> None:
         params = {
             "prompt": "Generate a query to get transactions that amount exceed 10000 and sort by when created",
             "sql_schema": "CREATE TABLE Transactions (transaction_id INT PRIMARY KEY, user_id INT NOT NULL,total_amount DECIMAL(10, 2 NOT NULL, transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,status VARCHAR(20) DEFAULT 'pending',FOREIGN KEY(user_id) REFERENCES Users(user_id))"

@@ -18,7 +18,7 @@ import jigsawstack.translate._translate
 
 class TestSummaryAPI(unittest.TestCase):
 
-    def test_sentiment_response_success(self) -> None:
+    def test_summary_response_success(self) -> None:
         params = {
             "text": "The Leaning Tower of Pisa, or simply, the Tower of Pisa, is the campanile, or freestanding bell tower, of Pisa Cathedral."
         }
