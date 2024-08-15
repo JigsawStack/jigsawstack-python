@@ -4,3 +4,5 @@ venv/
 jigsawstack.egg-info/
 
 .env
+build/  
+dist/ 
