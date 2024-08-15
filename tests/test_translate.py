@@ -11,7 +11,6 @@ import jigsawstack.translate._translate
 
 # flake8: noqa
 
-
 class TestTranslateAPI(unittest.TestCase):
 
     def test_translate_response_success(self) -> None:
@@ -21,7 +20,7 @@ class TestTranslateAPI(unittest.TestCase):
             "text": "Hello, world!"
         }
         try:
-            result = jigsawstack.translate._translate.translate(params)
+            result = jigsawstack.Translate.translate(params)
             assert result["success"] == True
         except JigsawStackError as e:
             assert e.message == "Failed to parse API response. Please try again."

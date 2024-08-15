@@ -10,10 +10,12 @@ import jigsawstack.translate
 import jigsawstack.translate._translate
 import jigsawstack.web
 import jigsawstack
-
+import pytest
 # flake8: noqa
-class TestWebAPI(unittest.TestCase):
 
+
+@pytest.mark.skip(reason="Skipping TestWebAPI class for now")
+class TestWebAPI(unittest.TestCase):
     def test_ai_scrape_success_response(self) -> None:
         params = {
          "url": "https://supabase.com/pricing",

@@ -53,18 +53,21 @@ class AISearchParams(TypedDict):
     Spell check the search query.
     """
 
-def ai(params: AISearchParams) -> SearchAIResponse:
-    path = "/web/search"
-    resp = request.Request(
-        path=path, params=cast(Dict[Any, Any], params), verb="post"
-    ).perform_with_content()
-    return resp
 
+class Search:
+    @classmethod
+    def ai_search(params: AISearchParams) -> SearchAIResponse:
+        path = "/web/search"
+        resp = request.Request(
+            path=path, params=cast(Dict[Any, Any], params), verb="post"
+        ).perform_with_content()
+        return resp
+    
 
-
-def suggestion(params: SearchSuggestionParams) -> SearchSuggestionResponse:
-    path = "/web/search/suggest"
-    resp = request.Request(
-        path=path, params=cast(Dict[Any, Any], params), verb="patch"
-    ).perform_with_content()
-    return resp
+    @classmethod
+    def suggestion(params: SearchSuggestionParams) -> SearchSuggestionResponse:
+        path = "/web/search/suggest"
+        resp = request.Request(
+            path=path, params=cast(Dict[Any, Any], params), verb="patch"
+        ).perform_with_content()
+        return resp

@@ -30,7 +30,10 @@ class SQLResponse(TypedDict):
     The SQL statement.
     """
 
-def sql(params: SQLParams) -> SQLResponse:
-    path = "/ai/sql"
-    resp = request.Request(path=path,params=cast(Dict[Any, Any], params),verb="post").perform_with_content()
-    return resp
+
+class SQL:
+    @classmethod
+    def text_to_sql(params: SQLParams) -> SQLResponse:
+        path = "/ai/sql"
+        resp = request.Request(path=path,params=cast(Dict[Any, Any], params),verb="post").perform_with_content()
+        return resp

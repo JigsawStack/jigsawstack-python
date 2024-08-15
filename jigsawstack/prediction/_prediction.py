@@ -32,7 +32,13 @@ class PredictionResponse(TypedDict):
     """
     prediction: object
 
-def prediction(params: PredictionParams) -> PredictionResponse:
-    path = "/ai/prediction"
-    resp = request.Request(path=path,params=cast(Dict[Any, Any], params),verb="post").perform_with_content()
-    return resp
+
+
+class Prediction:
+    @classmethod
+    def predict(cls, params: PredictionParams) -> PredictionResponse:
+        path = "/ai/prediction"
+        resp = request.Request(path=path,params=cast(Dict[Any, Any], params),verb="post").perform_with_content()
+        return resp
+
+

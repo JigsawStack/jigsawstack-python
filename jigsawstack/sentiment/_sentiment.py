@@ -33,7 +33,10 @@ class SentimentResponse(TypedDict):
     """
     sentiment: SentimentResult
 
-def sentiment(params: SentimentParams) -> SentimentResponse:
-    path = "/ai/sentiment"
-    resp = request.Request(path=path,params=cast(Dict[Any, Any], params),verb="post").perform_with_content()
-    return resp
+
+class Sentiment:
+    @classmethod
+    def analyze(params: SentimentParams) -> SentimentResponse:
+        path = "/ai/sentiment"
+        resp = request.Request(path=path,params=cast(Dict[Any, Any], params),verb="post").perform_with_content()
+        return resp

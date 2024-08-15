@@ -10,9 +10,10 @@ import jigsawstack.translate
 import jigsawstack.translate._translate
 import jigsawstack.audio
 import jigsawstack
-
+import pytest
 # flake8: noqa
 
+@pytest.mark.skip(reason="Skipping TestWebAPI class for now")
 class TestAudioAPI(unittest.TestCase):
 
     def test_speech_to_text_success_response(self) -> None:

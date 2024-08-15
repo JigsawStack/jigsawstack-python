@@ -25,7 +25,10 @@ class SummaryResponse(TypedDict):
     The summarized text.
     """
 
-def summarize(params: SummaryParams) -> SummaryResponse:
-    path = "/ai/summary"
-    resp = request.Request(path=path,params=cast(Dict[Any, Any], params),verb="post").perform_with_content()
-    return resp
+
+class Summary:
+    @classmethod
+    def summarize(params: SummaryParams) -> SummaryResponse:
+        path = "/ai/summary"
+        resp = request.Request(path=path,params=cast(Dict[Any, Any], params),verb="post").perform_with_content()
+        return resp
