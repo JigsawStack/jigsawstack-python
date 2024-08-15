@@ -16,7 +16,7 @@ First, you need to get an API key, which is available in the [JigsawStack Dashbo
 import jigsawstack
 import os
 
-jigsawstack.api_key = "re_yourkey"
+jigsawstack.api_key = "your-api-key"
 ```
 
 ## Example
@@ -25,6 +25,12 @@ jigsawstack.api_key = "re_yourkey"
 import os
 import jigsawstack
 
-jigsawstack.api_key = "re_yourkey"
+jigsawstack.api_key = "your-api-key"
 
+params = {
+    "url": "https://rogilvkqloanxtvjfrkm.supabase.co/storage/v1/object/public/demo/Collabo%201080x842.jpg?t=2024-03-22T09%3A22%3A48.442Z"
+}
+
+result = jigsawstack.Vision.vocr(params)
+print(result)
 ```
