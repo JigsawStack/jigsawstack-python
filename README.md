@@ -13,7 +13,7 @@ pip install jigsawstack
 First, you need to get an API key, which is available in the [JigsawStack Dashboard](https://jigsawstack.com).
 
 ```py
-from jigsawstack from JigsawStack
+from jigsawstack import JigsawStack
 
 import os
 
@@ -24,7 +24,7 @@ import os
 
 ```py
 import os
-from jigsawstack from JigsawStack
+from jigsawstack import JigsawStack
 
 
 ai = JigsawStack(api_key="your-api-key")
