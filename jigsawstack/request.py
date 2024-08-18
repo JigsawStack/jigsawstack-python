@@ -15,13 +15,17 @@ T = TypeVar("T")
 class Request(Generic[T]):
     def __init__(
         self,
+        api_url:str,
+        api_key:str,
         path: str,
         params: Union[Dict[Any, Any], List[Dict[Any, Any]]],
-        verb: RequestVerb,
+        verb: RequestVerb
     ):
         self.path = path
         self.params = params
         self.verb = verb
+        self.api_url = api_url
+        self.api_key = api_key
 
     def perform(self) -> Union[T, None]:
         """Is the main function that makes the HTTP request
@@ -34,7 +38,7 @@ class Request(Generic[T]):
         Raises:
             requests.HTTPError: If the request fails
         """
-        resp = self.make_request(url=f"{jigsawstack.api_url}/v1{self.path}")
+        resp = self.make_request(url=f"{self.api_url}{self.path}")
 
         # delete calls do not return a body
         if resp.text == "" and resp.status_code == 200:
@@ -85,7 +89,7 @@ class Request(Generic[T]):
         return {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "x-api-key": f"{jigsawstack.api_key}"
+            "x-api-key": f"{self.api_key}"
         }
 
     def make_request(self, url: str) -> requests.Response:
@@ -107,6 +111,6 @@ class Request(Generic[T]):
 
         print("ABOUT TO MAKE REQUEST WITH HEADERS",headers)
         try:
-            return requests.request(verb, url, json=params, headers=headers)
+            return requests.request(verb, url, json=params, headers=headers,)
         except requests.HTTPError as e:
             raise e

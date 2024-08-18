@@ -2,6 +2,8 @@ from typing import Any, Dict, List, Union, cast
 from typing_extensions import NotRequired, TypedDict
 from jigsawstack import request
 from typing import List, Union
+from .._config import ClientConfig
+
 
 class SQLParams(TypedDict):
     prompt: str
@@ -31,9 +33,12 @@ class SQLResponse(TypedDict):
     """
 
 
-class SQL:
+class SQL(ClientConfig):
     @classmethod
-    def text_to_sql(params: SQLParams) -> SQLResponse:
+    def text_to_sql(self, params: SQLParams) -> SQLResponse:
         path = "/ai/sql"
-        resp = request.Request(path=path,params=cast(Dict[Any, Any], params),verb="post").perform_with_content()
+        resp = request.Request(
+            api_key=self.api_key,
+            api_url=self.api_url,
+            path=path,params=cast(Dict[Any, Any], params),verb="post").perform_with_content()
         return resp
