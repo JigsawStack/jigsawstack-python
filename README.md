@@ -13,24 +13,27 @@ pip install jigsawstack
 First, you need to get an API key, which is available in the [JigsawStack Dashboard](https://jigsawstack.com).
 
 ```py
-import jigsawstack
+from jigsawstack from JigsawStack
+
 import os
 
-jigsawstack.api_key = "your-api-key"
+ ai = JigsawStack(api_key="your-api-key")
 ```
 
 ## Example
 
 ```py
 import os
-import jigsawstack
+from jigsawstack from JigsawStack
 
-jigsawstack.api_key = "your-api-key"
+
+ai = JigsawStack(api_key="your-api-key")
 
 params = {
     "url": "https://rogilvkqloanxtvjfrkm.supabase.co/storage/v1/object/public/demo/Collabo%201080x842.jpg?t=2024-03-22T09%3A22%3A48.442Z"
 }
 
-result = jigsawstack.Vision.vocr(params)
+result = ai.vision.vocr(params)
+
 print(result)
 ```
