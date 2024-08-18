@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, cast
 from typing_extensions import NotRequired, TypedDict
-from ..request import Request
+from .request import Request
 from typing_extensions import NotRequired, TypedDict
-
+from ._config import ClientConfig
 
 
 class SearchAIResponse(TypedDict):
@@ -40,34 +40,45 @@ class AISearchParams(TypedDict):
     """
     The search value. The maximum query character length is 200.
     """
-    ai_overview:  NotRequired[bool]
+    ai_overview:  NotRequired[bool] = True
     """
     Include AI powered overview in the search results. The default value is True
     """
-    safe_search: NotRequired[str]
+    safe_search: NotRequired[str] = "moderate"
     """
     Include offensive results in the search results. The default value is "moderate". Supported values:  moderate, strict, off
     """
-    spell_check: NotRequired[bool]
+    spell_check: NotRequired[bool] = True
     """
     Spell check the search query.
     """
 
 
-class Search:
-    @classmethod
-    def ai_search(params: AISearchParams) -> SearchAIResponse:
-        path = "/web/search"
+class Search(ClientConfig):
+    def ai_search(self,params: AISearchParams) -> SearchAIResponse:
+        query = params["query"]
+        ai_overview = params.get("ai_overview", "True")
+        safe_search = params.get("safe_search","moderate")
+        spell_check = params.get("spell_check", "True")
+        path = f"/web/search?query={query}&ai_overview={ai_overview}&safe_search={safe_search}&spell_check={spell_check}"
         resp = Request(
-            path=path, params=cast(Dict[Any, Any], params), verb="post"
+            api_key=self.api_key,
+            api_url=self.api_url,
+            path=path, params=cast(Dict[Any, Any], params), verb="GET"
         ).perform_with_content()
+
+        print(resp)
         return resp
     
 
-    @classmethod
-    def suggestion(params: SearchSuggestionParams) -> SearchSuggestionResponse:
-        path = "/web/search/suggest"
+    def suggestion(self, params: SearchSuggestionParams) -> SearchSuggestionResponse:
+        query = params["query"]
+        path = f"/web/search/suggest?query={query}"
         resp = Request(
-            path=path, params=cast(Dict[Any, Any], params), verb="patch"
+            api_key=self.api_key,
+            api_url=self.api_url,
+            path=path, params=cast(Dict[Any, Any], params), verb="GET"
         ).perform_with_content()
+
+        print(resp)
         return resp

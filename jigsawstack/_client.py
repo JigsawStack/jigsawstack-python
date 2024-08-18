@@ -2,8 +2,8 @@ from typing import Union
 import os
 from .audio import Audio
 from .vision import Vision
-from .search import Search
-from .prediction import Prediction
+from .searchs import Search
+from .predictions import Prediction
 from .sql import SQL
 from .store import KV, File
 from .translate import Translate

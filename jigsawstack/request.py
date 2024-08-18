@@ -105,8 +105,6 @@ class Request(Generic[T]):
         headers = self.__get_headers()
         params = self.params
         verb = self.verb
-
-        print("ABOUT TO MAKE REQUEST WITH HEADERS",headers)
         try:
             return requests.request(verb, url, json=params, headers=headers,)
         except requests.HTTPError as e:
