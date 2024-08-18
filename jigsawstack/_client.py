@@ -1,23 +1,30 @@
-
-from . import resources
 from typing import Union
-from ._config import ClientConfig
 import os
-
+from .audio import Audio
+from .vision import Vision
+from .searchs import Search
+from .predictions import Prediction
+from .sql import SQL
+from .store import KV, File
+from .translate import Translate
+from .web import Web
+from .sentiment import Sentiment
+from .validate import Validate
+from .summary import Summary
 
 class JigsawStack:
-    audio: resources.Audio
-    vision : resources.Vision
-    prediction: resources.Prediction
-    sql: resources.SQL
-    file: resources.File
-    kv: resources.KV
-    translate: resources.Translate
-    web: resources.Web
-    sentiment: resources.Sentiment
-    validate: resources.Validate
-    summary: resources.Summary
-    search: resources.Search
+    audio: Audio
+    vision : Vision
+    prediction: Prediction
+    sql: SQL
+    file: File
+    kv: KV
+    translate: Translate
+    web: Web
+    sentiment: Sentiment
+    validate: Validate
+    summary: Summary
+    search: Search
     api_key: str
     api_url: str
 
@@ -38,15 +45,15 @@ class JigsawStack:
         self.api_url = api_url
 
 
-        self.audio = resources.Audio(api_key=api_key, api_url=api_url)
-        self.web = resources.Web(api_key=api_key, api_url=api_url)
-        self.search = resources.Search(api_key=api_key, api_url=api_url)
-        self.sentiment = resources.Sentiment(api_key=api_key, api_url=api_url)
-        self.validate = resources.Validate(api_key=api_key, api_url=api_url)
-        self.summary = resources.Summary(api_key=api_key, api_url=api_url)
-        self.vision = resources.Vision(api_key=api_key, api_url=api_url)
-        self.prediction = resources.Prediction(api_key=api_key, api_url=api_url)
-        self.sql = resources.SQL(api_key=api_key, api_url=api_url)
-        self.file = resources.File(api_key=api_key, api_url=api_url)
-        self.kv = resources.KV(api_key=api_key, api_url=api_url)
-        self.translate = resources.Translate(api_key=api_key, api_url=api_url)
+        self.audio = Audio(api_key=api_key, api_url=api_url)
+        self.web = Web(api_key=api_key, api_url=api_url)
+        self.search = Search(api_key=api_key, api_url=api_url)
+        self.sentiment = Sentiment(api_key=api_key, api_url=api_url)
+        self.validate = Validate(api_key=api_key, api_url=api_url)
+        self.summary = Summary(api_key=api_key, api_url=api_url)
+        self.vision = Vision(api_key=api_key, api_url=api_url)
+        self.prediction = Prediction(api_key=api_key, api_url=api_url)
+        self.sql = SQL(api_key=api_key, api_url=api_url)
+        self.file = File(api_key=api_key, api_url=api_url)
+        self.kv = KV(api_key=api_key, api_url=api_url)
+        self.translate = Translate(api_key=api_key, api_url=api_url)

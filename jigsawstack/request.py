@@ -1,10 +1,7 @@
 from typing import Any, Dict, Generic, List, Union, cast
-
 import requests
 from typing_extensions import Literal, TypeVar
-
-import jigsawstack
-from jigsawstack.exceptions import NoContentError, raise_for_code_and_type
+from .exceptions import NoContentError, raise_for_code_and_type
 
 RequestVerb = Literal["get", "post", "put", "patch", "delete"]
 
@@ -108,8 +105,6 @@ class Request(Generic[T]):
         headers = self.__get_headers()
         params = self.params
         verb = self.verb
-
-        print("ABOUT TO MAKE REQUEST WITH HEADERS",headers)
         try:
             return requests.request(verb, url, json=params, headers=headers,)
         except requests.HTTPError as e:

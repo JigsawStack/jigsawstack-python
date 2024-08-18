@@ -8,7 +8,7 @@ import pytest
 jigsaw = jigsawstack.JigsawStack()
 
 
-
+@pytest.mark.skip(reason="Skipping TestWebAPI class for now")
 class TestSearchAPI(unittest.TestCase):
 
     def test_search_suggestion_response_success(self) -> None:

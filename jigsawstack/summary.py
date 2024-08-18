@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, Union, cast
 from typing_extensions import NotRequired, TypedDict
-from jigsawstack import request
+from .request import Request
 from typing import List, Union
-from .._config import ClientConfig
+from ._config import ClientConfig
 
 
 class SummaryParams(TypedDict):
@@ -32,7 +32,7 @@ class Summary(ClientConfig):
 
     def summarize(self,params: SummaryParams) -> SummaryResponse:
         path = "/ai/summary"
-        resp = request.Request(
+        resp = Request(
             api_key=self.api_key,
             api_url=self.api_url,
             path=path,params=cast(Dict[Any, Any], params),verb="post").perform_with_content()

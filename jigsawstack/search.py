@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, cast
 from typing_extensions import NotRequired, TypedDict
-from jigsawstack import request
+from .request import Request
 from typing_extensions import NotRequired, TypedDict
-from .._config import ClientConfig
+from ._config import ClientConfig
 
 
 class SearchAIResponse(TypedDict):
@@ -61,7 +61,7 @@ class Search(ClientConfig):
         safe_search = params.get("safe_search","moderate")
         spell_check = params.get("spell_check", "True")
         path = f"/web/search?query={query}&ai_overview={ai_overview}&safe_search={safe_search}&spell_check={spell_check}"
-        resp = request.Request(
+        resp = Request(
             api_key=self.api_key,
             api_url=self.api_url,
             path=path, params=cast(Dict[Any, Any], params), verb="GET"
@@ -74,7 +74,7 @@ class Search(ClientConfig):
     def suggestion(self, params: SearchSuggestionParams) -> SearchSuggestionResponse:
         query = params["query"]
         path = f"/web/search/suggest?query={query}"
-        resp = request.Request(
+        resp = Request(
             api_key=self.api_key,
             api_url=self.api_url,
             path=path, params=cast(Dict[Any, Any], params), verb="GET"
