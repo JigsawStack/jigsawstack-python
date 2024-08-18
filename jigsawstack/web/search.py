@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, cast
 from typing_extensions import NotRequired, TypedDict
-from jigsawstack import request
+from ..request import Request
 from typing_extensions import NotRequired, TypedDict
 
 
@@ -58,7 +58,7 @@ class Search:
     @classmethod
     def ai_search(params: AISearchParams) -> SearchAIResponse:
         path = "/web/search"
-        resp = request.Request(
+        resp = Request(
             path=path, params=cast(Dict[Any, Any], params), verb="post"
         ).perform_with_content()
         return resp
@@ -67,7 +67,7 @@ class Search:
     @classmethod
     def suggestion(params: SearchSuggestionParams) -> SearchSuggestionResponse:
         path = "/web/search/suggest"
-        resp = request.Request(
+        resp = Request(
             path=path, params=cast(Dict[Any, Any], params), verb="patch"
         ).perform_with_content()
         return resp

@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, cast
 from typing_extensions import NotRequired, TypedDict
-from jigsawstack import request
+from ..request import Request
 from ._kv import KVAddParams, KVAddResponse, KVGetResponse
 from .._config import ClientConfig
 
@@ -9,7 +9,7 @@ class KV(ClientConfig):
  
     def add(self, params: KVAddParams) -> KVAddResponse:
         path = "/store/kv"
-        resp = request.Request(
+        resp = Request(
             api_key=self.api_key,
             api_url=self.api_url,
             path=path, params=cast(Dict[Any, Any], params), verb="post"
@@ -18,7 +18,7 @@ class KV(ClientConfig):
     
     def get(self, key: str) -> KVGetResponse:
         path =f"/store/kv/{key}"
-        resp = request.Request(
+        resp = Request(
             api_key=self.api_key,
             api_url=self.api_url,
             path=path, params=cast(Dict[Any, Any], params={}), verb="get"
@@ -28,7 +28,7 @@ class KV(ClientConfig):
 
     def delete(self, key: str) -> KVGetResponse:
         path =f"/store/kv/{key}"
-        resp = request.Request(
+        resp = Request(
             api_key=self.api_key,
             api_url=self.api_url,
             path=path, params=cast(Dict[Any, Any], params={}), verb="delete"

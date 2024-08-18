@@ -8,7 +8,7 @@ import pytest
 
 client = jigsawstack.JigsawStack()
 
-@pytest.mark.skip(reason="Skipping TestWebAPI class for now")
+
 class TestSentimentAPI(unittest.TestCase):
     def test_sentiment_response_success(self) -> None:
         params = {
