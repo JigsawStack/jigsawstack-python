@@ -59,20 +59,27 @@ params = {
 result = jigsaw.web.ai_scrape(params)
 ```
 
+Text To Speech Example:
+
+```py
+params = {"text": "Hello, how are you doing?"}
+result = jigsaw.audio.text_to_speech(params)
+```
+
 Speech To Text Example:
 
 ```py
 params = { "url": "https://rogilvkqloanxtvjfrkm.supabase.co/storage/v1/object/public/demo/Video%201737458382653833217.mp4?t=2024-03-22T09%3A50%3A49.894Z"}
-result = ai.audio.speech_to_text(params)
+result = jigsaw.audio.speech_to_text(params)
 ```
 
-OCR:
+VOCR:
 
 ```py
 params = {
     "url": "https://rogilvkqloanxtvjfrkm.supabase.co/storage/v1/object/public/demo/Collabo%201080x842.jpg?t=2024-03-22T09%3A22%3A48.442Z"
 }
-result = ai.vision.object_detection(params)
+result = jigsaw.vision.vocr(params)
 ```
 
 ## Community
