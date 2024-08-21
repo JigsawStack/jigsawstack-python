@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 
 from setuptools import find_packages, setup
-from jigsawstack.version import get_version
 
 install_requires = open("requirements.txt").readlines()
 
 setup(
     name="jigsawstack",
-    version=get_version(),
+    version="0.1.2",
     description="JigsawStack Python SDK",
     long_description=open("README.md", encoding="utf8").read(),
     long_description_content_type="text/markdown",
