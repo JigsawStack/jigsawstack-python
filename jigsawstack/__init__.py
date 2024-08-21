@@ -14,7 +14,7 @@ from .validate import Validate
 from .summary import Summary
 from .geo import Geo
 from .prompt_engine import PromptEngine
-from .version import get_version
+# from .version import get_version
 
 class JigsawStack:
     audio: Audio
@@ -67,4 +67,4 @@ class JigsawStack:
         self.prompt_engine = PromptEngine(api_key=api_key, api_url=api_url)
 
 # Create a global instance of the Web class
-__all__ = ["JigsawStack", "get_version"]
+__all__ = ["JigsawStack"]
