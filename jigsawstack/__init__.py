@@ -12,6 +12,8 @@ from .web import Web
 from .sentiment import Sentiment
 from .validate import Validate
 from .summary import Summary
+from .geo import Geo
+from .prompt_engine import PromptEngine
 
 class JigsawStack:
     audio: Audio
@@ -26,6 +28,8 @@ class JigsawStack:
     validate: Validate
     summary: Summary
     search: Search
+    geo : Geo
+    prompt_engine: PromptEngine
     api_key: str
     api_url: str
 
@@ -58,6 +62,8 @@ class JigsawStack:
         self.file = File(api_key=api_key, api_url=api_url)
         self.kv = KV(api_key=api_key, api_url=api_url)
         self.translate = Translate(api_key=api_key, api_url=api_url)
+        self.geo = Geo(api_key=api_key, api_url=api_url)
+        self.prompt_engine = PromptEngine(api_key=api_key, api_url=api_url)
 
 # Create a global instance of the Web class
 __all__ = ["JigsawStack"]

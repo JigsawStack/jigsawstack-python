@@ -106,6 +106,6 @@ class Request(Generic[T]):
         params = self.params
         verb = self.verb
         try:
-            return requests.request(verb, url, json=params, headers=headers,)
+            return requests.request(verb, url, json=params,headers=headers,)
         except requests.HTTPError as e:
             raise e
