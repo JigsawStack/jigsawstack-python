@@ -59,11 +59,11 @@ class PromptEngine(ClientConfig):
         return resp
     
     def get(self, id:str) -> PromptEngineGetResponse:
-        path = f"/prompt_engine/${id}"
+        path = f"/prompt_engine/{id}"
         resp = Request(
             api_key=self.api_key,
             api_url=self.api_url,
-            path=path,params=cast(Dict[Any, Any], params={}),verb="get").perform_with_content()
+            path=path,params={},verb="get").perform_with_content()
         return resp
     
     def list(self, params:PromptEngineListParams) -> PromptEngineListResponse:
@@ -73,26 +73,30 @@ class PromptEngine(ClientConfig):
         
         if params.get('page') is None:
             params['page'] = 1
+
         
-        path = f"/prompt_engine?limit={params["limit"]}&page={params["page"]}"
+        limit = params.get('limit')
+        page = params.get('page')
+    
+        path = f"/prompt_engine?limit={limit}&page={page}"
         resp = Request(
             api_key=self.api_key,
             api_url=self.api_url,
-            path=path,params=cast(Dict[Any, Any], params={}),verb="get").perform_with_content()
+            path=path,params={},verb="get").perform_with_content()
         return resp
     
     def delete(self, id:str) -> PromptEngineDeleteResponse:
-        path = f"/prompt_engine/${id}"
+        path = f"/prompt_engine/{id}"
         resp = Request(
             api_key=self.api_key,
             api_url=self.api_url,
-            path=path,params=cast(Dict[Any, Any], params={}),verb="DELETE").perform_with_content()
+            path=path,params={},verb="DELETE").perform_with_content()
         return resp
     
     def run(self, id:str, params:PromptEngineRunParams) -> PromptEngineRunResponse:
-        path = f"/prompt_engine/${id}"
+        path = f"/prompt_engine/{id}"
         resp = Request(
             api_key=self.api_key,
             api_url=self.api_url,
-            path=path,params=cast(Dict[Any, Any], params),verb="get").perform_with_content()
+            path=path,params=cast(Dict[Any, Any], params),verb="post").perform_with_content()
         return resp

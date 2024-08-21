@@ -37,6 +37,13 @@ class Request(Generic[T]):
         """
         resp = self.make_request(url=f"{self.api_url}{self.path}")
 
+
+        url= f"{self.api_url}{self.path}"
+
+        print(url)
+
+
+
         # delete calls do not return a body
         if resp.text == "" and resp.status_code == 200:
             return None
