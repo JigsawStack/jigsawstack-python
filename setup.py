@@ -13,7 +13,7 @@ setup(
     long_description_content_type="text/markdown",
     author="Narcisse Egonu",
     author_email="hello@jigsawstack.com",
-    url="https://github.com/jigsawstack/jigsawstack-py",
+    url="https://github.com/jigsawstack/jigsawstack-python",
     packages=find_packages(include=["jigsawstack"]),
     install_requires=install_requires,
     zip_safe=False,
