@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 
 from setuptools import find_packages, setup
-
+from jigsawstack.version import get_version
 
 install_requires = open("requirements.txt").readlines()
 
 setup(
     name="jigsawstack",
-    version="0.1.2",
+    version=get_version(),
     description="JigsawStack Python SDK",
     long_description=open("README.md", encoding="utf8").read(),
     long_description_content_type="text/markdown",
-    author="Narcisse",
+    author="Narcisse Egonu",
     author_email="hello@jigsawstack.com",
-    url="https://github.com/jigsawstack/jigsawstack-py",
+    url="https://github.com/jigsawstack/jigsawstack-python",
     packages=find_packages(include=["jigsawstack"]),
     install_requires=install_requires,
     zip_safe=False,
