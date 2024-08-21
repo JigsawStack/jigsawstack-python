@@ -27,7 +27,14 @@ class KVAddResponse(TypedDict):
 
 
 class File(ClientConfig):
-    
+    def upload(self, file: bytes) -> Any:
+        path ="/store/file"
+        resp = Request(
+            api_key=self.api_key,
+            api_url=self.api_url,
+            path=path, params=cast(Dict[Any, Any], params={}), verb="post"
+        ).perform_with_content()
+        return resp
 
     def get(self, key: str) -> Any:
         path =f"/store/file/{key}"

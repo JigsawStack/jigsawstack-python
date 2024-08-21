@@ -34,7 +34,6 @@ class SQLResponse(TypedDict):
 
 
 class SQL(ClientConfig):
-    @classmethod
     def text_to_sql(self, params: SQLParams) -> SQLResponse:
         path = "/ai/sql"
         resp = Request(
