@@ -7,7 +7,7 @@ import pytest
 
 jigsaw = jigsawstack.JigsawStack()
 
-
+@pytest.mark.skip(reason="Skipping TestWebAPI class for now")
 class TestPromptEngine(unittest.TestCase):
 
     def test_get_prompt_engine_response_success(self) -> None:

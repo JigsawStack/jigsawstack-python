@@ -26,13 +26,31 @@ class KVAddResponse(TypedDict):
 
 
 
-class File(ClientConfig):
-    def upload(self, file: bytes) -> Any:
-        path ="/store/file"
+class FileUploadParams(TypedDict):
+    overwrite:bool
+    filename:str
+    headers: Dict[str, str]
+
+
+
+class Store(ClientConfig):
+    def upload(self, file: bytes, options=FileUploadParams) -> Any:
+        overwrite = options.get("overwrite")
+        filename = options.get("filename")
+        path =f"/store/file?overwrite={overwrite}&filename={filename}"
+
+
+        headers = options.get("headers")
+        _headers = {"Content-Type":"application/octet-stream"}
+        if headers:
+            _headers.update(headers)
+
         resp = Request(
             api_key=self.api_key,
             api_url=self.api_url,
-            path=path, params=cast(Dict[Any, Any], params={}), verb="post"
+            params=None,
+            path=path,  data=file, headers=_headers, verb="post"
+        
         ).perform_with_content()
         return resp
 
@@ -41,8 +59,8 @@ class File(ClientConfig):
         resp = Request(
             api_key=self.api_key,
             api_url=self.api_url,
-            path=path, params=cast(Dict[Any, Any], params={}), verb="get"
-        ).perform_with_content()
+            path=path, params=None, verb="get"
+        ).perform_with_content_file()
         return resp
 
     def delete(self, key: str) -> FileDeleteResponse:
@@ -71,7 +89,7 @@ class KV(ClientConfig):
         resp = Request(
             api_key=self.api_key,
             api_url=self.api_url,
-            path=path, params=cast(Dict[Any, Any], params={}), verb="get"
+            path=path, verb="get"
         ).perform_with_content()
         return resp
     

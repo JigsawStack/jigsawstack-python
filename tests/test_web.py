@@ -15,7 +15,7 @@ class TestWebAPI(unittest.TestCase):
          "element_prompts": ["Plan title", "Plan price"],
         }
         try:
-            result =client.web.ai_scrape(params)
+            result =client.file.upload(params)
             assert result["success"] == True
         except JigsawStackError as e:
             assert e.message == "Failed to parse API response. Please try again."

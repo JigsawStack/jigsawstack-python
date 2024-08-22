@@ -16,13 +16,17 @@ class Request(Generic[T]):
         api_key:str,
         path: str,
         params: Union[Dict[Any, Any], List[Dict[Any, Any]]],
-        verb: RequestVerb
+        verb: RequestVerb,
+        headers: Dict[str, str] = {"Content-Type": "application/json"},
+        data : Union[bytes, None] = None
     ):
         self.path = path
         self.params = params
         self.verb = verb
         self.api_url = api_url
         self.api_key = api_key
+        self.data = data
+        self.headers = headers
 
     def perform(self) -> Union[T, None]:
         """Is the main function that makes the HTTP request
@@ -36,13 +40,6 @@ class Request(Generic[T]):
             requests.HTTPError: If the request fails
         """
         resp = self.make_request(url=f"{self.api_url}{self.path}")
-
-
-        url= f"{self.api_url}{self.path}"
-
-        print(url)
-
-
 
         # delete calls do not return a body
         if resp.text == "" and resp.status_code == 200:
@@ -66,7 +63,30 @@ class Request(Generic[T]):
                 message=error.get("message"),
                 error_type=error.get("name"),
             )
+        
         return cast(T, resp.json())
+    
+
+    def perform_file(self) -> Union[T, None]:
+    
+        resp = self.make_request(url=f"{self.api_url}{self.path}")
+
+        # delete calls do not return a body
+        if resp.text == "" and resp.status_code == 200:
+            return None
+
+
+        # handle error in case there is a statusCode attr present
+        # and status != 200 and response is a json.
+        if resp.status_code != 200 and resp.json().get("statusCode"):
+            error = resp.json()
+            raise_for_code_and_type(
+                code=error.get("statusCode"),
+                message=error.get("message"),
+                error_type=error.get("name"),
+            )
+
+        return resp
 
     def perform_with_content(self) -> T:
         """
@@ -82,6 +102,23 @@ class Request(Generic[T]):
         if resp is None:
             raise NoContentError()
         return resp
+    
+
+    def perform_with_content_file(self) -> T:
+        """
+        Perform an HTTP request and return the response content.
+
+        Returns:
+            T: The content of the response
+
+        Raises:
+            NoContentError: If the response content is `None`.
+        """
+        resp = self.perform_file()
+        if resp is None:
+            raise NoContentError()
+        return resp
+
 
     def __get_headers(self) -> Dict[Any, Any]:
         """get_headers returns the HTTP headers that will be
@@ -90,11 +127,17 @@ class Request(Generic[T]):
         Returns:
             Dict: configured HTTP Headers
         """
-        return {
+
+        h = {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "x-api-key": f"{self.api_key}"
+            "x-api-key": f"{self.api_key}",
         }
+        _headers = h.copy()
+        _headers.update(self.headers)
+
+        return _headers
+    
 
     def make_request(self, url: str) -> requests.Response:
         """make_request is a helper function that makes the actual
@@ -112,7 +155,9 @@ class Request(Generic[T]):
         headers = self.__get_headers()
         params = self.params
         verb = self.verb
+        data = self.data
+        
         try:
-            return requests.request(verb, url, json=params,headers=headers,)
+            return requests.request(verb, url, json=params,headers=headers, data=data)
         except requests.HTTPError as e:
             raise e
