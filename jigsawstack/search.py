@@ -5,7 +5,7 @@ from typing_extensions import NotRequired, TypedDict
 from ._config import ClientConfig
 
 
-class SearchAIResponse(TypedDict):
+class SearchResponse(TypedDict):
     success: bool
     """
     Indicates whether the translation was successful.
@@ -35,7 +35,7 @@ class SearchSuggestionParams(TypedDict):
     The search value. The maximum query character length is 200.
     """
 
-class AISearchParams(TypedDict):
+class SearchParams(TypedDict):
     query: str
     """
     The search value. The maximum query character length is 200.
@@ -55,7 +55,7 @@ class AISearchParams(TypedDict):
 
 
 class Search(ClientConfig):
-    def ai_search(self,params: AISearchParams) -> SearchAIResponse:
+    def search(self,params: SearchParams) -> SearchResponse:
         query = params["query"]
         ai_overview = params.get("ai_overview", "True")
         safe_search = params.get("safe_search","moderate")
@@ -67,7 +67,6 @@ class Search(ClientConfig):
             path=path, params=cast(Dict[Any, Any], params), verb="GET"
         ).perform_with_content()
 
-        print(resp)
         return resp
     
 
@@ -79,6 +78,4 @@ class Search(ClientConfig):
             api_url=self.api_url,
             path=path, params=cast(Dict[Any, Any], params), verb="GET"
         ).perform_with_content()
-
-        print(resp)
         return resp
