@@ -6,7 +6,7 @@ from .vision import Vision
 from .search import Search
 from .prediction import Prediction
 from .sql import SQL
-from .store import KV, File
+from .store import KV, Store
 from .translate import Translate
 from .web import Web
 from .sentiment import Sentiment
@@ -21,7 +21,7 @@ class JigsawStack:
     vision : Vision
     prediction: Prediction
     sql: SQL
-    file: File
+    file: Store
     kv: KV
     translate: Translate
     web: Web
@@ -59,7 +59,7 @@ class JigsawStack:
         self.vision = Vision(api_key=api_key, api_url=api_url)
         self.prediction = Prediction(api_key=api_key, api_url=api_url)
         self.sql = SQL(api_key=api_key, api_url=api_url)
-        self.file = File(api_key=api_key, api_url=api_url)
+        self.store = Store(api_key=api_key, api_url=api_url)
         self.kv = KV(api_key=api_key, api_url=api_url)
         self.translate = Translate(api_key=api_key, api_url=api_url)
         self.geo = Geo(api_key=api_key, api_url=api_url)
