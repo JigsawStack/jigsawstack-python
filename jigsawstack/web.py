@@ -2,7 +2,7 @@ from typing import Any, Dict, List, cast
 from typing_extensions import NotRequired, TypedDict
 from .request import Request
 from ._config import ClientConfig
-
+from .search import Search,SearchParams, SearchSuggestionParams, SearchSuggestionResponse, SearchResponse
 class DNSParams(TypedDict):
     domain:str
     type : NotRequired[str]
@@ -129,3 +129,11 @@ class Web(ClientConfig):
             path=path, params=cast(Dict[Any, Any], params), verb="get"
         ).perform_with_content()
         return resp
+    
+    def search(self, params: SearchParams) -> SearchResponse:
+        s = Search(self.api_key, self.api_url)
+        return s.search(params)
+    
+    def search_suggestion(self, params: SearchSuggestionParams) -> SearchSuggestionResponse:
+        s = Search(self.api_key, self.api_url)
+        return s.suggestion(params)

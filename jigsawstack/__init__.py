@@ -53,7 +53,6 @@ class JigsawStack:
 
         self.audio = Audio(api_key=api_key, api_url=api_url)
         self.web = Web(api_key=api_key, api_url=api_url)
-        self.search = Search(api_key=api_key, api_url=api_url)
         self.sentiment = Sentiment(api_key=api_key, api_url=api_url)
         self.validate = Validate(api_key=api_key, api_url=api_url)
         self.summary = Summary(api_key=api_key, api_url=api_url)
@@ -67,4 +66,4 @@ class JigsawStack:
         self.prompt_engine = PromptEngine(api_key=api_key, api_url=api_url)
 
 # Create a global instance of the Web class
-__all__ = ["JigsawStack"]
+__all__ = ["JigsawStack", "Search"]
