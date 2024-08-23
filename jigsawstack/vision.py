@@ -26,7 +26,7 @@ class OCRResponse(TypedDict):
 
 class Vision(ClientConfig):
     def vocr(self, params: VOCRParams) -> OCRResponse:
-        path = "/ai/vocr"
+        path = "/vocr"
         resp = Request(
             api_key=self.api_key,
             api_url=self.api_url,
