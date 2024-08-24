@@ -116,7 +116,7 @@ class Web(ClientConfig):
             api_key=self.api_key,
             api_url=self.api_url,
             path=path, params=cast(Dict[Any, Any], params), verb="post"
-        ).perform_with_content()
+        ).perform_with_content_file()
         return resp
     
     def dns(self, params: DNSParams) -> DNSResponse:

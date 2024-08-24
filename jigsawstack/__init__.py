@@ -14,6 +14,7 @@ from .validate import Validate
 from .summary import Summary
 from .geo import Geo
 from .prompt_engine import PromptEngine
+from .exceptions import JigsawStackError
 # from .version import get_version
 
 class JigsawStack:
@@ -66,4 +67,4 @@ class JigsawStack:
         self.prompt_engine = PromptEngine(api_key=api_key, api_url=api_url)
 
 # Create a global instance of the Web class
-__all__ = ["JigsawStack", "Search"]
+__all__ = ["JigsawStack", "Search", "JigsawStackError"]

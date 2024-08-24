@@ -50,18 +50,17 @@ class Request(Generic[T]):
         if "application/json" not in resp.headers["content-type"]:
             raise_for_code_and_type(
                 code=500,
-                message="Failed to parse JigsawStack API response. Please try again.",
-                error_type="InternalServerError",
+                message="Failed to parse JigsawStack API response. Please try again."
             )
 
         # handle error in case there is a statusCode attr present
         # and status != 200 and response is a json.
-        if resp.status_code != 200 and resp.json().get("statusCode"):
+        if resp.status_code != 200:
             error = resp.json()
             raise_for_code_and_type(
-                code=error.get("statusCode"),
+                code=resp.status_code,
                 message=error.get("message"),
-                error_type=error.get("name"),
+                err=error.get("error"),
             )
         
         return cast(T, resp.json())
@@ -74,18 +73,24 @@ class Request(Generic[T]):
         # delete calls do not return a body
         if resp.text == "" and resp.status_code == 200:
             return None
-
-
         # handle error in case there is a statusCode attr present
         # and status != 200 and response is a json.
-        if resp.status_code != 200 and resp.json().get("statusCode"):
+
+
+        if "application/json" not in resp.headers["content-type"] and resp.status_code != 200:
+         raise_for_code_and_type(
+            code=500,
+            message="Failed to parse JigsawStack API response. Please try again.",
+            error_type="InternalServerError",
+        )
+         
+        if resp.status_code != 200:
             error = resp.json()
             raise_for_code_and_type(
-                code=error.get("statusCode"),
+                code=resp.status_code,
                 message=error.get("message"),
-                error_type=error.get("name"),
+                err=error.get("error"),
             )
-
         return resp
 
     def perform_with_content(self) -> T:

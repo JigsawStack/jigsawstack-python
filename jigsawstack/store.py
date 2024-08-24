@@ -37,9 +37,7 @@ class Store(ClientConfig):
     def upload(self, file: bytes, options=FileUploadParams) -> Any:
         overwrite = options.get("overwrite")
         filename = options.get("filename")
-        path =f"/store/file?overwrite={overwrite}&filename={filename}"
-
-
+        path =f"/store/file?overwrite={overwrite}&key={filename}"
         headers = options.get("headers")
         _headers = {"Content-Type":"application/octet-stream"}
         if headers:
