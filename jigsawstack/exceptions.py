@@ -26,15 +26,16 @@ class JigsawStackError(Exception):
     def __init__(
         self,
         code: Union[str, int],
-        error_type: str,
         message: str,
         suggested_action: str,
+        err: Union[str, Dict[str, Any]] = None,
     ):
         Exception.__init__(self, message)
         self.code = code
         self.message = message
         self.suggested_action = suggested_action
-        self.error_type = error_type
+        self.error = err
+        self.success = False
 
 
 class MissingApiKeyError(JigsawStackError):
@@ -172,7 +173,7 @@ ERRORS: Dict[str, Dict[str, Any]] = {
 
 
 def raise_for_code_and_type(
-    code: Union[str, int], error_type: str, message: str
+    code: Union[str, int], message: str, err : Union[str, Dict[str, Any]] = None
 ) -> None:
     """Raise the appropriate error based on the code and type.
 
@@ -201,21 +202,12 @@ def raise_for_code_and_type(
     # Handle the case where the error might be unknown
     if error is None:
         raise JigsawStackError(
-            code=code, message=message, error_type=error_type, suggested_action=""
+            code=code, message=message, err=err, suggested_action=""
         )
 
-    # Raise error from errors list
-    error_from_list = error.get(error_type)
-
-    if error_from_list is not None:
-        raise error_from_list(
-            code=code,
-            message=message,
-            error_type=error_type,
-        )
     # defaults to JigsawStackError if finally can't find error type
     raise JigsawStackError(
-        code=code, message=message, error_type=error_type, suggested_action=""
+        code=code, message=message, err=err,  suggested_action=""
     )
 
 
