@@ -37,6 +37,10 @@ class Store(ClientConfig):
     def upload(self, file: bytes, options=FileUploadParams) -> Any:
         overwrite = options.get("overwrite")
         filename = options.get("filename")
+        params = {
+            "key":filename,
+            "overwrite":overwrite
+        }
         path =f"/store/file?overwrite={overwrite}&key={filename}"
         headers = options.get("headers")
         _headers = {"Content-Type":"application/octet-stream"}
@@ -46,7 +50,7 @@ class Store(ClientConfig):
         resp = Request(
             api_key=self.api_key,
             api_url=self.api_url,
-            params=None,
+            params=params,
             path=path,  data=file, headers=_headers, verb="post"
         
         ).perform_with_content()

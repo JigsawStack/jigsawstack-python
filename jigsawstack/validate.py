@@ -72,13 +72,12 @@ class Validate(ClientConfig):
         ).perform_with_content()
         return resp
     
-    def nsfw(self, params: NSFWParams) -> NSFWResponse:
-        url = params.get("url")
+    def nsfw(self, url:str) -> NSFWResponse:
         path = f"/validate/nsfw?url={url}"
         resp = Request(
              api_url=self.api_url,
             api_key=self.api_key,
-            path=path, params=cast(Dict[Any, Any], params), verb="get"
+            path=path, params=cast(Dict[Any, Any], params={"url":url}), verb="get"
         ).perform_with_content()
         return resp
     
@@ -95,7 +94,7 @@ class Validate(ClientConfig):
         return resp
     
 
-    def spell_check(self, params: SpellCheckParams) -> SpellCheckResponse:
+    def spellcheck(self, params: SpellCheckParams) -> SpellCheckResponse:
         text = params.get("text")
         language_code = params.get("language_code","en")
         path = f"/validate/spell_check?text={text}&language_code={language_code}"
@@ -105,7 +104,7 @@ class Validate(ClientConfig):
             path=path, params=cast(Dict[Any, Any], params), verb="get"
         ).perform_with_content()
         return resp
-    def spam_check(self, params: SpamCheckParams) -> SpamCheckResponse:
+    def spamcheck(self, params: SpamCheckParams) -> SpamCheckResponse:
         path = "/ai/spamcheck"
         resp = Request(
             api_url=self.api_url,

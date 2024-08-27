@@ -16,7 +16,8 @@ class TestSentimentAPI(unittest.TestCase):
             "text": "I am so excited"
         }
         try:
-            result = client.sentiment.analyze(params)
+            result = client.sentiment(params)
             assert result["success"] == True
         except JigsawStackError as e:
+
             assert e.message == "Failed to parse API response. Please try again."
