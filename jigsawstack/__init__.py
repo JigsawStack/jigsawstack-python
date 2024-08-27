@@ -21,7 +21,7 @@ class JigsawStack:
     audio: Audio
     vision : Vision
     prediction: Prediction
-    sql: SQL
+    text_to_sql: SQL
     file: Store
     kv: KV
     translate: Translate
@@ -54,15 +54,15 @@ class JigsawStack:
 
         self.audio = Audio(api_key=api_key, api_url=api_url)
         self.web = Web(api_key=api_key, api_url=api_url)
-        self.sentiment = Sentiment(api_key=api_key, api_url=api_url)
+        self.sentiment = Sentiment(api_key=api_key, api_url=api_url).analyze
         self.validate = Validate(api_key=api_key, api_url=api_url)
-        self.summary = Summary(api_key=api_key, api_url=api_url)
+        self.summary = Summary(api_key=api_key, api_url=api_url).summarize
         self.vision = Vision(api_key=api_key, api_url=api_url)
-        self.prediction = Prediction(api_key=api_key, api_url=api_url)
-        self.sql = SQL(api_key=api_key, api_url=api_url)
+        self.prediction = Prediction(api_key=api_key, api_url=api_url).predict
+        self.text_to_sql = SQL(api_key=api_key, api_url=api_url).text_to_sql
         self.store = Store(api_key=api_key, api_url=api_url)
         self.kv = KV(api_key=api_key, api_url=api_url)
-        self.translate = Translate(api_key=api_key, api_url=api_url)
+        self.translate = Translate(api_key=api_key, api_url=api_url).translate
         self.geo = Geo(api_key=api_key, api_url=api_url)
         self.prompt_engine = PromptEngine(api_key=api_key, api_url=api_url)
 
