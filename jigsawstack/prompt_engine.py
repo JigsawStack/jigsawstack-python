@@ -73,13 +73,17 @@ class PromptEngine(ClientConfig):
             path=path,params={},verb="get").perform_with_content()
         return resp
     
-    def list(self, params:PromptEngineListParams) -> PromptEngineListResponse:
+    def list(self, params:Union[PromptEngineListParams, None] = None) -> PromptEngineListResponse:
 
-        if params.get('limit') is None:
+        if params is None:
+            params = {}
+        
+        # Default limit and page to 20 and 1 respectively
+        if  params.get('limit') is None:
             params['limit'] = 20
         
         if params.get('page') is None:
-            params['page'] = 1
+            params['page'] = 0
 
         
         limit = params.get('limit')
