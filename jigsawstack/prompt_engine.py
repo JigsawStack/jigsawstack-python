@@ -16,7 +16,7 @@ class PromptEngineRunParams(TypedDict):
     prompt:str
     inputs: NotRequired[List[object]]
     return_prompt: Union[str, List[object], Dict[str, str]]
-    grok_key: NotRequired[str]
+    # grok_key: NotRequired[str]
     input_values: NotRequired[Dict[str, str]]
 
 class PromptEngineExecuteParams(TypedDict):
@@ -30,7 +30,7 @@ class PromptEngineRunResponse(TypedDict):
 
 class PromptEngineCreateParams(TypedDict):
     prompt: str
-    grok_key: NotRequired[str]
+    # grok_key: NotRequired[str]
     inputs: NotRequired[List[object]]
     return_prompt: Union[str, List[object], Dict[str, str]]
 
@@ -100,7 +100,7 @@ class PromptEngine(ClientConfig):
             path=path,params={},verb="DELETE").perform_with_content()
         return resp
     
-    def run(self, params:PromptEngineRunParams) -> PromptEngineRunResponse:
+    def run_prompt_direct(self, params:PromptEngineRunParams) -> PromptEngineRunResponse:
         path = "/prompt_engine/run"
         resp = Request(
             api_key=self.api_key,
@@ -108,7 +108,7 @@ class PromptEngine(ClientConfig):
             path=path,params=cast(Dict[Any, Any], params),verb="post").perform_with_content()
         return resp
     
-    def execute(self, params:PromptEngineExecuteParams) -> PromptEngineRunResponse:
+    def run(self, params:PromptEngineExecuteParams) -> PromptEngineRunResponse:
         id = params.get("id")
         path = f"/prompt_engine/{id}"
         resp = Request(
