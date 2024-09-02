@@ -162,7 +162,12 @@ class Request(Generic[T]):
         verb = self.verb
         data = self.data
 
+        _requestParams = None
+
+        if verb.lower() in ["get", "delete"]:
+            _requestParams = params
+
         try:
-            return requests.request(verb, url, params=params, json=params,headers=headers, data=data)
+            return requests.request(verb, url, params=_requestParams, json=params,headers=headers, data=data)
         except requests.HTTPError as e:
             raise e
