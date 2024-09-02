@@ -6,4 +6,3 @@ jigsawstack.egg-info/
 .env
 build/  
 dist/ 
-test/
