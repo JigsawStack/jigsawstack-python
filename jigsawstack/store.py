@@ -29,7 +29,7 @@ class KVAddResponse(TypedDict):
 class FileUploadParams(TypedDict):
     overwrite:bool
     filename:str
-    headers: Dict[str, str]
+    content_type: NotRequired[str]
 
 
 
@@ -42,11 +42,11 @@ class Store(ClientConfig):
             "overwrite":overwrite
         }
         path =f"/store/file?overwrite={overwrite}&key={filename}"
-        headers = options.get("headers")
+        content_type = options.get("content_type")
         _headers = {"Content-Type":"application/octet-stream"}
-        if headers:
-            _headers.update(headers)
-
+        if content_type is not None:
+            _headers = {"Content-Type":content_type}
+            
         resp = Request(
             api_key=self.api_key,
             api_url=self.api_url,
