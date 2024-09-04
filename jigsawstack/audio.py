@@ -49,3 +49,11 @@ class Audio(ClientConfig):
             path=path, params=cast(Dict[Any, Any], params), verb="post"
         ).perform_with_content()
         return resp
+    def speaker_voice_accents(self) -> TextToSpeechResponse:
+        path = "/ai/tts"
+        resp = Request(
+            api_key=self.api_key,
+            api_url=self.api_url,
+            path=path, params={}, verb="get"
+        ).perform_with_content()
+        return resp
