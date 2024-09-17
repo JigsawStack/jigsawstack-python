@@ -18,9 +18,9 @@ setup(
     zip_safe=False,
     python_requires=">=3.7",
     keywords=["AI", "AI Tooling"],
-    setup_requires=['pytest-runner'],
-    tests_require=['pytest'],
-    test_suite='tests',
+    setup_requires=["pytest-runner"],
+    tests_require=["pytest"],
+    test_suite="tests",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
