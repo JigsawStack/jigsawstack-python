@@ -1,38 +1,40 @@
 from typing import Any, Dict, List, Union, cast
 from typing_extensions import NotRequired, TypedDict
-from .request import Request
+from .request import Request, RequestConfig
 from typing import List, Union
 from ._config import ClientConfig
 
 
-
 class PromptEngineResult(TypedDict):
     prompt: str
-    return_prompt:str
-    id:str
+    return_prompt: str
+    id: str
 
 
 class PromptEngineRunParams(TypedDict):
-    prompt:str
+    prompt: str
     inputs: NotRequired[List[object]]
     return_prompt: Union[str, List[object], Dict[str, str]]
     # grok_key: NotRequired[str]
     input_values: NotRequired[Dict[str, str]]
 
+
 class PromptEngineExecuteParams(TypedDict):
-    id:str
+    id: str
     input_values: object
+
 
 class PromptEngineRunResponse(TypedDict):
     success: bool
-    result:Any
-    
+    result: Any
+
 
 class PromptEngineCreateParams(TypedDict):
     prompt: str
     # grok_key: NotRequired[str]
     inputs: NotRequired[List[object]]
     return_prompt: Union[str, List[object], Dict[str, str]]
+
 
 class PromptEngineCreateResponse(TypedDict):
     success: bool
@@ -47,76 +49,102 @@ class PromptEngineListResponse(TypedDict):
     success: bool
     prompt_engines: List[PromptEngineResult]
 
+
 class PromptEngineListParams(TypedDict):
     limit: str
     page: str
+
 
 class PromptEngineDeleteResponse(TypedDict):
     prompt_engine_id: str
 
 
-
 class PromptEngine(ClientConfig):
+
+    config: RequestConfig
+
+    def __init__(
+        self,
+        api_key: str,
+        api_url: str,
+        disable_request_logging: Union[bool, None] = False,
+    ):
+        super().__init__(api_key, api_url, disable_request_logging)
+        self.config = RequestConfig(
+            api_url=api_url,
+            api_key=api_key,
+            disable_request_logging=disable_request_logging,
+        )
+
     def create(self, params: PromptEngineCreateParams) -> PromptEngineCreateResponse:
         path = "/prompt_engine"
         resp = Request(
-            api_key=self.api_key,
-            api_url=self.api_url,
-            path=path,params=cast(Dict[Any, Any], params),verb="post").perform_with_content()
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="post",
+        ).perform_with_content()
         return resp
-    
-    def get(self, id:str) -> PromptEngineGetResponse:
+
+    def get(self, id: str) -> PromptEngineGetResponse:
         path = f"/prompt_engine/{id}"
         resp = Request(
-            api_key=self.api_key,
-            api_url=self.api_url,
-            path=path,params={},verb="get").perform_with_content()
+            config=self.config, path=path, params={}, verb="get"
+        ).perform_with_content()
         return resp
-    
-    def list(self, params:Union[PromptEngineListParams, None] = None) -> PromptEngineListResponse:
+
+    def list(
+        self, params: Union[PromptEngineListParams, None] = None
+    ) -> PromptEngineListResponse:
 
         if params is None:
             params = {}
-        
-        # Default limit and page to 20 and 1 respectively
-        if  params.get('limit') is None:
-            params['limit'] = 20
-        
-        if params.get('page') is None:
-            params['page'] = 0
 
-        
-        limit = params.get('limit')
-        page = params.get('page')
-    
+        # Default limit and page to 20 and 1 respectively
+        if params.get("limit") is None:
+            params["limit"] = 20
+
+        if params.get("page") is None:
+            params["page"] = 0
+
+        limit = params.get("limit")
+        page = params.get("page")
+
         path = f"/prompt_engine?limit={limit}&page={page}"
         resp = Request(
-            api_key=self.api_key,
-            api_url=self.api_url,
-            path=path,params={},verb="get").perform_with_content()
+            config=self.config, path=path, params={}, verb="get"
+        ).perform_with_content()
         return resp
-    
-    def delete(self, id:str) -> PromptEngineDeleteResponse:
+
+    def delete(self, id: str) -> PromptEngineDeleteResponse:
         path = f"/prompt_engine/{id}"
         resp = Request(
-            api_key=self.api_key,
-            api_url=self.api_url,
-            path=path,params={},verb="DELETE").perform_with_content()
+            config=self.config,
+            path=path,
+            params={},
+            verb="DELETE",
+        ).perform_with_content()
         return resp
-    
-    def run_prompt_direct(self, params:PromptEngineRunParams) -> PromptEngineRunResponse:
+
+    def run_prompt_direct(
+        self, params: PromptEngineRunParams
+    ) -> PromptEngineRunResponse:
         path = "/prompt_engine/run"
         resp = Request(
-            api_key=self.api_key,
-            api_url=self.api_url,
-            path=path,params=cast(Dict[Any, Any], params),verb="post").perform_with_content()
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="post",
+        ).perform_with_content()
         return resp
-    
-    def run(self, params:PromptEngineExecuteParams) -> PromptEngineRunResponse:
+
+    def run(self, params: PromptEngineExecuteParams) -> PromptEngineRunResponse:
         id = params.get("id")
         path = f"/prompt_engine/{id}"
         resp = Request(
-            api_key=self.api_key,
-            api_url=self.api_url,
-            path=path,params=cast(Dict[Any, Any], params),verb="post").perform_with_content()
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="post",
+        ).perform_with_content()
         return resp

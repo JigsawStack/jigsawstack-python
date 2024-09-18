@@ -4,6 +4,7 @@ from jigsawstack.exceptions import JigsawStackError
 import jigsawstack
 
 import pytest
+
 # flake8: noqa
 
 client = jigsawstack.JigsawStack()
@@ -12,9 +13,7 @@ client = jigsawstack.JigsawStack()
 @pytest.mark.skip(reason="Skipping TestWebAPI class for now")
 class TestSentimentAPI(unittest.TestCase):
     def test_sentiment_response_success(self) -> None:
-        params = {
-            "text": "I am so excited"
-        }
+        params = {"text": "I am so excited"}
         try:
             result = client.sentiment(params)
             assert result["success"] == True

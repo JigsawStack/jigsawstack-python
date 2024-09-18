@@ -1,4 +1,4 @@
-from typing import Any, Dict, Generic, List, Union, cast
+from typing import Any, Dict, Generic, List, Union, cast, TypedDict
 import requests
 from typing_extensions import Literal, TypeVar
 from .exceptions import NoContentError, raise_for_code_and_type
@@ -8,25 +8,31 @@ RequestVerb = Literal["get", "post", "put", "patch", "delete"]
 T = TypeVar("T")
 
 
+class RequestConfig(TypedDict):
+    api_url: str
+    api_key: str
+    disable_request_logging: Union[bool, None] = False
+
+
 # This class wraps the HTTP request creation logic
 class Request(Generic[T]):
     def __init__(
         self,
-        api_url:str,
-        api_key:str,
+        config: RequestConfig,
         path: str,
         params: Union[Dict[Any, Any], List[Dict[Any, Any]]],
         verb: RequestVerb,
         headers: Dict[str, str] = {"Content-Type": "application/json"},
-        data : Union[bytes, None] = None
+        data: Union[bytes, None] = None,
     ):
         self.path = path
         self.params = params
         self.verb = verb
-        self.api_url = api_url
-        self.api_key = api_key
+        self.api_url = config.get("api_url")
+        self.api_key = config.get("api_key")
         self.data = data
         self.headers = headers
+        self.disable_request_logging = config.get("disable_request_logging")
 
     def perform(self) -> Union[T, None]:
         """Is the main function that makes the HTTP request
@@ -50,7 +56,7 @@ class Request(Generic[T]):
         if "application/json" not in resp.headers["content-type"]:
             raise_for_code_and_type(
                 code=500,
-                message="Failed to parse JigsawStack API response. Please try again."
+                message="Failed to parse JigsawStack API response. Please try again.",
             )
 
         # handle error in case there is a statusCode attr present
@@ -62,12 +68,11 @@ class Request(Generic[T]):
                 message=error.get("message"),
                 err=error.get("error"),
             )
-        
+
         return cast(T, resp.json())
-    
 
     def perform_file(self) -> Union[T, None]:
-    
+
         resp = self.make_request(url=f"{self.api_url}{self.path}")
 
         # delete calls do not return a body
@@ -76,14 +81,16 @@ class Request(Generic[T]):
         # handle error in case there is a statusCode attr present
         # and status != 200 and response is a json.
 
+        if (
+            "application/json" not in resp.headers["content-type"]
+            and resp.status_code != 200
+        ):
+            raise_for_code_and_type(
+                code=500,
+                message="Failed to parse JigsawStack API response. Please try again.",
+                error_type="InternalServerError",
+            )
 
-        if "application/json" not in resp.headers["content-type"] and resp.status_code != 200:
-         raise_for_code_and_type(
-            code=500,
-            message="Failed to parse JigsawStack API response. Please try again.",
-            error_type="InternalServerError",
-        )
-         
         if resp.status_code != 200:
             error = resp.json()
             raise_for_code_and_type(
@@ -107,7 +114,6 @@ class Request(Generic[T]):
         if resp is None:
             raise NoContentError()
         return resp
-    
 
     def perform_with_content_file(self) -> T:
         """
@@ -124,7 +130,6 @@ class Request(Generic[T]):
             raise NoContentError()
         return resp
 
-
     def __get_headers(self) -> Dict[Any, Any]:
         """get_headers returns the HTTP headers that will be
         used for every req.
@@ -138,11 +143,14 @@ class Request(Generic[T]):
             "Accept": "application/json",
             "x-api-key": f"{self.api_key}",
         }
+
+        if self.disable_request_logging:
+            h["x-jigsaw-no-request-log"] = "true"
+
         _headers = h.copy()
         _headers.update(self.headers)
 
         return _headers
-    
 
     def make_request(self, url: str) -> requests.Response:
         """make_request is a helper function that makes the actual
@@ -168,6 +176,13 @@ class Request(Generic[T]):
             _requestParams = params
 
         try:
-            return requests.request(verb, url, params=_requestParams, json=params,headers=headers, data=data)
+            return requests.request(
+                verb,
+                url,
+                params=_requestParams,
+                json=params,
+                headers=headers,
+                data=data,
+            )
         except requests.HTTPError as e:
             raise e
