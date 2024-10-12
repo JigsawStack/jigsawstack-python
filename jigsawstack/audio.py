@@ -26,6 +26,7 @@ class SpeechToTextParams(TypedDict):
     translate: NotRequired[bool]
     by_speaker: NotRequired[bool]
     webhook_url: NotRequired[str]
+    batch_size: NotRequired[int]
 
 
 class SpeechToTextResponse(TypedDict):
