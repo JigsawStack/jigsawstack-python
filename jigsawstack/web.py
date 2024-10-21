@@ -70,6 +70,8 @@ class AIScrapeParams(TypedDict):
     goto_options: NotRequired[object]
     wait_for: NotRequired[object]
     cookies: NotRequired[object]
+    page_position: NotRequired[int]
+    root_element_selector: NotRequired[str]
 
 
 class ScrapeParams(TypedDict):
@@ -97,6 +99,18 @@ class ScrapeResponse(TypedDict):
     data: Any
 
 
+class AIScrapeResponse(TypedDict):
+    success: bool
+    """
+    Indicates whether the translation was successful.
+    """
+    data: List[object]
+    context: object
+    page_position_length: int
+    page_position: int
+    selectors: object
+
+
 class Web(ClientConfig):
 
     config: RequestConfig
@@ -114,7 +128,7 @@ class Web(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    def ai_scrape(self, params: AIScrapeParams) -> ScrapeResponse:
+    def ai_scrape(self, params: AIScrapeParams) -> AIScrapeResponse:
         path = "/ai/scrape"
         resp = Request(
             config=self.config,
