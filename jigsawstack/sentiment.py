@@ -12,6 +12,13 @@ class SentimentParams(TypedDict):
     """
 
 
+class SentimentSentenceResult(TypedDict):
+    score: float
+    emotion: str
+    text: str
+    sentiment: str
+
+
 class SentimentResult(TypedDict):
     emotion: str
     """
@@ -25,6 +32,7 @@ class SentimentResult(TypedDict):
     """
       The score of the sentiment.
      """
+    sentences: List[SentimentSentenceResult]
 
 
 class SentimentResponse(TypedDict):
