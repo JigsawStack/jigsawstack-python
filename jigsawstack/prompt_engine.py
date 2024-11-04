@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union, cast
+from typing import Any, Dict, List, Union, cast, Generator
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from typing import List, Union
@@ -15,13 +15,13 @@ class PromptEngineRunParams(TypedDict):
     prompt: str
     inputs: NotRequired[List[object]]
     return_prompt: Union[str, List[object], Dict[str, str]]
-    # grok_key: NotRequired[str]
     input_values: NotRequired[Dict[str, str]]
 
 
 class PromptEngineExecuteParams(TypedDict):
     id: str
     input_values: object
+    stream: Union[bool, None] = False
 
 
 class PromptEngineRunResponse(TypedDict):
@@ -138,9 +138,22 @@ class PromptEngine(ClientConfig):
         ).perform_with_content()
         return resp
 
-    def run(self, params: PromptEngineExecuteParams) -> PromptEngineRunResponse:
+    def run(
+        self, params: PromptEngineExecuteParams
+    ) -> Union[PromptEngineRunResponse, Generator[Any, None, None]]:
         id = params.get("id")
         path = f"/prompt_engine/{id}"
+        stream = params.get("stream")
+
+        if stream:
+            resp = Request(
+                config=self.config,
+                path=path,
+                params=cast(Dict[Any, Any], params),
+                verb="post",
+            ).perform_with_content_streaming()
+            return resp
+
         resp = Request(
             config=self.config,
             path=path,

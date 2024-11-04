@@ -1,7 +1,8 @@
-from typing import Any, Dict, Generic, List, Union, cast, TypedDict
+from typing import Any, Dict, Generic, List, Union, cast, TypedDict, Generator
 import requests
 from typing_extensions import Literal, TypeVar
 from .exceptions import NoContentError, raise_for_code_and_type
+import json
 
 RequestVerb = Literal["get", "post", "put", "patch", "delete"]
 
@@ -24,6 +25,7 @@ class Request(Generic[T]):
         verb: RequestVerb,
         headers: Dict[str, str] = {"Content-Type": "application/json"},
         data: Union[bytes, None] = None,
+        stream: Union[bool, None] = False,
     ):
         self.path = path
         self.params = params
@@ -33,6 +35,7 @@ class Request(Generic[T]):
         self.data = data
         self.headers = headers
         self.disable_request_logging = config.get("disable_request_logging")
+        self.stream = stream
 
     def perform(self) -> Union[T, None]:
         """Is the main function that makes the HTTP request
@@ -152,6 +155,75 @@ class Request(Generic[T]):
 
         return _headers
 
+    def perform_streaming(self) -> Generator[Union[T, str], None, None]:
+        """Is the main function that makes the HTTP request
+        to the JigsawStack API. It uses the path, params, and verb attributes
+        to make the request.
+
+        Returns:
+            Generator[bytes, None, None]: A generator of bytes
+
+        Raises:
+            requests.HTTPError: If the request fails
+        """
+        resp = self.make_request(url=f"{self.api_url}{self.path}")
+
+        # delete calls do not return a body
+        if resp.text == "":
+            return None
+
+        # this is a safety net, if we get here it means the JigsawStack API is having issues
+        # and most likely the gateway is returning htmls
+        if "application/json" not in resp.headers["content-type"]:
+            raise_for_code_and_type(
+                code=500,
+                message="Failed to parse JigsawStack API response. Please try again.",
+            )
+
+        if resp.status_code != 200:
+            error = resp.json()
+            raise_for_code_and_type(
+                code=resp.status_code,
+                message=error.get("message"),
+                err=error.get("error"),
+            )
+
+        def try_parse_data(chunk: bytes) -> Union[T, str]:
+            if not chunk:
+                return chunk
+            # Decode bytes to text
+            text = chunk.decode("utf-8")
+
+            try:
+                # Try to parse as JSON
+                return json.loads(text)
+            except json.JSONDecodeError:
+                # Return as text if not valid JSON
+                return text
+
+        # Yield content in chunks
+        def chunk_generator():
+            for chunk in resp.iter_content(chunk_size=1024):  # 1KB chunks
+                if chunk:  # Filter out keep-alive new chunks
+                    yield try_parse_data(chunk)
+
+        return chunk_generator()
+
+    def perform_with_content_streaming(self) -> T:
+        """
+        Perform an HTTP request and return the response content as a streaming response.
+
+        Returns:
+            T: The content of the response
+
+        Raises:
+            NoContentError: If the response content is `None`.
+        """
+        resp = self.perform_streaming()
+        if resp is None:
+            raise NoContentError()
+        return resp
+
     def make_request(self, url: str) -> requests.Response:
         """make_request is a helper function that makes the actual
         HTTP request to the JigsawStack API.
@@ -183,6 +255,7 @@ class Request(Generic[T]):
                 json=params,
                 headers=headers,
                 data=data,
+                stream=self.stream,
             )
         except requests.HTTPError as e:
             raise e
