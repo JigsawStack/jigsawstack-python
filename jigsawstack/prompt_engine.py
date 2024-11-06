@@ -16,6 +16,8 @@ class PromptEngineRunParams(TypedDict):
     inputs: NotRequired[List[object]]
     return_prompt: Union[str, List[object], Dict[str, str]]
     input_values: NotRequired[Dict[str, str]]
+    stream: Union[bool, None] = False
+    use_internet: Union[bool, None] = False
 
 
 class PromptEngineExecuteParams(TypedDict):
@@ -31,9 +33,10 @@ class PromptEngineRunResponse(TypedDict):
 
 class PromptEngineCreateParams(TypedDict):
     prompt: str
-    # grok_key: NotRequired[str]
     inputs: NotRequired[List[object]]
     return_prompt: Union[str, List[object], Dict[str, str]]
+    use_internet: Union[bool, None] = False
+    optimize_prompt: Union[bool, None] = False
 
 
 class PromptEngineCreateResponse(TypedDict):
@@ -128,8 +131,18 @@ class PromptEngine(ClientConfig):
 
     def run_prompt_direct(
         self, params: PromptEngineRunParams
-    ) -> PromptEngineRunResponse:
+    ) -> Union[PromptEngineRunResponse, Generator[Any, None, None]]:
         path = "/prompt_engine/run"
+        stream = params.get("stream")
+        if stream:
+            resp = Request(
+                config=self.config,
+                path=path,
+                params=cast(Dict[Any, Any], params),
+                verb="post",
+            ).perform_with_content_streaming()
+            return resp
+
         resp = Request(
             config=self.config,
             path=path,

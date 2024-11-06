@@ -172,14 +172,6 @@ class Request(Generic[T]):
         if resp.text == "":
             return None
 
-        # this is a safety net, if we get here it means the JigsawStack API is having issues
-        # and most likely the gateway is returning htmls
-        if "application/json" not in resp.headers["content-type"]:
-            raise_for_code_and_type(
-                code=500,
-                message="Failed to parse JigsawStack API response. Please try again.",
-            )
-
         if resp.status_code != 200:
             error = resp.json()
             raise_for_code_and_type(
@@ -209,7 +201,7 @@ class Request(Generic[T]):
 
         return chunk_generator()
 
-    def perform_with_content_streaming(self) -> T:
+    def perform_with_content_streaming(self) -> Generator[Union[T, str], None, None]:
         """
         Perform an HTTP request and return the response content as a streaming response.
 
