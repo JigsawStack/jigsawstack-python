@@ -3,9 +3,11 @@ import unittest
 from jigsawstack.exceptions import JigsawStackError
 import jigsawstack
 import pytest
+
 # flake8: noq
 
 jigsaw = jigsawstack.JigsawStack()
+
 
 @pytest.mark.skip(reason="Skipping TestWebAPI class for now")
 class TestPromptEngine(unittest.TestCase):

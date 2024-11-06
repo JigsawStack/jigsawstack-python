@@ -7,3 +7,6 @@ jigsawstack.egg-info/
 build/  
 dist/ 
 /demo
+
+test.py
+test_web.py
