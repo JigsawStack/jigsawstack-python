@@ -23,6 +23,7 @@ class KVAddParams(TypedDict):
     key: str
     value: str
     encrypt: NotRequired[bool]
+    byo_secret: NotRequired[str]
 
 
 class KVAddResponse(TypedDict):
