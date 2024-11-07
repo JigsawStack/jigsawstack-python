@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union, cast, Optional, Literal
+from typing import Any, Dict, List, Union, cast, Literal
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from typing import List, Union
@@ -61,7 +61,9 @@ class Summary(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    def summarize(self, params: SummaryParams) -> SummaryResponse | SummaryListResponse:
+    def summarize(
+        self, params: SummaryParams
+    ) -> Union[SummaryResponse, SummaryListResponse]:
         path = "/ai/summary"
         resp = Request(
             config=self.config,
