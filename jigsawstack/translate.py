@@ -14,7 +14,7 @@ class TranslateParams(TypedDict):
     """
     Language to translate from.
     """
-    text: str
+    text: Union[str, list[str]]
     """
     The text to translate.
     """
@@ -26,6 +26,17 @@ class TranslateResponse(TypedDict):
     Indicates whether the translation was successful.
     """
     translated_text: str
+    """
+    The translated text.
+    """
+
+
+class TranslateListResponse(TypedDict):
+    success: bool
+    """
+    Indicates whether the translation was successful.
+    """
+    translated_text: List[str]
     """
     The translated text.
     """
@@ -48,7 +59,9 @@ class Translate(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    def translate(self, params: TranslateParams) -> TranslateResponse:
+    def translate(
+        self, params: TranslateParams
+    ) -> Union[TranslateResponse, TranslateListResponse]:
         path = "/ai/translate"
         resp = Request(
             config=self.config,

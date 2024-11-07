@@ -96,26 +96,29 @@ class Validate(ClientConfig):
         return resp
 
     def nsfw(self, url: str) -> NSFWResponse:
-        path = f"/validate/nsfw?url={url}"
+        path = f"/validate/nsfw"
         resp = Request(
             config=self.config,
             path=path,
-            params=cast(Dict[Any, Any], params={"url": url}),
-            verb="get",
+            params=cast(
+                Dict[Any, Any],
+                params={"url": url},
+            ),
+            verb="post",
         ).perform_with_content()
         return resp
 
     def profanity(self, params: ProfanityParams) -> ProfanityResponse:
         text = params.get("text")
         censor_replacement = params.get("censor_replacement", "*")
-        path = (
-            f"/validate/profanity?text={text}&censor_replacement={censor_replacement}"
-        )
+        path = f"/validate/profanity"
         resp = Request(
             config=self.config,
             path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="get",
+            params=cast(
+                Dict[Any, Any], {"text": text, "censor_replacement": censor_replacement}
+            ),
+            verb="post",
         ).perform_with_content()
         return resp
 
@@ -127,12 +130,12 @@ class Validate(ClientConfig):
             config=self.config,
             path=path,
             params=cast(Dict[Any, Any], params),
-            verb="get",
+            verb="post",
         ).perform_with_content()
         return resp
 
     def spamcheck(self, params: SpamCheckParams) -> SpamCheckResponse:
-        path = "/ai/spamcheck"
+        path = "/validate/spam_check"
         resp = Request(
             config=self.config,
             path=path,

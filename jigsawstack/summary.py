@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union, cast
+from typing import Any, Dict, List, Union, cast, Optional, Literal
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from typing import List, Union
@@ -6,16 +6,20 @@ from ._config import ClientConfig
 
 
 class SummaryParams(TypedDict):
-    text: str
+    text: NotRequired[str]
     """
     The text to summarize.
     """
 
-    type: NotRequired[str]
+    type: NotRequired[Literal["text", "points"]]
 
     """
    The summary result type. Supported values are: text, points
     """
+    url: NotRequired[str]
+    file_store_key: NotRequired[str]
+    max_points: NotRequired[int]
+    max_characters: NotRequired[int]
 
 
 class SummaryResponse(TypedDict):
@@ -24,6 +28,17 @@ class SummaryResponse(TypedDict):
     Indicates whether the translation was successful.
     """
     summary: str
+    """
+    The summarized text.
+    """
+
+
+class SummaryListResponse(TypedDict):
+    success: bool
+    """
+    Indicates whether the translation was successful.
+    """
+    summary: List[str]
     """
     The summarized text.
     """
@@ -46,7 +61,7 @@ class Summary(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    def summarize(self, params: SummaryParams) -> SummaryResponse:
+    def summarize(self, params: SummaryParams) -> SummaryResponse | SummaryListResponse:
         path = "/ai/summary"
         resp = Request(
             config=self.config,
