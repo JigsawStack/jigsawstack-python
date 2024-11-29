@@ -18,6 +18,7 @@ class PromptEngineRunParams(TypedDict):
     input_values: NotRequired[Dict[str, str]]
     stream: Union[bool, None] = False
     use_internet: Union[bool, None] = False
+    prompt_guard: NotRequired[List[str]]
 
 
 class PromptEngineExecuteParams(TypedDict):
@@ -37,6 +38,7 @@ class PromptEngineCreateParams(TypedDict):
     return_prompt: Union[str, List[object], Dict[str, str]]
     use_internet: Union[bool, None] = False
     optimize_prompt: Union[bool, None] = False
+    prompt_guard: NotRequired[List[str]]
 
 
 class PromptEngineCreateResponse(TypedDict):
