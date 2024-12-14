@@ -3,16 +3,16 @@ import os
 from .audio import Audio, AsyncAudio
 from .vision import Vision, AsyncVision
 from .search import Search
-from .prediction import Prediction
-from .sql import SQL
-from .store import KV, Store
-from .translate import Translate
+from .prediction import Prediction, AsyncPrediction
+from .sql import SQL, AsyncSQL
+from .store import Store, AsyncStore
+from .translate import Translate, AsyncTranslate
 from .web import Web, AsyncWeb
-from .sentiment import Sentiment
+from .sentiment import Sentiment, AsyncSentiment
 from .validate import Validate, AsyncValidate
-from .summary import Summary
+from .summary import Summary, AsyncSummary
 from .geo import Geo, AsyncGeo
-from .prompt_engine import PromptEngine
+from .prompt_engine import PromptEngine, AsyncPromptEngine
 from .exceptions import JigsawStackError
 
 
@@ -22,7 +22,6 @@ class JigsawStack:
     prediction: Prediction
     text_to_sql: SQL
     file: Store
-    kv: KV
     translate: Translate
     web: Web
     sentiment: Sentiment
@@ -102,11 +101,6 @@ class JigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         )
-        self.kv = KV(
-            api_key=api_key,
-            api_url=api_url,
-            disable_request_logging=disable_request_logging,
-        )
         self.translate = Translate(
             api_key=api_key,
             api_url=api_url,
@@ -130,6 +124,13 @@ class AsyncJigsawStack:
     web: AsyncWeb
     audio: AsyncAudio
     vision: AsyncVision
+    store: AsyncStore
+    summary: AsyncSummary
+    sentiment: AsyncSentiment
+    translate: AsyncTranslate
+    sql: AsyncSQL
+    prediction: AsyncPrediction
+    prompt_engine: AsyncPromptEngine
     api_key: str
     api_url: str
     disable_request_logging: bool
@@ -180,6 +181,47 @@ class AsyncJigsawStack:
         )
 
         self.vision = AsyncVision(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        )
+
+        self.store = AsyncStore(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        )
+
+        self.summary = AsyncSummary(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        ).summarize
+
+        self.prediction = AsyncPrediction(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        ).predict
+        self.text_to_sql = AsyncSQL(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        ).text_to_sql
+
+        self.sentiment = AsyncSentiment(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        ).analyze
+
+        self.translate = AsyncTranslate(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        ).translate
+
+        self.prompt_engine = AsyncPromptEngine(
             api_key=api_key,
             api_url=api_url,
             disable_request_logging=disable_request_logging,

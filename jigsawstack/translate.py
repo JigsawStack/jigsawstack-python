@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Union, cast
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
+from .async_request import AsyncRequest
 from typing import List, Union
 from ._config import ClientConfig
 
@@ -64,6 +65,36 @@ class Translate(ClientConfig):
     ) -> Union[TranslateResponse, TranslateListResponse]:
         path = "/ai/translate"
         resp = Request(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="post",
+        ).perform_with_content()
+        return resp
+
+
+class AsyncTranslate(ClientConfig):
+
+    config: RequestConfig
+
+    def __init__(
+        self,
+        api_key: str,
+        api_url: str,
+        disable_request_logging: Union[bool, None] = False,
+    ):
+        super().__init__(api_key, api_url, disable_request_logging)
+        self.config = RequestConfig(
+            api_url=api_url,
+            api_key=api_key,
+            disable_request_logging=disable_request_logging,
+        )
+
+    async def translate(
+        self, params: TranslateParams
+    ) -> Union[TranslateResponse, TranslateListResponse]:
+        path = "/ai/translate"
+        resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=cast(Dict[Any, Any], params),
