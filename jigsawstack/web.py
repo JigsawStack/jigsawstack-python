@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, cast, Union
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
+from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
 from .search import (
     Search,
@@ -8,6 +9,7 @@ from .search import (
     SearchSuggestionParams,
     SearchSuggestionResponse,
     SearchResponse,
+    AsyncSearch,
 )
 
 
@@ -187,3 +189,81 @@ class Web(ClientConfig):
             disable_request_logging=self.config.get("disable_request_logging"),
         )
         return s.suggestion(params)
+
+
+class AsyncWeb(ClientConfig):
+
+    config: AsyncRequestConfig
+
+    def __init__(
+        self,
+        api_key: str,
+        api_url: str,
+        disable_request_logging: Union[bool, None] = False,
+    ):
+        super().__init__(api_key, api_url, disable_request_logging)
+        self.config = RequestConfig(
+            api_url=api_url,
+            api_key=api_key,
+            disable_request_logging=disable_request_logging,
+        )
+
+    async def ai_scrape(self, params: AIScrapeParams) -> AIScrapeResponse:
+        path = "/ai/scrape"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="post",
+        ).perform_with_content()
+        return resp
+
+    async def scrape(self, params: ScrapeParams) -> ScrapeResponse:
+        path = "/web/scrape"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="post",
+        ).perform_with_content()
+        return resp
+
+    async def html_to_any(self, params: HTMLToAnyParams) -> Any:
+        path = "/web/html_to_any"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="post",
+        ).perform_with_content_file()
+        return resp
+
+    async def dns(self, params: DNSParams) -> DNSResponse:
+        domain = params.get("domain", "")
+        type = params.get("type", "A")
+        path = f"/web/html_to_any?domain={domain}&type={type}"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="get",
+        ).perform_with_content()
+        return resp
+
+    async def search(self, params: SearchParams) -> SearchResponse:
+        s = AsyncSearch(
+            self.api_key,
+            self.api_url,
+            disable_request_logging=self.config.get("disable_request_logging"),
+        )
+        return await s.search(params)
+
+    async def search_suggestion(
+        self, params: SearchSuggestionParams
+    ) -> SearchSuggestionResponse:
+        s = AsyncSearch(
+            self.api_key,
+            self.api_url,
+            disable_request_logging=self.config.get("disable_request_logging"),
+        )
+        return await s.suggestion(params)

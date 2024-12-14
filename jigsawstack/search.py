@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Union, cast
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
+from .async_request import AsyncRequest, AsyncRequestConfig
 from typing_extensions import NotRequired, TypedDict
 from ._config import ClientConfig
 
@@ -89,6 +90,51 @@ class Search(ClientConfig):
         query = params["query"]
         path = f"/web/search/suggest?query={query}"
         resp = Request(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="GET",
+        ).perform_with_content()
+        return resp
+
+
+class AsyncSearch(ClientConfig):
+    config: AsyncRequestConfig
+
+    def __init__(
+        self,
+        api_key: str,
+        api_url: str,
+        disable_request_logging: Union[bool, None] = False,
+    ):
+        super().__init__(api_key, api_url, disable_request_logging)
+        self.config = RequestConfig(
+            api_url=api_url,
+            api_key=api_key,
+            disable_request_logging=disable_request_logging,
+        )
+
+    async def search(self, params: SearchParams) -> SearchResponse:
+        query = params["query"]
+        ai_overview = params.get("ai_overview", "True")
+        safe_search = params.get("safe_search", "moderate")
+        spell_check = params.get("spell_check", "True")
+        path = f"/web/search?query={query}&ai_overview={ai_overview}&safe_search={safe_search}&spell_check={spell_check}"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="GET",
+        ).perform_with_content()
+
+        return resp
+
+    async def suggestion(
+        self, params: SearchSuggestionParams
+    ) -> SearchSuggestionResponse:
+        query = params["query"]
+        path = f"/web/search/suggest?query={query}"
+        resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=cast(Dict[Any, Any], params),
