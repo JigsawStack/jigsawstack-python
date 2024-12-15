@@ -15,7 +15,7 @@ class TranslateParams(TypedDict):
     """
     Language to translate from.
     """
-    text: Union[str, list[str]]
+    text: Union[str, List[str]]
     """
     The text to translate.
     """

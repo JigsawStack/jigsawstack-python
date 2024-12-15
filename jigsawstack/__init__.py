@@ -19,14 +19,8 @@ from .exceptions import JigsawStackError
 class JigsawStack:
     audio: Audio
     vision: Vision
-    prediction: Prediction
-    text_to_sql: SQL
     file: Store
-    translate: Translate
     web: Web
-    sentiment: Sentiment
-    validate: Validate
-    summary: Summary
     search: Search
     geo: Geo
     prompt_engine: PromptEngine
@@ -125,11 +119,6 @@ class AsyncJigsawStack:
     audio: AsyncAudio
     vision: AsyncVision
     store: AsyncStore
-    summary: AsyncSummary
-    sentiment: AsyncSentiment
-    translate: AsyncTranslate
-    sql: AsyncSQL
-    prediction: AsyncPrediction
     prompt_engine: AsyncPromptEngine
     api_key: str
     api_url: str

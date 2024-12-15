@@ -16,7 +16,8 @@ def test_async_vocr_response():
         try:
             result = await client.vision.vocr(
                 {
-                    "url": "https://rogilvkqloanxtvjfrkm.supabase.co/storage/v1/object/public/demo/Collabo%201080x842.jpg?t=2024-03-22T09%3A22%3A48.442Z"
+                    "url": "https://rogilvkqloanxtvjfrkm.supabase.co/storage/v1/object/public/demo/Collabo%201080x842.jpg?t=2024-03-22T09%3A22%3A48.442Z",
+                    "prompt": ["Hello"],
                 }
             )
 

@@ -13,7 +13,7 @@ class Spam(TypedDict):
 
 
 class SpamCheckParams(TypedDict):
-    text: str
+    text: Union[str, List[str]]
 
 
 class SpamCheckResponse(TypedDict):

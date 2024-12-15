@@ -57,6 +57,16 @@ class HTMLToAnyResponse(TypedDict):
     html: str
 
 
+class BYOProxyAuth(TypedDict):
+    username: str
+    password: str
+
+
+class BYOProxy(TypedDict):
+    server: str
+    auth: BYOProxyAuth
+
+
 class AIScrapeParams(TypedDict):
     url: str
     element_prompts: List[str]
@@ -74,6 +84,8 @@ class AIScrapeParams(TypedDict):
     cookies: NotRequired[object]
     page_position: NotRequired[int]
     root_element_selector: NotRequired[str]
+    force_rotate_proxy: NotRequired[bool]
+    byo_proxy: NotRequired[BYOProxy]
 
 
 class ScrapeParams(TypedDict):

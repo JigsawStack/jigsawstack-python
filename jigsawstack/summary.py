@@ -7,7 +7,7 @@ from ._config import ClientConfig
 
 
 class SummaryParams(TypedDict):
-    text: NotRequired[str]
+    text: Union[str, List[str]]
     """
     The text to summarize.
     """

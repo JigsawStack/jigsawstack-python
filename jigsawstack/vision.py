@@ -13,7 +13,7 @@ class OCRParams(TypedDict):
 
 
 class VOCRParams(TypedDict):
-    prompt: str
+    prompt: Union[str, List[str]]
     url: NotRequired[str]
     file_store_key: NotRequired[str]
 

@@ -5,11 +5,12 @@ from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
 from typing import Any, Dict, List, cast
 from typing_extensions import NotRequired, TypedDict
+from .custom_typing import SupportedAccents
 
 
 class TextToSpeechParams(TypedDict):
     text: str
-    accent: NotRequired[str]
+    accent: NotRequired[SupportedAccents]
     speaker_clone_url: NotRequired[str]
     speaker_clone_file_store_key: NotRequired[str]
 
@@ -21,7 +22,7 @@ class TextToSpeechResponse(TypedDict):
 
 
 class SpeechToTextParams(TypedDict):
-    url: str
+    url: NotRequired[str]
     file_store_key: NotRequired[str]
     language: NotRequired[str]
     translate: NotRequired[bool]
