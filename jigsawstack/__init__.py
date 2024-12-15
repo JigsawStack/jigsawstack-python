@@ -1,35 +1,26 @@
 from typing import Union
 import os
-from .audio import Audio
-from .vision import Vision
+from .audio import Audio, AsyncAudio
+from .vision import Vision, AsyncVision
 from .search import Search
-from .prediction import Prediction
-from .sql import SQL
-from .store import KV, Store
-from .translate import Translate
-from .web import Web
-from .sentiment import Sentiment
-from .validate import Validate
-from .summary import Summary
-from .geo import Geo
-from .prompt_engine import PromptEngine
+from .prediction import Prediction, AsyncPrediction
+from .sql import SQL, AsyncSQL
+from .store import Store, AsyncStore
+from .translate import Translate, AsyncTranslate
+from .web import Web, AsyncWeb
+from .sentiment import Sentiment, AsyncSentiment
+from .validate import Validate, AsyncValidate
+from .summary import Summary, AsyncSummary
+from .geo import Geo, AsyncGeo
+from .prompt_engine import PromptEngine, AsyncPromptEngine
 from .exceptions import JigsawStackError
-
-# from .version import get_version
 
 
 class JigsawStack:
     audio: Audio
     vision: Vision
-    prediction: Prediction
-    text_to_sql: SQL
     file: Store
-    kv: KV
-    translate: Translate
     web: Web
-    sentiment: Sentiment
-    validate: Validate
-    summary: Summary
     search: Search
     geo: Geo
     prompt_engine: PromptEngine
@@ -104,11 +95,6 @@ class JigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         )
-        self.kv = KV(
-            api_key=api_key,
-            api_url=api_url,
-            disable_request_logging=disable_request_logging,
-        )
         self.translate = Translate(
             api_key=api_key,
             api_url=api_url,
@@ -126,5 +112,110 @@ class JigsawStack:
         )
 
 
+class AsyncJigsawStack:
+    geo: AsyncGeo
+    validate: AsyncValidate
+    web: AsyncWeb
+    audio: AsyncAudio
+    vision: AsyncVision
+    store: AsyncStore
+    prompt_engine: AsyncPromptEngine
+    api_key: str
+    api_url: str
+    disable_request_logging: bool
+
+    def __init__(
+        self,
+        api_key: Union[str, None] = None,
+        api_url: Union[str, None] = None,
+        disable_request_logging: Union[bool, None] = None,
+    ) -> None:
+        if api_key is None:
+            api_key = os.environ.get("JIGSAWSTACK_API_KEY")
+
+        if api_key is None:
+            raise ValueError(
+                "The api_key client option must be set either by passing api_key to the client or by setting the JIGSAWSTACK_API_KEY environment variable"
+            )
+
+        if api_url is None:
+            api_url = os.environ.get("JIGSAWSTACK_API_URL")
+        if api_url is None:
+            api_url = f"https://api.jigsawstack.com/v1"
+
+        self.api_key = api_key
+        self.api_url = api_url
+
+        self.web = AsyncWeb(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        )
+
+        self.geo = AsyncGeo(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        )
+
+        self.validate = AsyncValidate(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        )
+        self.audio = AsyncAudio(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        )
+
+        self.vision = AsyncVision(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        )
+
+        self.store = AsyncStore(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        )
+
+        self.summary = AsyncSummary(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        ).summarize
+
+        self.prediction = AsyncPrediction(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        ).predict
+        self.text_to_sql = AsyncSQL(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        ).text_to_sql
+
+        self.sentiment = AsyncSentiment(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        ).analyze
+
+        self.translate = AsyncTranslate(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        ).translate
+
+        self.prompt_engine = AsyncPromptEngine(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        )
+
+
 # Create a global instance of the Web class
-__all__ = ["JigsawStack", "Search", "JigsawStackError"]
+__all__ = ["JigsawStack", "Search", "JigsawStackError", "AsyncJigsawStack"]

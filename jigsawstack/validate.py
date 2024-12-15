@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Union, cast
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
+from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
 from typing import Any, Dict, List, cast
 from typing_extensions import NotRequired, TypedDict
@@ -12,7 +13,7 @@ class Spam(TypedDict):
 
 
 class SpamCheckParams(TypedDict):
-    text: str
+    text: Union[str, List[str]]
 
 
 class SpamCheckResponse(TypedDict):
@@ -137,6 +138,84 @@ class Validate(ClientConfig):
     def spamcheck(self, params: SpamCheckParams) -> SpamCheckResponse:
         path = "/validate/spam_check"
         resp = Request(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="post",
+        ).perform_with_content()
+        return resp
+
+
+class AsyncValidate(ClientConfig):
+
+    config: AsyncRequestConfig
+
+    def __init__(
+        self,
+        api_key: str,
+        api_url: str,
+        disable_request_logging: Union[bool, None] = False,
+    ):
+        super().__init__(api_key, api_url, disable_request_logging)
+        self.config = AsyncRequestConfig(
+            api_url=api_url,
+            api_key=api_key,
+            disable_request_logging=disable_request_logging,
+        )
+
+    async def email(self, params: EmailValidationParams) -> EmailValidationResponse:
+        email = params.get("email")
+        path = f"/validate/email?email={email}"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="get",
+        ).perform_with_content()
+        return resp
+
+    async def nsfw(self, url: str) -> NSFWResponse:
+        path = f"/validate/nsfw"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(
+                Dict[Any, Any],
+                params={"url": url},
+            ),
+            verb="post",
+        ).perform_with_content()
+        return resp
+
+    async def profanity(self, params: ProfanityParams) -> ProfanityResponse:
+        text = params.get("text")
+        censor_replacement = params.get("censor_replacement", "*")
+        path = f"/validate/profanity"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(
+                Dict[Any, Any], {"text": text, "censor_replacement": censor_replacement}
+            ),
+            verb="post",
+        ).perform_with_content()
+        return resp
+
+    async def spellcheck(self, params: SpellCheckParams) -> SpellCheckResponse:
+        text = params.get("text")
+        language_code = params.get("language_code", "en")
+        path = f"/validate/spell_check?text={text}&language_code={language_code}"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="post",
+        ).perform_with_content()
+        return resp
+
+    async def spamcheck(self, params: SpamCheckParams) -> SpamCheckResponse:
+        path = "/validate/spam_check"
+        resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=cast(Dict[Any, Any], params),

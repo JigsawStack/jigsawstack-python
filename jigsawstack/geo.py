@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Union, cast
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
+from .async_request import AsyncRequestConfig, AsyncRequest
 from typing import List, Union
 from ._config import ClientConfig
 
@@ -291,6 +292,114 @@ class Geo(ClientConfig):
     def geohash(self, key: str) -> GeohashDecodeResponse:
         path = f"/geo/geohash/decode/{key}"
         resp = Request(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params={}),
+            verb="get",
+        ).perform_with_content()
+        return resp
+
+
+class AsyncGeo(ClientConfig):
+
+    config: AsyncRequestConfig
+
+    def __init__(
+        self,
+        api_key: str,
+        api_url: str,
+        disable_request_logging: Union[bool, None] = False,
+    ):
+        super().__init__(api_key, api_url, disable_request_logging)
+        self.config = AsyncRequestConfig(
+            api_url=api_url,
+            api_key=api_key,
+            disable_request_logging=disable_request_logging,
+        )
+
+    async def search(self, params: GeoSearchParams) -> GeoSearchResponse:
+        path = "/geo/search"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="get",
+        ).perform_with_content()
+        return resp
+
+    async def geocode(self, params: GeocodeParams) -> GeohashDecodeResponse:
+        path = "/geo/geocode"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="get",
+        ).perform_with_content()
+        return resp
+
+    async def city(self, params: GeoCityParams) -> GeoCityResponse:
+        path = "/geo/city"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="get",
+        ).perform_with_content()
+        return resp
+
+    async def country(self, params: GeoCountryParams) -> GeoCountryResponse:
+        path = "/geo/country"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="get",
+        ).perform_with_content()
+        return resp
+
+    async def state(self, params: GeoStateParams) -> GeoStateResponse:
+        path = "/geo/state"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="get",
+        ).perform_with_content()
+        return resp
+
+    async def distance(self, params: GeoDistanceParams) -> GeoDistanceResponse:
+        path = "/geo/distance"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="get",
+        ).perform_with_content()
+        return resp
+
+    async def timezone(self, params: GeoTimezoneParams) -> GeoTimezoneResponse:
+        path = "/geo/timezone"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="get",
+        ).perform_with_content()
+        return resp
+
+    async def geohash(self, params: GeohashParams) -> GeohashResponse:
+        path = "/geo/geohash"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="get",
+        ).perform_with_content()
+        return resp
+
+    async def geohash(self, key: str) -> GeohashDecodeResponse:
+        path = f"/geo/geohash/decode/{key}"
+        resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=cast(Dict[Any, Any], params={}),

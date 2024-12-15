@@ -2,8 +2,8 @@ from typing import Union
 import os
 from .audio import Audio
 from .vision import Vision
-from .searchs import Search
-from .predictions import Prediction
+from .search import Search
+from .prediction import Prediction
 from .sql import SQL
 from .store import KV, File
 from .translate import Translate
@@ -12,9 +12,10 @@ from .sentiment import Sentiment
 from .validate import Validate
 from .summary import Summary
 
+
 class JigsawStack:
     audio: Audio
-    vision : Vision
+    vision: Vision
     prediction: Prediction
     sql: SQL
     file: File
@@ -28,14 +29,17 @@ class JigsawStack:
     api_key: str
     api_url: str
 
-
-    def __init__(self, api_key: Union[str, None] = None, api_url: Union[str, None] = None) -> None:
+    def __init__(
+        self, api_key: Union[str, None] = None, api_url: Union[str, None] = None
+    ) -> None:
         if api_key is None:
             api_key = os.environ.get("JIGSAWSTACK_API_KEY")
-        
+
         if api_key is None:
-            raise ValueError("The api_key client option must be set either by passing api_key to the client or by setting the JIGSAWSTACK_API_KEY environment variable")
-        
+            raise ValueError(
+                "The api_key client option must be set either by passing api_key to the client or by setting the JIGSAWSTACK_API_KEY environment variable"
+            )
+
         if api_url is None:
             api_url = os.environ.get("JIGSAWSTACK_API_URL")
         if api_url is None:
@@ -43,7 +47,6 @@ class JigsawStack:
 
         self.api_key = api_key
         self.api_url = api_url
-
 
         self.audio = Audio(api_key=api_key, api_url=api_url)
         self.web = Web(api_key=api_key, api_url=api_url)

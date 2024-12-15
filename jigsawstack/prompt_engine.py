@@ -1,6 +1,7 @@
-from typing import Any, Dict, List, Union, cast, Generator
+from typing import Any, Dict, List, Union, cast, Generator, Literal
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
+from .async_request import AsyncRequest
 from typing import List, Union
 from ._config import ClientConfig
 
@@ -18,7 +19,19 @@ class PromptEngineRunParams(TypedDict):
     input_values: NotRequired[Dict[str, str]]
     stream: Union[bool, None] = False
     use_internet: Union[bool, None] = False
-    prompt_guard: NotRequired[List[str]]
+    prompt_guard: NotRequired[
+        Literal[
+            "defamation",
+            "specialized_advice",
+            "privacy",
+            "intellectual_property",
+            "indiscriminate_weapons",
+            "hate",
+            "sexual_content",
+            "elections",
+            "code_interpreter_abuse",
+        ]
+    ]
 
 
 class PromptEngineExecuteParams(TypedDict):
@@ -38,7 +51,19 @@ class PromptEngineCreateParams(TypedDict):
     return_prompt: Union[str, List[object], Dict[str, str]]
     use_internet: Union[bool, None] = False
     optimize_prompt: Union[bool, None] = False
-    prompt_guard: NotRequired[List[str]]
+    prompt_guard: NotRequired[
+        Literal[
+            "defamation",
+            "specialized_advice",
+            "privacy",
+            "intellectual_property",
+            "indiscriminate_weapons",
+            "hate",
+            "sexual_content",
+            "elections",
+            "code_interpreter_abuse",
+        ]
+    ]
 
 
 class PromptEngineCreateResponse(TypedDict):
@@ -170,6 +195,121 @@ class PromptEngine(ClientConfig):
             return resp
 
         resp = Request(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="post",
+        ).perform_with_content()
+        return resp
+
+
+class AsyncPromptEngine(ClientConfig):
+
+    config: RequestConfig
+
+    def __init__(
+        self,
+        api_key: str,
+        api_url: str,
+        disable_request_logging: Union[bool, None] = False,
+    ):
+        super().__init__(api_key, api_url, disable_request_logging)
+        self.config = RequestConfig(
+            api_url=api_url,
+            api_key=api_key,
+            disable_request_logging=disable_request_logging,
+        )
+
+    async def create(
+        self, params: PromptEngineCreateParams
+    ) -> PromptEngineCreateResponse:
+        path = "/prompt_engine"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="post",
+        ).perform_with_content()
+        return resp
+
+    async def get(self, id: str) -> PromptEngineGetResponse:
+        path = f"/prompt_engine/{id}"
+        resp = await AsyncRequest(
+            config=self.config, path=path, params={}, verb="get"
+        ).perform_with_content()
+        return resp
+
+    async def list(
+        self, params: Union[PromptEngineListParams, None] = None
+    ) -> PromptEngineListResponse:
+
+        if params is None:
+            params = {}
+
+        # Default limit and page to 20 and 1 respectively
+        if params.get("limit") is None:
+            params["limit"] = 20
+
+        if params.get("page") is None:
+            params["page"] = 0
+
+        limit = params.get("limit")
+        page = params.get("page")
+
+        path = f"/prompt_engine?limit={limit}&page={page}"
+        resp = await AsyncRequest(
+            config=self.config, path=path, params={}, verb="get"
+        ).perform_with_content()
+        return resp
+
+    async def delete(self, id: str) -> PromptEngineDeleteResponse:
+        path = f"/prompt_engine/{id}"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params={},
+            verb="DELETE",
+        ).perform_with_content()
+        return resp
+
+    async def run_prompt_direct(
+        self, params: PromptEngineRunParams
+    ) -> Union[PromptEngineRunResponse, Generator[Any, None, None]]:
+        path = "/prompt_engine/run"
+        stream = params.get("stream")
+        if stream:
+            resp = await AsyncRequest(
+                config=self.config,
+                path=path,
+                params=cast(Dict[Any, Any], params),
+                verb="post",
+            ).perform_with_content_streaming()
+            return resp
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="post",
+        ).perform_with_content()
+        return resp
+
+    async def run(
+        self, params: PromptEngineExecuteParams
+    ) -> Union[PromptEngineRunResponse, Generator[Any, None, None]]:
+        id = params.get("id")
+        path = f"/prompt_engine/{id}"
+        stream = params.get("stream")
+
+        if stream:
+            resp = await AsyncRequest(
+                config=self.config,
+                path=path,
+                params=cast(Dict[Any, Any], params),
+                verb="post",
+            ).perform_with_content_streaming()
+            return resp
+
+        resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=cast(Dict[Any, Any], params),
