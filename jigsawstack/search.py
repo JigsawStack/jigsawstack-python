@@ -78,12 +78,21 @@ class Search(ClientConfig):
         ai_overview = params.get("ai_overview", "True")
         safe_search = params.get("safe_search", "moderate")
         spell_check = params.get("spell_check", "True")
-        path = f"/web/search?query={query}&ai_overview={ai_overview}&safe_search={safe_search}&spell_check={spell_check}"
+
+        body = {
+            "byo_urls": params.get("byo_urls", []),
+            "query": query,
+            "ai_overview": ai_overview,
+            "safe_search": safe_search,
+            "spell_check": spell_check,
+        }
+
+        path = f"/web/search"
         resp = Request(
             config=self.config,
             path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="GET",
+            params=cast(Dict[Any, Any], body),
+            verb="POST",
         ).perform_with_content()
 
         return resp
@@ -117,18 +126,25 @@ class AsyncSearch(ClientConfig):
         )
 
     async def search(self, params: SearchParams) -> SearchResponse:
+        path = f"/web/search"
         query = params["query"]
         ai_overview = params.get("ai_overview", "True")
         safe_search = params.get("safe_search", "moderate")
         spell_check = params.get("spell_check", "True")
-        path = f"/web/search?query={query}&ai_overview={ai_overview}&safe_search={safe_search}&spell_check={spell_check}"
+
+        body = {
+            "byo_urls": params.get("byo_urls", []),
+            "query": query,
+            "ai_overview": ai_overview,
+            "safe_search": safe_search,
+            "spell_check": spell_check,
+        }
         resp = await AsyncRequest(
             config=self.config,
             path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="GET",
+            params=cast(Dict[Any, Any], body),
+            verb="POST",
         ).perform_with_content()
-
         return resp
 
     async def suggestion(
