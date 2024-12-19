@@ -117,18 +117,13 @@ class AsyncSearch(ClientConfig):
         )
 
     async def search(self, params: SearchParams) -> SearchResponse:
-        query = params["query"]
-        ai_overview = params.get("ai_overview", "True")
-        safe_search = params.get("safe_search", "moderate")
-        spell_check = params.get("spell_check", "True")
-        path = f"/web/search?query={query}&ai_overview={ai_overview}&safe_search={safe_search}&spell_check={spell_check}"
+        path = f"/web/search"
         resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=cast(Dict[Any, Any], params),
-            verb="GET",
+            verb="POST",
         ).perform_with_content()
-
         return resp
 
     async def suggestion(
