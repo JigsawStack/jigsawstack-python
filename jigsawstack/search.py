@@ -54,6 +54,8 @@ class SearchParams(TypedDict):
     Spell check the search query.
     """
 
+    byo_urls: NotRequired[List[str]]
+
 
 class Search(ClientConfig):
     config: RequestConfig
