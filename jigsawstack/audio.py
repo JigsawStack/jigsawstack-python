@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, cast, Union
+from typing import Any, Dict, List, cast, Union, Optional
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
@@ -31,10 +31,20 @@ class SpeechToTextParams(TypedDict):
     batch_size: NotRequired[int]
 
 
+class ChunkParams(TypedDict):
+    text: str
+    timestamp: tuple[int, int]
+
+
+class BySpeakerParams(ChunkParams):
+    speaker: str
+
+
 class SpeechToTextResponse(TypedDict):
     success: bool
     text: str
-    chunks: List[object]
+    chunks: List[ChunkParams]
+    speakers: Optional[List[BySpeakerParams]]
 
 
 class Audio(ClientConfig):
