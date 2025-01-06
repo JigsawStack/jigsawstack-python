@@ -7,31 +7,18 @@ from ._config import ClientConfig
 
 
 class EmbeddingParams(TypedDict):
-    text: Union[str, List[str]]
-    """
-    The text to summarize.
-    """
-
-    type: NotRequired[Literal["text", "points"]]
-
-    """
-   The summary result type. Supported values are: text, points
-    """
+    text: NotRequired[str]
+    file_content: NotRequired[Any]
+    type: Literal["text", "text-other", "image", "audio", "pdf"]
     url: NotRequired[str]
     file_store_key: NotRequired[str]
-    max_points: NotRequired[int]
-    max_characters: NotRequired[int]
+    token_overflow_mode: NotRequired[Literal["truncate", "chunk", "error"]] = "chunk"
 
 
 class EmbeddingResponse(TypedDict):
     success: bool
-    """
-    Indicates whether the translation was successful.
-    """
-    summary: str
-    """
-    The summarized text.
-    """
+    embeddings: List[List[float]]
+    chunks: List[str]
 
 
 class Embedding(ClientConfig):
@@ -50,6 +37,16 @@ class Embedding(ClientConfig):
             api_key=api_key,
             disable_request_logging=disable_request_logging,
         )
+
+    def execute(self, params: EmbeddingParams) -> EmbeddingResponse:
+        path = "/embedding"
+        resp = Request(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="post",
+        ).perform_with_content()
+        return resp
 
 
 class AsyncEmbedding(ClientConfig):
@@ -70,7 +67,7 @@ class AsyncEmbedding(ClientConfig):
         )
 
     async def execute(self, params: EmbeddingParams) -> EmbeddingResponse:
-        path = "/ai/embedding"
+        path = "/embedding"
         resp = await AsyncRequest(
             config=self.config,
             path=path,

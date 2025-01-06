@@ -13,6 +13,7 @@ from .validate import Validate, AsyncValidate
 from .summary import Summary, AsyncSummary
 from .geo import Geo, AsyncGeo
 from .prompt_engine import PromptEngine, AsyncPromptEngine
+from .embedding import Embedding, AsyncEmbedding
 from .exceptions import JigsawStackError
 
 
@@ -110,6 +111,11 @@ class JigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         )
+        self.embedding = Embedding(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        ).execute
 
 
 class AsyncJigsawStack:
@@ -215,6 +221,11 @@ class AsyncJigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         )
+        self.embedding = AsyncEmbedding(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        ).execute
 
 
 # Create a global instance of the Web class
