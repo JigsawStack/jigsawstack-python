@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union, cast
+from typing import Any, Dict, List, Union, cast, Optional
 from typing_extensions import NotRequired, TypedDict
 from typing import Any, Dict, List, cast
 from typing_extensions import NotRequired, TypedDict
@@ -27,6 +27,10 @@ class OCRResponse(TypedDict):
     tags: List[str]
     has_text: bool
     sections: List[object]
+    total_pages: Optional[int]  # Only available for PDFs
+    page_ranges: Optional[
+        List[int]
+    ]  # Only available if page_ranges is set in the request parameters.
 
 
 class Vision(ClientConfig):
