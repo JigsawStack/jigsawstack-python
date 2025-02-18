@@ -113,6 +113,11 @@ class ScrapeResponse(TypedDict):
     data: Any
 
 
+class LinkParams(TypedDict):
+    text: str
+    href: str
+
+
 class AIScrapeResponse(TypedDict):
     success: bool
     """
@@ -123,6 +128,7 @@ class AIScrapeResponse(TypedDict):
     page_position_length: int
     page_position: int
     selectors: object
+    link: List[LinkParams]
 
 
 class Web(ClientConfig):
