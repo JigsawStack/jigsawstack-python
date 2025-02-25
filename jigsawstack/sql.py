@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union, cast
+from typing import Any, Dict, List, Union, cast, Literal
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest
@@ -21,6 +21,10 @@ class SQLParams(TypedDict):
     file_store_key: NotRequired[str]
     """
     The key used to store the database schema on Jigsawstack file Storage. Not required if sql_schema is specified.
+    """
+    database: NotRequired[Literal["mysql", "postgresql", "sqlite"]]
+    """
+    The type of database for the SQL query (mysql, postgresql, sqlite).
     """
 
 

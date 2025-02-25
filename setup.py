@@ -6,7 +6,7 @@ install_requires = open("requirements.txt").readlines()
 
 setup(
     name="jigsawstack",
-    version="0.1.28",
+    version="0.1.29",
     description="JigsawStack Python SDK",
     long_description=open("README.md", encoding="utf8").read(),
     long_description_content_type="text/markdown",
