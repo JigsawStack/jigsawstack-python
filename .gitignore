@@ -3,7 +3,7 @@ venv/
 .pytest_cache/
 jigsawstack.egg-info/
 
-/__pycache__/
+__pycache__/
 /.pytest_cache/
 /.vscode/
 /.idea/
