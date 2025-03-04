@@ -3,32 +3,13 @@ from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
-from typing import Any, Dict, List, cast
-from typing_extensions import NotRequired, TypedDict
+
+
 
 
 class FileDeleteResponse(TypedDict):
     success: bool
 
-
-class KVGetParams(TypedDict):
-    key: str
-
-
-class KVGetResponse(TypedDict):
-    success: bool
-    value: str
-
-
-class KVAddParams(TypedDict):
-    key: str
-    value: str
-    encrypt: NotRequired[bool]
-    byo_secret: NotRequired[str]
-
-
-class KVAddResponse(TypedDict):
-    success: bool
 
 
 class FileUploadParams(TypedDict):
@@ -37,7 +18,7 @@ class FileUploadParams(TypedDict):
     content_type: NotRequired[str]
 
 
-class KV(ClientConfig):
+
 
     config: RequestConfig
 
@@ -83,7 +64,6 @@ class KV(ClientConfig):
 class Store(ClientConfig):
 
     config: RequestConfig
-    kv: KV
 
     def __init__(
         self,
@@ -97,8 +77,6 @@ class Store(ClientConfig):
             api_key=api_key,
             disable_request_logging=disable_request_logging,
         )
-
-        self.kv = KV(api_key, api_url, disable_request_logging)
 
     def upload(self, file: bytes, options=FileUploadParams) -> Any:
         overwrite = options.get("overwrite")
@@ -141,7 +119,6 @@ class Store(ClientConfig):
         return resp
 
 
-class AsyncKV(ClientConfig):
 
     config: AsyncRequestConfig
 
@@ -188,7 +165,6 @@ class AsyncKV(ClientConfig):
 
 class AsyncStore(ClientConfig):
     config: AsyncRequestConfig
-    kv: AsyncKV
 
     def __init__(
         self,
@@ -202,7 +178,7 @@ class AsyncStore(ClientConfig):
             api_key=api_key,
             disable_request_logging=disable_request_logging,
         )
-        self.kv = AsyncKV(api_key, api_url, disable_request_logging)
+        
 
     async def upload(self, file: bytes, options=FileUploadParams) -> Any:
         overwrite = options.get("overwrite")
