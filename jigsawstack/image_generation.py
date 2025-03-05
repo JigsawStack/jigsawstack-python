@@ -1,17 +1,17 @@
 from typing import Any, Dict, List, Union, cast
-from typing_extensions import NotRequired, TypedDict, Literal
+from typing_extensions import NotRequired, TypedDict, Literal, Required
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest
 
 from typing import List, Union
 from ._config import ClientConfig
 
-class ImageGenerationparams(TypedDict):
-    prompt: str
+class ImageGenerationParams(TypedDict):
+    prompt: Required[str]
     """"
     The text to generate the image from."
     """
-    aspect_ratio: Literal["1:1", "16:9", "21:9", "3:2", "2:3", "4:5", "5:4", "3:4", "4:3", "9:16", "9:21"]
+    aspect_ratio: NotRequired[Literal["1:1", "16:9", "21:9", "3:2", "2:3", "4:5", "5:4", "3:4", "4:3", "9:16", "9:21"]]
     """
     The aspect ratio of the image. The default is 1:1.
     """
@@ -62,7 +62,7 @@ class ImageGeneration(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    def image_generation(self, params: ImageGenerationparams) -> ImageGenerationResponse:
+    def image_generation(self, params: ImageGenerationParams) -> ImageGenerationResponse:
         path = "/ai/image_generation"
         resp = Request(
             config=self.config,
@@ -88,7 +88,7 @@ class AsyncImageGeneration(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    async def image_generation(self, params: ImageGenerationparams) -> ImageGenerationResponse:
+    async def image_generation(self, params: ImageGenerationParams) -> ImageGenerationResponse:
         path = "/ai/image_generation"
         resp = await AsyncRequest(
             config=self.config,
