@@ -1,29 +1,30 @@
-# JigsawStack Python SDK
+# JigsawStack AI SDK
 
-The JigsawStack Python SDK allows you to interact with powerful AI services to build AI-powered applications.
+The JigsawStack AI SDK is a Python library that allows you to interact with powerful AI services to build AI-powered applications.
 
 - 🧩 Powerful AI services all in one SDK
 - ⌨️ Fully typed parameters and responses
 - 📡 Built in Webhook support for long-running tasks
 - 📦 Built in file system for easy file uploads
+- 🍃 Lightweight and blazing fast
 
 ## Learn more
 
-To learn more about all available JigsawStack AI services, view the [Documentation](https://docs.jigsawstack.com) or [Website](https://jigsawstack.com).
+To learn more about all available JigsawStack AI services, view the [Documentation](https://jigsawstack.com/docs) or [Website](https://jigsawstack.com).
 
 ## All APIs
 
-| Category          | APIs                                              |
-| ----------------- | ------------------------------------------------- |
-| **👉 General**    | Translation, Summarization, Sentiment Analysis    |
-| **🌐 Web**        | AI Web Scraping, AI Web Search                    |
-| **🎵 Audio**      | Text to Speech, Speech to Text (Whisper large v3) |
-| **👀 Vision**     | vOCR, Object Detection                            |
-| **🧠 LLMs**       | Prompt Engine                                     |
-| **🖼️ Generative** | AI Image (SD, SDXL-Fast & more), HTML to Any      |
-| **🌍 Geo**        | Location search, Timezone, IP Geolocation & more  |
-| **✅ Validation** | Email, NSFW images, profanity & more              |
-| **📁 Store**      | Simple File Storage, KV Encryption store          |
+| Category          | APIs                                               |
+| ----------------- | -------------------------------------------------- |
+| **👉 General**    | Translation, Summarization, Sentiment Analysis     |
+| **🌐 Web**        | AI Web Scraping, AI Web Search                     |
+| **🎵 Audio**      | Text to Speech, Speech to Text (Whisper large v3)  |
+| **👀 Vision**     | vOCR, Object Detection                             |
+| **🧠 LLMs**       | Prompt Engine                                      |
+| **🖼️ Generative** | AI Image (Flux, SD, SDXL-Fast & more), HTML to Any |
+| **🌍 Geo**        | Location search                                    |
+| **✅ Validation** | Email, NSFW images, profanity & more               |
+| **📁 Store**      | Simple File Storage                                |
 
 Learn more of about each category in the [API reference](https://docs.jigsawstack.com/api-reference)
 
@@ -88,7 +89,7 @@ Join JigsawStack community on [Discord](https://discord.gg/dj8fMBpnqd) to connec
 
 ## Related Projects
 
-- [Docs](https://docs.jigsawstack.com)
+- [Docs](https://jigsawstack.com/docs)
 - [Javascript SDK](https://github.com/JigsawStack/jigsawstack-js)
 
 ## Contributing

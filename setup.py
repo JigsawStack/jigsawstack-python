@@ -7,10 +7,10 @@ install_requires = open("requirements.txt").readlines()
 setup(
     name="jigsawstack",
     version="0.1.29",
-    description="JigsawStack Python SDK",
+    description="JigsawStack - The AI SDK for Python",
     long_description=open("README.md", encoding="utf8").read(),
     long_description_content_type="text/markdown",
-    author="Narcisse Egonu",
+    author="JigsawStack",
     author_email="hello@jigsawstack.com",
     url="https://github.com/jigsawstack/jigsawstack-python",
     packages=find_packages(include=["jigsawstack"]),
