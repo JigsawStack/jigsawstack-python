@@ -99,7 +99,7 @@ class Store(ClientConfig):
         return resp
 
     def get(self, key: str) -> Any:
-        path = f"/store/file/{key}"
+        path = f"/store/file/read/{key}"
         resp = Request(
             config=self.config,
             path=path,
@@ -109,7 +109,7 @@ class Store(ClientConfig):
         return resp
 
     def delete(self, key: str) -> FileDeleteResponse:
-        path = f"/store/file/{key}"
+        path = f"/store/file/read/{key}"
         resp = Request(
             config=self.config,
             path=path,
@@ -201,7 +201,7 @@ class AsyncStore(ClientConfig):
         return resp
 
     async def get(self, key: str) -> Any:
-        path = f"/store/file/{key}"
+        path = f"/store/file/read/{key}"
         resp = await AsyncRequest(
             config=self.config,
             path=path,
@@ -211,7 +211,7 @@ class AsyncStore(ClientConfig):
         return resp
 
     async def delete(self, key: str) -> FileDeleteResponse:
-        path = f"/store/file/{key}"
+        path = f"/store/file/read/{key}"
         resp = AsyncRequest(
             config=self.config,
             path=path,
