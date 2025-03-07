@@ -56,7 +56,9 @@ class Request(Generic[T]):
 
         # this is a safety net, if we get here it means the JigsawStack API is having issues
         # and most likely the gateway is returning htmls
-        if "application/json" not in resp.headers["content-type"] and "audio/wav" not in resp.headers["content-type"]:
+        if "application/json" not in resp.headers["content-type"] \
+            and "audio/wav" not in resp.headers["content-type"] \
+            and "image/png" not in resp.headers["content-type"]:
             raise_for_code_and_type(
                 code=500,
                 message="Failed to parse JigsawStack API response. Please try again.",
@@ -72,9 +74,9 @@ class Request(Generic[T]):
                 err=error.get("error"),
             )
 
-        if "audio/wav" in resp.headers["content-type"]:
+        if "audio/wav" or "image/png" in resp.headers["content-type"]:
             return cast(T, resp) # we return the response object, instead of the json
-
+        
         return cast(T, resp.json())
 
     def perform_file(self) -> Union[T, None]:

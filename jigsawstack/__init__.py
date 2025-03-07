@@ -15,11 +15,13 @@ from .geo import Geo, AsyncGeo
 from .prompt_engine import PromptEngine, AsyncPromptEngine
 from .embedding import Embedding, AsyncEmbedding
 from .exceptions import JigsawStackError
+from .image_generation import ImageGeneration, AsyncImageGeneration
 
 
 class JigsawStack:
     audio: Audio
     vision: Vision
+    image_generation: ImageGeneration
     file: Store
     web: Web
     search: Search
@@ -116,6 +118,11 @@ class JigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         ).execute
+        self.image_generation = ImageGeneration(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        ).image_generation
 
 
 class AsyncJigsawStack:
@@ -124,6 +131,7 @@ class AsyncJigsawStack:
     web: AsyncWeb
     audio: AsyncAudio
     vision: AsyncVision
+    image_generation: AsyncImageGeneration
     store: AsyncStore
     prompt_engine: AsyncPromptEngine
     api_key: str
@@ -226,6 +234,12 @@ class AsyncJigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         ).execute
+
+        self.image_generation = AsyncImageGeneration(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        ).image_generation
 
 
 # Create a global instance of the Web class
