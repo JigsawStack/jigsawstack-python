@@ -96,14 +96,14 @@ class Validate(ClientConfig):
         ).perform_with_content()
         return resp
 
-    def nsfw(self, url: str) -> NSFWResponse:
+    def nsfw(self, params: NSFWParams) -> NSFWResponse:
         path = f"/validate/nsfw"
         resp = Request(
             config=self.config,
             path=path,
             params=cast(
                 Dict[Any, Any],
-                params={"url": url},
+                params
             ),
             verb="post",
         ).perform_with_content()
@@ -174,14 +174,14 @@ class AsyncValidate(ClientConfig):
         ).perform_with_content()
         return resp
 
-    async def nsfw(self, url: str) -> NSFWResponse:
+    async def nsfw(self, params: NSFWParams) -> NSFWResponse:
         path = f"/validate/nsfw"
         resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=cast(
                 Dict[Any, Any],
-                params={"url": url},
+                params,
             ),
             verb="post",
         ).perform_with_content()

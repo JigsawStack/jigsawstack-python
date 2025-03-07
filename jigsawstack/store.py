@@ -17,50 +17,6 @@ class FileUploadParams(TypedDict):
     filename: str
     content_type: NotRequired[str]
 
-
-
-
-    config: RequestConfig
-
-    def __init__(
-        self,
-        api_key: str,
-        api_url: str,
-        disable_request_logging: Union[bool, None] = False,
-    ):
-        super().__init__(api_key, api_url, disable_request_logging)
-        self.config = RequestConfig(
-            api_url=api_url,
-            api_key=api_key,
-            disable_request_logging=disable_request_logging,
-        )
-
-    def add(self, params: KVAddParams) -> KVAddResponse:
-        path = "/store/kv"
-        resp = Request(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="post",
-        ).perform_with_content()
-        return resp
-
-    def get(self, key: str) -> KVGetResponse:
-        path = f"/store/kv/{key}"
-        resp = Request(config=self.config, path=path, verb="get").perform_with_content()
-        return resp
-
-    def delete(self, key: str) -> KVGetResponse:
-        path = f"/store/kv/{key}"
-        resp = Request(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params={}),
-            verb="delete",
-        ).perform_with_content()
-        return resp
-
-
 class Store(ClientConfig):
 
     config: RequestConfig
@@ -113,51 +69,7 @@ class Store(ClientConfig):
         resp = Request(
             config=self.config,
             path=path,
-            params=cast(Dict[Any, Any], params={}),
-            verb="delete",
-        ).perform_with_content()
-        return resp
-
-
-
-    config: AsyncRequestConfig
-
-    def __init__(
-        self,
-        api_key: str,
-        api_url: str,
-        disable_request_logging: Union[bool, None] = False,
-    ):
-        super().__init__(api_key, api_url, disable_request_logging)
-        self.config = AsyncRequestConfig(
-            api_url=api_url,
-            api_key=api_key,
-            disable_request_logging=disable_request_logging,
-        )
-
-    async def add(self, params: KVAddParams) -> KVAddResponse:
-        path = "/store/kv"
-        resp = await AsyncRequest(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="post",
-        ).perform_with_content()
-        return resp
-
-    async def get(self, key: str) -> KVGetResponse:
-        path = f"/store/kv/{key}"
-        resp = await AsyncRequest(
-            config=self.config, path=path, verb="get", params={}
-        ).perform_with_content()
-        return resp
-
-    async def delete(self, key: str) -> KVGetResponse:
-        path = f"/store/kv/{key}"
-        resp = await AsyncRequest(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params={}),
+            params=key,
             verb="delete",
         ).perform_with_content()
         return resp
