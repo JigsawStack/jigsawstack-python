@@ -20,7 +20,7 @@ class SearchResponse(TypedDict):
     spell_fixed: str
 
 
-class SearchSuggestionResponse(TypedDict):
+class SearchSuggestionsResponse(TypedDict):
     success: bool
     """
     Indicates whether the translation was successful.
@@ -29,7 +29,7 @@ class SearchSuggestionResponse(TypedDict):
     suggestions: List[str]
 
 
-class SearchSuggestionParams(TypedDict):
+class SearchSuggestionsParams(TypedDict):
     query: str
     """
     The search value. The maximum query character length is 200.
@@ -97,7 +97,7 @@ class Search(ClientConfig):
 
         return resp
 
-    def suggestion(self, params: SearchSuggestionParams) -> SearchSuggestionResponse:
+    def suggestions(self, params: SearchSuggestionsParams) -> SearchSuggestionsResponse:
         query = params["query"]
         path = f"/web/search/suggest?query={query}"
         resp = Request(
@@ -147,9 +147,9 @@ class AsyncSearch(ClientConfig):
         ).perform_with_content()
         return resp
 
-    async def suggestion(
-        self, params: SearchSuggestionParams
-    ) -> SearchSuggestionResponse:
+    async def suggestions(
+        self, params: SearchSuggestionsParams
+    ) -> SearchSuggestionsResponse:
         query = params["query"]
         path = f"/web/search/suggest?query={query}"
         resp = await AsyncRequest(

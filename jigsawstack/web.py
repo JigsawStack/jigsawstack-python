@@ -6,8 +6,8 @@ from ._config import ClientConfig
 from .search import (
     Search,
     SearchParams,
-    SearchSuggestionParams,
-    SearchSuggestionResponse,
+    SearchSuggestionsParams,
+    SearchSuggestionsResponse,
     SearchResponse,
     AsyncSearch,
 )
@@ -198,15 +198,15 @@ class Web(ClientConfig):
         )
         return s.search(params)
 
-    def search_suggestion(
-        self, params: SearchSuggestionParams
-    ) -> SearchSuggestionResponse:
+    def search_suggestions(
+        self, params: SearchSuggestionsParams
+    ) -> SearchSuggestionsResponse:
         s = Search(
             self.api_key,
             self.api_url,
             disable_request_logging=self.config.get("disable_request_logging"),
         )
-        return s.suggestion(params)
+        return s.suggestions(params)
 
 
 class AsyncWeb(ClientConfig):
@@ -276,12 +276,12 @@ class AsyncWeb(ClientConfig):
         )
         return await s.search(params)
 
-    async def search_suggestion(
-        self, params: SearchSuggestionParams
-    ) -> SearchSuggestionResponse:
+    async def search_suggestions(
+        self, params: SearchSuggestionsParams
+    ) -> SearchSuggestionsResponse:
         s = AsyncSearch(
             self.api_key,
             self.api_url,
             disable_request_logging=self.config.get("disable_request_logging"),
         )
-        return await s.suggestion(params)
+        return await s.suggestions(params)
