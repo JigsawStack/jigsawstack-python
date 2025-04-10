@@ -11,7 +11,6 @@ from .web import Web, AsyncWeb
 from .sentiment import Sentiment, AsyncSentiment
 from .validate import Validate, AsyncValidate
 from .summary import Summary, AsyncSummary
-from .geo import Geo, AsyncGeo
 from .prompt_engine import PromptEngine, AsyncPromptEngine
 from .embedding import Embedding, AsyncEmbedding
 from .exceptions import JigsawStackError
@@ -25,7 +24,6 @@ class JigsawStack:
     file: Store
     web: Web
     search: Search
-    geo: Geo
     prompt_engine: PromptEngine
     api_key: str
     api_url: str
@@ -103,11 +101,7 @@ class JigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         ).translate
-        self.geo = Geo(
-            api_key=api_key,
-            api_url=api_url,
-            disable_request_logging=disable_request_logging,
-        )
+        
         self.prompt_engine = PromptEngine(
             api_key=api_key,
             api_url=api_url,
@@ -126,7 +120,6 @@ class JigsawStack:
 
 
 class AsyncJigsawStack:
-    geo: AsyncGeo
     validate: AsyncValidate
     web: AsyncWeb
     audio: AsyncAudio
@@ -161,12 +154,6 @@ class AsyncJigsawStack:
         self.api_url = api_url
 
         self.web = AsyncWeb(
-            api_key=api_key,
-            api_url=api_url,
-            disable_request_logging=disable_request_logging,
-        )
-
-        self.geo = AsyncGeo(
             api_key=api_key,
             api_url=api_url,
             disable_request_logging=disable_request_logging,
