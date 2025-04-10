@@ -6,6 +6,20 @@ from typing import List, Union
 from ._config import ClientConfig
 
 
+class TranslateImageParams(TypedDict):
+    target_language: str
+    """
+    Target langauge to translate to.
+    """
+    url: str
+    """
+    The URL of the image to translate.
+    """
+    file_store_key: NotRequired[str]
+    """
+    The file store key of the image to translate.
+    """
+
 class TranslateParams(TypedDict):
     target_language: str
     """
@@ -20,7 +34,6 @@ class TranslateParams(TypedDict):
     The text to translate.
     """
 
-
 class TranslateResponse(TypedDict):
     success: bool
     """
@@ -31,6 +44,15 @@ class TranslateResponse(TypedDict):
     The translated text.
     """
 
+class TranslateImageResponse(TypedDict):
+    success: bool
+    """
+    Indicates whether the translation was successful.
+    """
+    image: bytes
+    """
+    The image data that was translated.
+    """
 
 class TranslateListResponse(TypedDict):
     success: bool
@@ -61,15 +83,18 @@ class Translate(ClientConfig):
         )
 
     def translate(
-        self, params: TranslateParams
-    ) -> Union[TranslateResponse, TranslateListResponse]:
-        path = "/ai/translate"
+        self, params: Union[TranslateParams, TranslateImageParams]
+    ) -> Union[TranslateResponse, TranslateListResponse, TranslateImageResponse]:
+        if "url" in params or "file_store_key" in params:
+            path = "/ai/translate/image"
+        else:
+            path = "/ai/translate"
         resp = Request(
             config=self.config,
             path=path,
             params=cast(Dict[Any, Any], params),
             verb="post",
-        ).perform_with_content()
+        ).perform()
         return resp
 
 
@@ -91,13 +116,16 @@ class AsyncTranslate(ClientConfig):
         )
 
     async def translate(
-        self, params: TranslateParams
-    ) -> Union[TranslateResponse, TranslateListResponse]:
-        path = "/ai/translate"
+        self, params: Union[TranslateParams, TranslateImageParams]
+    ) -> Union[TranslateResponse, TranslateListResponse, TranslateImageParams]:
+        if "url" in params or "file_store_key" in params:
+            path = "/ai/translate/image"
+        else:
+            path = "/ai/translate"
         resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=cast(Dict[Any, Any], params),
             verb="post",
-        ).perform_with_content()
+        ).perform()
         return resp
