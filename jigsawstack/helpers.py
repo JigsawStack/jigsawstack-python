@@ -1,8 +1,4 @@
-# Helper method that:
-# Accepts a dictionary ro typed dictionary or None
-# Also accepts a path for url endpont,
-# Builds the url endpoint with non None values where the key is the parameter name & the value is the parameter value
-# Returns the url endpoint with the parameters
+
 from typing import Dict, Optional, Union
 from urllib.parse import urlencode
 
