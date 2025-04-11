@@ -5,6 +5,7 @@ from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
 from typing import Any, Dict, List, cast
 from typing_extensions import NotRequired, TypedDict
+from .helpers import build_path
 
 
 class Spam(TypedDict):
@@ -86,8 +87,11 @@ class Validate(ClientConfig):
         )
 
     def email(self, params: EmailValidationParams) -> EmailValidationResponse:
-        email = params.get("email")
-        path = f"/validate/email?email={email}"
+        path = build_path(
+            base_path="/validate/email",
+            params=params,
+        )
+
         resp = Request(
             config=self.config,
             path=path,
@@ -110,23 +114,25 @@ class Validate(ClientConfig):
         return resp
 
     def profanity(self, params: ProfanityParams) -> ProfanityResponse:
-        text = params.get("text")
-        censor_replacement = params.get("censor_replacement", "*")
-        path = f"/validate/profanity"
+        path = build_path(
+            base_path="/validate/profanity",
+            params=params,
+        )
         resp = Request(
             config=self.config,
             path=path,
             params=cast(
-                Dict[Any, Any], {"text": text, "censor_replacement": censor_replacement}
+                Dict[Any, Any], params
             ),
             verb="post",
         ).perform_with_content()
         return resp
 
     def spellcheck(self, params: SpellCheckParams) -> SpellCheckResponse:
-        text = params.get("text")
-        language_code = params.get("language_code", "en")
-        path = f"/validate/spell_check?text={text}&language_code={language_code}"
+        path = build_path(
+            base_path="/validate/spell_check",
+            params=params,
+        )
         resp = Request(
             config=self.config,
             path=path,
@@ -164,8 +170,7 @@ class AsyncValidate(ClientConfig):
         )
 
     async def email(self, params: EmailValidationParams) -> EmailValidationResponse:
-        email = params.get("email")
-        path = f"/validate/email?email={email}"
+        path = bui
         resp = await AsyncRequest(
             config=self.config,
             path=path,
@@ -188,23 +193,25 @@ class AsyncValidate(ClientConfig):
         return resp
 
     async def profanity(self, params: ProfanityParams) -> ProfanityResponse:
-        text = params.get("text")
-        censor_replacement = params.get("censor_replacement", "*")
-        path = f"/validate/profanity"
+        path = build_path(
+            base_path="/validate/profanity",
+            params=params,
+        )
         resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=cast(
-                Dict[Any, Any], {"text": text, "censor_replacement": censor_replacement}
+                Dict[Any, Any], params
             ),
             verb="post",
         ).perform_with_content()
         return resp
 
     async def spellcheck(self, params: SpellCheckParams) -> SpellCheckResponse:
-        text = params.get("text")
-        language_code = params.get("language_code", "en")
-        path = f"/validate/spell_check?text={text}&language_code={language_code}"
+        path = build_path(
+            base_path="/validate/spell_check",
+            params=params,
+        )
         resp = await AsyncRequest(
             config=self.config,
             path=path,
