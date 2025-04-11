@@ -4,6 +4,7 @@ from .request import Request, RequestConfig
 from .async_request import AsyncRequest
 from typing import List, Union
 from ._config import ClientConfig
+from .helpers import build_path
 
 
 class PromptEngineResult(TypedDict):
@@ -137,10 +138,10 @@ class PromptEngine(ClientConfig):
         if params.get("page") is None:
             params["page"] = 0
 
-        limit = params.get("limit")
-        page = params.get("page")
-
-        path = f"/prompt_engine?limit={limit}&page={page}"
+        path = build_path(
+            base_path="/prompt_engine",
+            params=params,
+        )
         resp = Request(
             config=self.config, path=path, params={}, verb="get"
         ).perform_with_content()
@@ -253,10 +254,10 @@ class AsyncPromptEngine(ClientConfig):
         if params.get("page") is None:
             params["page"] = 0
 
-        limit = params.get("limit")
-        page = params.get("page")
-
-        path = f"/prompt_engine?limit={limit}&page={page}"
+        path = build_path(
+            base_path="/prompt_engine",
+            params=params,
+        )
         resp = await AsyncRequest(
             config=self.config, path=path, params={}, verb="get"
         ).perform_with_content()
