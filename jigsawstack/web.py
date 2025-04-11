@@ -1,5 +1,5 @@
 from typing import Any, Dict, List, cast, Union
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import NotRequired, TypedDict, Optional
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
@@ -67,31 +67,8 @@ class BYOProxy(TypedDict):
     server: str
     auth: BYOProxyAuth
 
-
-class AIScrapeParams(TypedDict):
+class BaseAIScrapeParams(TypedDict):
     url: str
-    element_prompts: List[str]
-    type: NotRequired[str]
-    size_preset: NotRequired[str]
-    is_mobile: NotRequired[bool]
-    scale: NotRequired[int]
-    width: NotRequired[int]
-    height: NotRequired[int]
-    force_rotate_proxy: NotRequired[bool]
-    reject_request_pattern: NotRequired[List[str]]
-    http_headers: NotRequired[object]
-    goto_options: NotRequired[object]
-    wait_for: NotRequired[object]
-    cookies: NotRequired[object]
-    page_position: NotRequired[int]
-    root_element_selector: NotRequired[str]
-    force_rotate_proxy: NotRequired[bool]
-    byo_proxy: NotRequired[BYOProxy]
-
-
-class ScrapeParams(TypedDict):
-    url: str
-    elements: List[object]
     advance_config: NotRequired[object]
     size_preset: NotRequired[str]
     is_mobile: NotRequired[bool]
@@ -105,31 +82,30 @@ class ScrapeParams(TypedDict):
     wait_for: NotRequired[object]
     cookies: NotRequired[object]
 
+class AIScrapeParamsWithPrompts(BaseAIScrapeParams):
+    selector: Optional[List[str]]
+    element_prompts: List[str]
 
-class ScrapeResponse(TypedDict):
-    success: bool
-    """
-    Indicates whether the translation was successful.
-    """
-    data: Any
+class AIScrapeParamsWithSelector(BaseAIScrapeParams):
+    selector: List[str]
+    element_prompts: Optional[List[str]]
 
+AIScrapeParams = Union[AIScrapeParamsWithSelector, AIScrapeParamsWithPrompts]
 
-class LinkParams(TypedDict):
-    text: str
-    href: str
+class LinkData(TypedDict):
+    type: str  # "a" or "img"
+    href: Optional[str]
+    text: Optional[str]
 
 
 class AIScrapeResponse(TypedDict):
     success: bool
-    """
-    Indicates whether the translation was successful.
-    """
-    data: List[object]
-    context: object
-    page_position_length: int
+    data: List[Dict[str, Any]]
+    selectors: List[str]
+    context: Dict[str, List[str]]
+    link: List[LinkData]
     page_position: int
-    selectors: object
-    link: List[LinkParams]
+    page_position_length: int
 
 
 class Web(ClientConfig):
@@ -154,7 +130,7 @@ class Web(ClientConfig):
         resp = Request(
             config=self.config,
             path=path,
-            params=cast(Dict[Any, Any], params),
+            params=cast(AIScrapeParams, params),
             verb="post",
         ).perform_with_content()
         return resp
@@ -228,15 +204,6 @@ class AsyncWeb(ClientConfig):
         ).perform_with_content()
         return resp
 
-    async def scrape(self, params: ScrapeParams) -> ScrapeResponse:
-        path = "/web/scrape"
-        resp = await AsyncRequest(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="post",
-        ).perform_with_content()
-        return resp
 
     async def html_to_any(self, params: HTMLToAnyParams) -> Any:
         path = "/web/html_to_any"
