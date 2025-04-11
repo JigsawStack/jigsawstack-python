@@ -154,5 +154,5 @@ class AsyncTranslate(ClientConfig):
         self, params: Union[TranslateParams, TranslateImageParams]
     ) -> Union[TranslateResponse, TranslateListResponse, TranslateImageResponse]:
         if "url" in params or "file_store_key" in params:
-            return self.translate_image(params)
+            return await self.translate_image(params)
         return await self.translate_text(params)
