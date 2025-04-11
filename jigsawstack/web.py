@@ -11,6 +11,7 @@ from .search import (
     SearchResponse,
     AsyncSearch,
 )
+from .helpers import build_path
 
 
 class DNSParams(TypedDict):
@@ -158,16 +159,6 @@ class Web(ClientConfig):
         ).perform_with_content()
         return resp
 
-    def scrape(self, params: ScrapeParams) -> ScrapeResponse:
-        path = "/web/scrape"
-        resp = Request(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="post",
-        ).perform_with_content()
-        return resp
-
     def html_to_any(self, params: HTMLToAnyParams) -> Any:
         path = "/web/html_to_any"
         resp = Request(
@@ -179,9 +170,10 @@ class Web(ClientConfig):
         return resp
 
     def dns(self, params: DNSParams) -> DNSResponse:
-        domain = params.get("domain", "")
-        type = params.get("type", "A")
-        path = f"/web/html_to_any?domain={domain}&type={type}"
+        path = build_path(
+            base_path="/web/html_to_any",
+            params=params,
+        )
         resp = Request(
             config=self.config,
             path=path,
@@ -257,9 +249,10 @@ class AsyncWeb(ClientConfig):
         return resp
 
     async def dns(self, params: DNSParams) -> DNSResponse:
-        domain = params.get("domain", "")
-        type = params.get("type", "A")
-        path = f"/web/html_to_any?domain={domain}&type={type}"
+        path = build_path(
+            base_path="/web/html_to_any",
+            params=params,
+        )
         resp = await AsyncRequest(
             config=self.config,
             path=path,
