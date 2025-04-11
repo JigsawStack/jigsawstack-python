@@ -35,7 +35,6 @@ class Store(ClientConfig):
             options = {}
             
         path = build_path(base_path="/store/file", params=options)
-        print(path)
         content_type = options.get("content_type", "application/octet-stream")
         
         _headers = {"Content-Type": content_type}
@@ -93,14 +92,11 @@ class AsyncStore(ClientConfig):
             options = {}
             
         path = build_path(base_path="/store/file", params=options)
-        content_type = options.get("content_type")
-        _headers = {"Content-Type": "application/octet-stream"}
-        if content_type is not None:
-            _headers = {"Content-Type": content_type}
-
+        content_type = options.get("content_type", "application/octet-stream")
+        _headers = {"Content-Type": content_type}
         resp = await AsyncRequest(
             config=self.config,
-            params={},  # Empty params since we're using them in the URL
+            params=options,  # Empty params since we're using them in the URL
             path=path,
             data=file,
             headers=_headers,
@@ -123,7 +119,7 @@ class AsyncStore(ClientConfig):
         resp = AsyncRequest(
             config=self.config,
             path=path,
-            params=cast(Dict[Any, Any], params={}),
+            params=key,
             verb="delete",
         ).perform_with_content()
         return resp
