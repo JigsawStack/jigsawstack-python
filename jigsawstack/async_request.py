@@ -36,6 +36,27 @@ class AsyncRequest(Generic[T]):
         self.disable_request_logging = config.get("disable_request_logging")
         self.stream = stream
 
+    def __convert_params(self, params: Union[Dict[Any, Any], List[Dict[Any, Any]]]) -> Dict[str, str]:
+        """
+        Convert parameters to string values for URL encoding.
+        """
+        if params is None:
+            return {}
+
+        if isinstance(params, str):
+            return params
+        
+        if isinstance(params, list):
+            return {}  # List params are only used in JSON body
+        
+        converted = {}
+        for key, value in params.items():
+            if isinstance(value, bool):
+                converted[key] = str(value).lower()
+            else:
+                converted[key] = str(value)
+        return converted
+
     async def perform(self) -> Union[T, None]:
         """
         Async method to make an HTTP request to the JigsawStack API.
@@ -196,34 +217,36 @@ class AsyncRequest(Generic[T]):
     async def make_request(
         self, session: aiohttp.ClientSession, url: str
     ) -> aiohttp.ClientResponse:
-        """
-        Make the actual async HTTP request.
-
-        Args:
-            session (aiohttp.ClientSession): The client session
-            url (str): The URL to make the request to
-
-        Returns:
-            aiohttp.ClientResponse: The response object from the request
-        """
         headers = self.__get_headers()
-        params = self.params
         verb = self.verb
         data = self.data
 
-        request_params = None if verb.lower() not in ["get", "delete"] else params
+        # Convert params to string values for URL encoding
+        converted_params = self.__convert_params(self.params)
 
-        try:
+        if verb.lower() in ["get", "delete"]:
             return await session.request(
                 verb,
                 url,
-                params=request_params,
-                json=params,
+                params=converted_params,
                 headers=headers,
-                data=data,
             )
-        except aiohttp.ClientError as e:
-            raise e
+        else:
+            if data is not None:
+                return await session.request(
+                    verb,
+                    url,
+                    data=data,
+                    params=converted_params,  # Use converted params
+                    headers=headers,
+                )
+            else:
+                return await session.request(
+                    verb,
+                    url,
+                    json=self.params,  # Keep JSON body as original
+                    headers=headers,
+                )
 
     def __get_session(self) -> aiohttp.ClientSession:
         """
