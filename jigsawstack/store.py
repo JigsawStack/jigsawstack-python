@@ -116,7 +116,7 @@ class AsyncStore(ClientConfig):
 
     async def delete(self, key: str) -> FileDeleteResponse:
         path = f"/store/file/read/{key}"
-        resp = AsyncRequest(
+        resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=key,
