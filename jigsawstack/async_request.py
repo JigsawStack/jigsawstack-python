@@ -36,75 +36,89 @@ class AsyncRequest(Generic[T]):
         self.disable_request_logging = config.get("disable_request_logging")
         self.stream = stream
 
+    def __convert_params(self, params: Union[Dict[Any, Any], List[Dict[Any, Any]]]) -> Dict[str, str]:
+        """
+        Convert parameters to string values for URL encoding.
+        """
+        if params is None:
+            return {}
+
+        if isinstance(params, str):
+            return params
+        
+        if isinstance(params, list):
+            return {}  # List params are only used in JSON body
+        
+        converted = {}
+        for key, value in params.items():
+            if isinstance(value, bool):
+                converted[key] = str(value).lower()
+            else:
+                converted[key] = str(value)
+        return converted
+
     async def perform(self) -> Union[T, None]:
         """
         Async method to make an HTTP request to the JigsawStack API.
-
-        Returns:
-            Union[T, None]: A generic type of the Request class or None
-
-        Raises:
-            aiohttp.ClientResponseError: If the request fails
         """
         async with self.__get_session() as session:
             resp = await self.make_request(session, url=f"{self.api_url}{self.path}")
 
-            # delete calls do not return a body
-            if await resp.text() == "" and resp.status == 200:
-                return None
+            # For binary responses
+            if resp.status == 200:
+                content_type = resp.headers.get("content-type", "")
+                if not resp.text or any(t in content_type for t in ["audio/", "image/", "application/octet-stream", "image/png"]):
+                    content = await resp.read()
+                    return cast(T, content)
 
-            # safety net for non-JSON responses
-            content_type = resp.headers.get("content-type", "")
-            if "application/json" not in content_type:
-                raise_for_code_and_type(
-                    code=500,
-                    message="Failed to parse JigsawStack API response. Please try again.",
-                )
-
-            # handle error responses
+            # For error responses
             if resp.status != 200:
-                error = await resp.json()
-                raise_for_code_and_type(
-                    code=resp.status,
-                    message=error.get("message"),
-                    err=error.get("error"),
-                )
+                try:
+                    error = await resp.json()
+                    raise_for_code_and_type(
+                        code=resp.status,
+                        message=error.get("message"),
+                        err=error.get("error"),
+                    )
+                except json.JSONDecodeError:
+                    raise_for_code_and_type(
+                        code=500,
+                        message="Failed to parse response. Invalid content type or encoding.",
+                    )
+
+            # For JSON responses
+            try:
+                return cast(T, await resp.json())
+            except json.JSONDecodeError:
+                content = await resp.read()
+                return cast(T, content)
+
+    async def perform_file(self) -> Union[T, None]:
+        async with self.__get_session() as session:
+            resp = await self.make_request(session, url=f"{self.api_url}{self.path}")
+
+            if resp.status != 200:
+                try:
+                    error = await resp.json()
+                    raise_for_code_and_type(
+                        code=resp.status,
+                        message=error.get("message"),
+                        err=error.get("error"),
+                    )
+                except json.JSONDecodeError:
+                    raise_for_code_and_type(
+                        code=500,
+                        message="Failed to parse response. Invalid content type or encoding.",
+                    )
+
+            # For binary responses
+            if resp.status == 200:
+                content_type = resp.headers.get("content-type", "")
+                if "application/json" not in content_type:
+                    content = await resp.read()
+                    return cast(T, content)
 
             return cast(T, await resp.json())
-
-    async def perform_file(self) -> Union[aiohttp.ClientResponse, None]:
-        """
-        Async method to make an HTTP request and return the raw response.
-
-        Returns:
-            Union[aiohttp.ClientResponse, None]: The raw response object
-        """
-        async with self.__get_session() as session:
-            resp = await self.make_request(session, url=f"{self.api_url}{self.path}")
-
-            # delete calls do not return a body
-            if await resp.text() == "" and resp.status == 200:
-                return None
-
-            # handle error responses
-            if (
-                "application/json" not in resp.headers.get("content-type", "")
-                and resp.status != 200
-            ):
-                raise_for_code_and_type(
-                    code=500,
-                    message="Failed to parse JigsawStack API response. Please try again.",
-                    error_type="InternalServerError",
-                )
-
-            if resp.status != 200:
-                error = await resp.json()
-                raise_for_code_and_type(
-                    code=resp.status,
-                    message=error.get("message"),
-                    err=error.get("error"),
-                )
-            return resp
 
     async def perform_with_content(self) -> T:
         """
@@ -203,34 +217,36 @@ class AsyncRequest(Generic[T]):
     async def make_request(
         self, session: aiohttp.ClientSession, url: str
     ) -> aiohttp.ClientResponse:
-        """
-        Make the actual async HTTP request.
-
-        Args:
-            session (aiohttp.ClientSession): The client session
-            url (str): The URL to make the request to
-
-        Returns:
-            aiohttp.ClientResponse: The response object from the request
-        """
         headers = self.__get_headers()
-        params = self.params
         verb = self.verb
         data = self.data
 
-        request_params = None if verb.lower() not in ["get", "delete"] else params
+        # Convert params to string values for URL encoding
+        converted_params = self.__convert_params(self.params)
 
-        try:
+        if verb.lower() in ["get", "delete"]:
             return await session.request(
                 verb,
                 url,
-                params=request_params,
-                json=params,
+                params=converted_params,
                 headers=headers,
-                data=data,
             )
-        except aiohttp.ClientError as e:
-            raise e
+        else:
+            if data is not None:
+                return await session.request(
+                    verb,
+                    url,
+                    data=data,
+                    params=converted_params,  # Use converted params
+                    headers=headers,
+                )
+            else:
+                return await session.request(
+                    verb,
+                    url,
+                    json=self.params,  # Keep JSON body as original
+                    headers=headers,
+                )
 
     def __get_session(self) -> aiohttp.ClientSession:
         """

@@ -3,18 +3,14 @@ from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
-
-
-
-
+from .helpers import build_path
+from .exceptions import JigsawStackError
 class FileDeleteResponse(TypedDict):
     success: bool
 
-
-
 class FileUploadParams(TypedDict):
-    overwrite: bool
-    filename: str
+    overwrite: NotRequired[bool]
+    filename: NotRequired[str]
     content_type: NotRequired[str]
 
 class Store(ClientConfig):
@@ -34,19 +30,18 @@ class Store(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    def upload(self, file: bytes, options=FileUploadParams) -> Any:
-        overwrite = options.get("overwrite")
-        filename = options.get("filename")
-        params = {"key": filename, "overwrite": overwrite}
-        path = f"/store/file?overwrite={overwrite}&key={filename}"
-        content_type = options.get("content_type")
-        _headers = {"Content-Type": "application/octet-stream"}
-        if content_type is not None:
-            _headers = {"Content-Type": content_type}
+    def upload(self, file: bytes, options: Union[FileUploadParams, None] = None) -> Any:
+        if options is None:
+            options = {}
+            
+        path = build_path(base_path="/store/file", params=options)
+        content_type = options.get("content_type", "application/octet-stream")
+        
+        _headers = {"Content-Type": content_type}
 
         resp = Request(
             config=self.config,
-            params=params,
+            params=options,  # Empty params since we're using them in the URL
             path=path,
             data=file,
             headers=_headers,
@@ -92,19 +87,16 @@ class AsyncStore(ClientConfig):
         )
         
 
-    async def upload(self, file: bytes, options=FileUploadParams) -> Any:
-        overwrite = options.get("overwrite")
-        filename = options.get("filename")
-        params = {"key": filename, "overwrite": overwrite}
-        path = f"/store/file?overwrite={overwrite}&key={filename}"
-        content_type = options.get("content_type")
-        _headers = {"Content-Type": "application/octet-stream"}
-        if content_type is not None:
-            _headers = {"Content-Type": content_type}
-
+    async def upload(self, file: bytes, options: Union[FileUploadParams, None] = None) -> Any:
+        if options is None:
+            options = {}
+            
+        path = build_path(base_path="/store/file", params=options)
+        content_type = options.get("content_type", "application/octet-stream")
+        _headers = {"Content-Type": content_type}
         resp = await AsyncRequest(
             config=self.config,
-            params=params,
+            params=options,  # Empty params since we're using them in the URL
             path=path,
             data=file,
             headers=_headers,
@@ -124,10 +116,10 @@ class AsyncStore(ClientConfig):
 
     async def delete(self, key: str) -> FileDeleteResponse:
         path = f"/store/file/read/{key}"
-        resp = AsyncRequest(
+        resp = await AsyncRequest(
             config=self.config,
             path=path,
-            params=cast(Dict[Any, Any], params={}),
+            params=key,
             verb="delete",
         ).perform_with_content()
         return resp

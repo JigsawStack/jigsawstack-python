@@ -50,34 +50,32 @@ class Request(Generic[T]):
         """
         resp = self.make_request(url=f"{self.api_url}{self.path}")
 
-        # delete calls do not return a body
-        if resp.text == "" and resp.status_code == 200:
-            return None
+        #for binary responses
+        if resp.status_code == 200:
+            content_type = resp.headers.get("content-type", "")
+            if not resp.text or any(t in content_type for t in ["audio/", "image/", "application/octet-stream", "image/png"]):
+                return cast(T, resp.content)
 
-        # this is a safety net, if we get here it means the JigsawStack API is having issues
-        # and most likely the gateway is returning htmls
-        if "application/json" not in resp.headers["content-type"] \
-            and "audio/wav" not in resp.headers["content-type"] \
-            and "image/png" not in resp.headers["content-type"]:
-            raise_for_code_and_type(
-                code=500,
-                message="Failed to parse JigsawStack API response. Please try again.",
-            )
-
-        # handle error in case there is a statusCode attr present
-        # and status != 200 and response is a json.
+        #for json resposes.
         if resp.status_code != 200:
-            error = resp.json()
-            raise_for_code_and_type(
-                code=resp.status_code,
-                message=error.get("message"),
-                err=error.get("error"),
-            )
+            try:
+                error = resp.json()
+                raise_for_code_and_type(
+                    code=resp.status_code,
+                    message=error.get("message"),
+                    err=error.get("error"),
+                )
+            except json.JSONDecodeError:
+                raise_for_code_and_type(
+                    code=500,
+                    message="Failed to parse response. Invalid content type or encoding.",
+                )
 
-        if "audio/wav" or "image/png" in resp.headers["content-type"]:
-            return cast(T, resp) # we return the response object, instead of the json
-        
-        return cast(T, resp.json())
+        # For JSON responses
+        try:
+            return cast(T, resp.json())
+        except json.JSONDecodeError:
+            return cast(T, resp)
 
     def perform_file(self) -> Union[T, None]:
 
@@ -106,6 +104,12 @@ class Request(Generic[T]):
                 message=error.get("message"),
                 err=error.get("error"),
             )
+
+        #for binary responses
+        if resp.status_code == 200:
+            content_type = resp.headers.get("content-type", "")
+            if "application/json" not in content_type:
+                resp = cast(T, resp.content)
         return resp
 
     def perform_with_content(self) -> T:

@@ -1,5 +1,6 @@
-from typing import Any, Dict, List, cast, Union
+from typing import Any, Dict, List, Union, Optional, cast, Literal
 from typing_extensions import NotRequired, TypedDict
+
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
@@ -11,8 +12,12 @@ from .search import (
     SearchResponse,
     AsyncSearch,
 )
+from .helpers import build_path
 
 
+#
+# DNS
+#
 class DNSParams(TypedDict):
     domain: str
     type: NotRequired[str]
@@ -33,6 +38,9 @@ class DNSResponse(TypedDict):
     authority: List
 
 
+#
+# HTML to Any
+#
 class HTMLToAnyParams(TypedDict):
     html: str
     url: str
@@ -57,6 +65,39 @@ class HTMLToAnyResponse(TypedDict):
     html: str
 
 
+#
+# BYO Proxy
+#
+class CookieParameter(TypedDict):
+    name: str
+    value: str
+    url: NotRequired[str]
+    domain: NotRequired[str]
+    path: NotRequired[str]
+    secure: NotRequired[bool]
+    httpOnly: NotRequired[bool]
+    sameSite: NotRequired[Literal["Strict", "Lax", "None"]]
+    expires: NotRequired[bool]
+    priority: NotRequired[str]
+    sameParty: NotRequired[bool]
+
+
+class GotoOptions(TypedDict):
+    timeout: int
+    wait_until: str
+
+
+class WaitFor(TypedDict):
+    mode: str
+    value: Union[str, int]
+
+
+class AdvanceConfig(TypedDict):
+    console: bool
+    network: bool
+    cookies: bool
+
+
 class BYOProxyAuth(TypedDict):
     username: str
     password: str
@@ -64,73 +105,77 @@ class BYOProxyAuth(TypedDict):
 
 class BYOProxy(TypedDict):
     server: str
-    auth: BYOProxyAuth
+    auth: NotRequired[BYOProxyAuth]
 
 
-class AIScrapeParams(TypedDict):
+class BaseAIScrapeParams(TypedDict):
     url: str
-    element_prompts: List[str]
-    type: NotRequired[str]
+    root_element_selector: NotRequired[str]
+    page_position: NotRequired[int]
+    http_headers: NotRequired[Dict[str, Any]]
+    reject_request_pattern: NotRequired[List[str]]
+    goto_options: NotRequired[GotoOptions]
+    wait_for: NotRequired[WaitFor]
+    advance_config: NotRequired[AdvanceConfig]
     size_preset: NotRequired[str]
     is_mobile: NotRequired[bool]
     scale: NotRequired[int]
     width: NotRequired[int]
     height: NotRequired[int]
-    force_rotate_proxy: NotRequired[bool]
-    reject_request_pattern: NotRequired[List[str]]
-    http_headers: NotRequired[object]
-    goto_options: NotRequired[object]
-    wait_for: NotRequired[object]
-    cookies: NotRequired[object]
-    page_position: NotRequired[int]
-    root_element_selector: NotRequired[str]
+    cookies: NotRequired[List[CookieParameter]]
     force_rotate_proxy: NotRequired[bool]
     byo_proxy: NotRequired[BYOProxy]
 
 
-class ScrapeParams(TypedDict):
-    url: str
-    elements: List[object]
-    advance_config: NotRequired[object]
-    size_preset: NotRequired[str]
-    is_mobile: NotRequired[bool]
-    scale: NotRequired[int]
-    width: NotRequired[int]
-    height: NotRequired[int]
-    force_rotate_proxy: NotRequired[bool]
-    reject_request_pattern: NotRequired[List[str]]
-    http_headers: NotRequired[object]
-    goto_options: NotRequired[object]
-    wait_for: NotRequired[object]
-    cookies: NotRequired[object]
+class AIScrapeParamsWithSelector(BaseAIScrapeParams):
+    selectors: List[str]
+    element_prompts: NotRequired[List[str]]
 
 
-class ScrapeResponse(TypedDict):
-    success: bool
-    """
-    Indicates whether the translation was successful.
-    """
-    data: Any
+class AIScrapeParamsWithPrompts(BaseAIScrapeParams):
+    selectors: NotRequired[List[str]]
+    element_prompts: List[str]
 
 
-class LinkParams(TypedDict):
+AIScrapeParams = Union[AIScrapeParamsWithSelector, AIScrapeParamsWithPrompts]
+
+
+class Attribute(TypedDict):
+    name: str
+    value: str
+
+
+class Result(TypedDict):
+    html: str
     text: str
+    attributes: List[Attribute]
+
+
+class DataItem(TypedDict):
+    key: str
+    selectors: str
+    results: List[Result]
+
+
+class Link(TypedDict):
     href: str
+    text: Optional[str]
+    type: Literal["a", "img"]
 
 
 class AIScrapeResponse(TypedDict):
     success: bool
-    """
-    Indicates whether the translation was successful.
-    """
-    data: List[object]
-    context: object
-    page_position_length: int
+    data: List[DataItem]
     page_position: int
-    selectors: object
-    link: List[LinkParams]
+    page_position_length: int
+    context: Dict[str, List[str]]
+    selectors: Dict[str, List[str]]
+    link: List[Link]
 
 
+#
+# Web Client
+#
 class Web(ClientConfig):
 
     config: RequestConfig
@@ -158,16 +203,6 @@ class Web(ClientConfig):
         ).perform_with_content()
         return resp
 
-    def scrape(self, params: ScrapeParams) -> ScrapeResponse:
-        path = "/web/scrape"
-        resp = Request(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="post",
-        ).perform_with_content()
-        return resp
-
     def html_to_any(self, params: HTMLToAnyParams) -> Any:
         path = "/web/html_to_any"
         resp = Request(
@@ -179,9 +214,10 @@ class Web(ClientConfig):
         return resp
 
     def dns(self, params: DNSParams) -> DNSResponse:
-        domain = params.get("domain", "")
-        type = params.get("type", "A")
-        path = f"/web/html_to_any?domain={domain}&type={type}"
+        path = build_path(
+            base_path="/web/html_to_any",
+            params=params,
+        )
         resp = Request(
             config=self.config,
             path=path,
@@ -209,6 +245,9 @@ class Web(ClientConfig):
         return s.suggestions(params)
 
 
+#
+# Async Web Client
+#
 class AsyncWeb(ClientConfig):
 
     config: AsyncRequestConfig
@@ -236,16 +275,6 @@ class AsyncWeb(ClientConfig):
         ).perform_with_content()
         return resp
 
-    async def scrape(self, params: ScrapeParams) -> ScrapeResponse:
-        path = "/web/scrape"
-        resp = await AsyncRequest(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="post",
-        ).perform_with_content()
-        return resp
-
     async def html_to_any(self, params: HTMLToAnyParams) -> Any:
         path = "/web/html_to_any"
         resp = await AsyncRequest(
@@ -257,9 +286,10 @@ class AsyncWeb(ClientConfig):
         return resp
 
     async def dns(self, params: DNSParams) -> DNSResponse:
-        domain = params.get("domain", "")
-        type = params.get("type", "A")
-        path = f"/web/html_to_any?domain={domain}&type={type}"
+        path = build_path(
+            base_path="/web/html_to_any",
+            params=params,
+        )
         resp = await AsyncRequest(
             config=self.config,
             path=path,
