@@ -46,7 +46,7 @@ class AsyncRequest(Generic[T]):
             # For binary responses
             if resp.status == 200:
                 content_type = resp.headers.get("content-type", "")
-                if content_type not in ["application/json", "text/html"]:
+                if not resp.text or any(t in content_type for t in ["audio/", "image/", "application/octet-stream", "image/png"]):
                     content = await resp.read()
                     return cast(T, content)
 
