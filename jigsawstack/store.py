@@ -10,7 +10,7 @@ class FileDeleteResponse(TypedDict):
 
 class FileUploadParams(TypedDict):
     overwrite: NotRequired[bool]
-    filename: NotRequired[str]
+    key: NotRequired[str]
     content_type: NotRequired[str]
 
 class Store(ClientConfig):
