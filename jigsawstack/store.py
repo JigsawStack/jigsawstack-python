@@ -12,6 +12,7 @@ class FileUploadParams(TypedDict):
     overwrite: NotRequired[bool]
     key: NotRequired[str]
     content_type: NotRequired[str]
+    temp_public_url: NotRequired[bool]
 
 class Store(ClientConfig):
 
