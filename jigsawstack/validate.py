@@ -46,7 +46,9 @@ class ProfanityResponse(TypedDict):
 
 
 class NSFWParams(TypedDict):
-    url: str
+    url: NotRequired[str]
+    file_store_key: NotRequired[str]
+
 
 
 class NSFWResponse(TypedDict):
