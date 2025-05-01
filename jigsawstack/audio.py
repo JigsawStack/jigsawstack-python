@@ -29,6 +29,7 @@ class SpeechToTextParams(TypedDict):
     by_speaker: NotRequired[bool]
     webhook_url: NotRequired[str]
     batch_size: NotRequired[int]
+    chunk_duration: NotRequired[int]
 
 
 class ChunkParams(TypedDict):
