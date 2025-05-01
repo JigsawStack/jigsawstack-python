@@ -1,10 +1,10 @@
-from typing import Any, Dict, List, Union, cast
+from typing import Any, Dict, List, Union, cast, overload
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
 from typing import Any, Dict, List, cast
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import NotRequired, TypedDict, Union, Optional
 from .helpers import build_path
 
 
@@ -101,16 +101,37 @@ class Validate(ClientConfig):
             verb="get",
         ).perform_with_content()
         return resp
+    
+    @overload
+    def nsfw(self, params: NSFWParams) -> NSFWResponse: ...
+    @overload
+    def speech_to_text(self, file: bytes, options: Optional[NSFWParams] = None) -> NSFWParams: ...
 
-    def nsfw(self, params: NSFWParams) -> NSFWResponse:
-        path = f"/validate/nsfw"
+    def nsfw(
+        self,
+        blob: Union[NSFWParams, bytes],
+        options: Optional[NSFWParams] = None,
+    ) -> NSFWResponse:
+        if isinstance(blob, dict):
+            resp = Request(
+                config=self.config,
+                path="/validate/nsfw",
+                params=cast(Dict[Any, Any], blob),
+                verb="post",
+            ).perform_with_content()
+            return resp
+
+        options = options or {}
+        path = build_path(base_path="/validate/nsfw", params=options)
+        content_type = options.get("content_type", "application/octet-stream")
+        headers = {"Content-Type": content_type}
+
         resp = Request(
             config=self.config,
             path=path,
-            params=cast(
-                Dict[Any, Any],
-                params
-            ),
+            params=options,
+            data=blob,
+            headers=headers,
             verb="post",
         ).perform_with_content()
         return resp
@@ -184,15 +205,36 @@ class AsyncValidate(ClientConfig):
         ).perform_with_content()
         return resp
 
-    async def nsfw(self, params: NSFWParams) -> NSFWResponse:
-        path = f"/validate/nsfw"
+    @overload
+    async def nsfw(self, params: NSFWParams) -> NSFWResponse: ...
+    @overload
+    async def speech_to_text(self, file: bytes, options: Optional[NSFWParams] = None) -> NSFWParams: ...
+
+    async def nsfw(
+        self,
+        blob: Union[NSFWParams, bytes],
+        options: Optional[NSFWParams] = None,
+    ) -> NSFWResponse:
+        if isinstance(blob, dict):
+            resp = await AsyncRequest(
+                config=self.config,
+                path="/validate/nsfw",
+                params=cast(Dict[Any, Any], blob),
+                verb="post",
+            ).perform_with_content()
+            return resp
+
+        options = options or {}
+        path = build_path(base_path="/validate/nsfw", params=options)
+        content_type = options.get("content_type", "application/octet-stream")
+        headers = {"Content-Type": content_type}
+
         resp = await AsyncRequest(
             config=self.config,
             path=path,
-            params=cast(
-                Dict[Any, Any],
-                params,
-            ),
+            params=options,
+            data=blob,
+            headers=headers,
             verb="post",
         ).perform_with_content()
         return resp
