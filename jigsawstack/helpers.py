@@ -17,7 +17,7 @@ def build_path(base_path: str, params: Optional[Dict[str, Union[str, int, bool]]
         return base_path
     
     #remove None values from the parameters
-    filtered_params = {k: v for k, v in params.items() if v is not None}
+    filtered_params = { k: str(v).lower() if isinstance(v, bool) else v for k, v in params.items() if v is not None}
 
     #encode the parameters
     return f"{base_path}?{urlencode(filtered_params)}" if filtered_params else base_path
