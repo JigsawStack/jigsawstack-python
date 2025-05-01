@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, cast, Union, Optional
+from typing import Any, Dict, List, cast, Union, Optional, overload
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
@@ -6,6 +6,7 @@ from ._config import ClientConfig
 from typing import Any, Dict, List, cast
 from typing_extensions import NotRequired, TypedDict
 from .custom_typing import SupportedAccents
+from .helpers import build_path
 
 
 class TextToSpeechParams(TypedDict):
@@ -64,15 +65,40 @@ class Audio(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    def speech_to_text(self, params: SpeechToTextParams) -> SpeechToTextResponse:
-        path = "/ai/transcribe"
+    @overload
+    def speech_to_text(self, params: SpeechToTextParams) -> SpeechToTextResponse: ...
+    @overload
+    def speech_to_text(self, file: bytes, options: Optional[SpeechToTextParams] = None) -> SpeechToTextResponse: ...
+
+    def speech_to_text(
+        self,
+        blob: Union[SpeechToTextParams, bytes],
+        options: Optional[SpeechToTextParams] = None,
+    ) -> SpeechToTextResponse:
+        if isinstance(blob, dict): # If params is provided as a dict, we assume it's the first argument
+            resp = Request(
+                config=self.config,
+                path="/ai/transcribe",
+                params=cast(Dict[Any, Any], blob),
+                verb="post",
+            ).perform_with_content()
+            return resp
+
+        options = options or {}
+        path = build_path(base_path="/ai/transcribe", params=options)
+        content_type = options.get("content_type", "application/octet-stream")
+        headers = {"Content-Type": content_type}
+
         resp = Request(
             config=self.config,
             path=path,
-            params=cast(Dict[Any, Any], params),
+            params=options,
+            data=blob,
+            headers=headers,
             verb="post",
         ).perform_with_content()
         return resp
+
 
     def text_to_speech(self, params: TextToSpeechParams) -> TextToSpeechResponse:
         path = "/ai/tts"
@@ -111,12 +137,36 @@ class AsyncAudio(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    async def speech_to_text(self, params: SpeechToTextParams) -> SpeechToTextResponse:
-        path = "/ai/transcribe"
+    @overload
+    async def speech_to_text(self, params: SpeechToTextParams) -> SpeechToTextResponse: ...
+    @overload
+    async def speech_to_text(self, file: bytes, options: Optional[SpeechToTextParams] = None) -> SpeechToTextResponse: ...
+
+    async def speech_to_text(
+        self,
+        blob: Union[SpeechToTextParams, bytes],
+        options: Optional[SpeechToTextParams] = None,
+    ) -> SpeechToTextResponse:
+        if isinstance(blob, dict):
+            resp = await AsyncRequest(
+                config=self.config,
+                path="/ai/transcribe",
+                params=cast(Dict[Any, Any], blob),
+                verb="post",
+            ).perform_with_content()
+            return resp
+        
+        options = options or {}
+        path = build_path(base_path="/ai/transcribe", params=options)
+        content_type = options.get("content_type", "application/octet-stream")
+        headers = {"Content-Type": content_type}
+
         resp = await AsyncRequest(
             config=self.config,
             path=path,
-            params=cast(Dict[Any, Any], params),
+            params=options,
+            data=blob,
+            headers=headers,
             verb="post",
         ).perform_with_content()
         return resp
