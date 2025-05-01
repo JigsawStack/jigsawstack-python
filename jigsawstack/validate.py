@@ -102,36 +102,24 @@ class Validate(ClientConfig):
         ).perform_with_content()
         return resp
     
-    @overload
-    def nsfw(self, params: NSFWParams) -> NSFWResponse: ...
-    @overload
-    def speech_to_text(self, file: bytes, options: Optional[NSFWParams] = None) -> NSFWParams: ...
-
-    def nsfw(
-        self,
-        blob: Union[NSFWParams, bytes],
-        options: Optional[NSFWParams] = None,
-    ) -> NSFWResponse:
-        if isinstance(blob, dict):
+    def nsfw(self, params: Union[NSFWParams, bytes]) -> NSFWResponse:
+        path="/validate/nsfw"
+        if isinstance(params, dict):
             resp = Request(
                 config=self.config,
-                path="/validate/nsfw",
-                params=cast(Dict[Any, Any], blob),
+                path=path,
+                params=cast(Dict[Any, Any], params),
                 verb="post",
             ).perform_with_content()
             return resp
 
-        options = options or {}
-        path = build_path(base_path="/validate/nsfw", params=options)
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-
+        _headers = {"Content-Type": "application/octet-stream"}
         resp = Request(
             config=self.config,
             path=path,
-            params=options,
-            data=blob,
-            headers=headers,
+            params={}, #since we're already passing data.
+            data=params,
+            headers=_headers,
             verb="post",
         ).perform_with_content()
         return resp
@@ -204,37 +192,25 @@ class AsyncValidate(ClientConfig):
             verb="get",
         ).perform_with_content()
         return resp
-
-    @overload
-    async def nsfw(self, params: NSFWParams) -> NSFWResponse: ...
-    @overload
-    async def speech_to_text(self, file: bytes, options: Optional[NSFWParams] = None) -> NSFWParams: ...
-
-    async def nsfw(
-        self,
-        blob: Union[NSFWParams, bytes],
-        options: Optional[NSFWParams] = None,
-    ) -> NSFWResponse:
-        if isinstance(blob, dict):
+    
+    async def nsfw(self, params: Union[NSFWParams, bytes]) -> NSFWResponse:
+        path="/validate/nsfw"
+        if isinstance(params, dict):
             resp = await AsyncRequest(
                 config=self.config,
-                path="/validate/nsfw",
-                params=cast(Dict[Any, Any], blob),
+                path=path,
+                params=cast(Dict[Any, Any], params),
                 verb="post",
             ).perform_with_content()
             return resp
 
-        options = options or {}
-        path = build_path(base_path="/validate/nsfw", params=options)
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-
+        _headers = {"Content-Type": "application/octet-stream"}
         resp = await AsyncRequest(
             config=self.config,
             path=path,
-            params=options,
-            data=blob,
-            headers=headers,
+            params={},
+            data=params,
+            headers=_headers,
             verb="post",
         ).perform_with_content()
         return resp
