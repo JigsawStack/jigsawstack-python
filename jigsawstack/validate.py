@@ -172,7 +172,10 @@ class AsyncValidate(ClientConfig):
         )
 
     async def email(self, params: EmailValidationParams) -> EmailValidationResponse:
-        path = bui
+        path = build_path(
+            base_path="/validate/email",
+            params=params,
+        )
         resp = await AsyncRequest(
             config=self.config,
             path=path,
