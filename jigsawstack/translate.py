@@ -1,17 +1,17 @@
-from typing import Any, Dict, List, Union, cast
+from typing import Any, Dict, List, Union, cast, overload
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest
 from typing import List, Union
 from ._config import ClientConfig
-
+from .helpers import build_path
 
 class TranslateImageParams(TypedDict):
     target_language: str
     """
     Target langauge to translate to.
     """
-    url: str
+    url: NotRequired[str]
     """
     The URL of the image to translate.
     """
@@ -82,7 +82,7 @@ class Translate(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    def translate_text(
+    def text(
         self, params: TranslateParams
     ) -> Union[TranslateResponse, TranslateListResponse]:
         resp = Request(
@@ -92,24 +92,40 @@ class Translate(ClientConfig):
             verb="post",
         ).perform()
         return resp
+    
+    @overload
+    def image(self, params: TranslateImageParams) -> TranslateImageResponse: ...
+    @overload
+    def image(self, file: bytes, options: TranslateImageParams = None) -> TranslateImageParams: ...
 
-    def translate_image(
-    self, params: TranslateImageParams
-) -> TranslateImageResponse:
+    def image(
+        self,
+        blob: Union[TranslateImageParams, bytes],
+        options: TranslateImageParams = None,
+    ) -> TranslateImageResponse:
+        if isinstance(blob, dict): # If params is provided as a dict, we assume it's the first argument
+            resp = Request(
+                config=self.config,
+                path="/ai/translate/image",
+                params=cast(Dict[Any, Any], blob),
+                verb="post",
+            ).perform_with_content()
+            return resp
+
+        options = options or {}
+        path = build_path(base_path="/ai/translate/image", params=options)
+        content_type = options.get("content_type", "application/octet-stream")
+        headers = {"Content-Type": content_type}
+
         resp = Request(
             config=self.config,
-            path="/ai/translate/image",
-            params=cast(Dict[Any, Any], params),
+            path=path,
+            params=options,
+            data=blob,
+            headers=headers,
             verb="post",
-        ).perform()
+        ).perform_with_content()
         return resp
-
-    def translate(
-    self, params: Union[TranslateParams, TranslateImageParams]
-) -> Union[TranslateResponse, TranslateListResponse, TranslateImageResponse]:
-        if "url" in params or "file_store_key" in params:
-            return self.translate_image(params)
-        return self.translate_text(params)
 
 
 class AsyncTranslate(ClientConfig):
@@ -128,7 +144,7 @@ class AsyncTranslate(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    async def translate_text(
+    async def text(
         self, params: TranslateParams
     ) -> Union[TranslateResponse, TranslateListResponse]:
         resp = await AsyncRequest(
@@ -138,21 +154,37 @@ class AsyncTranslate(ClientConfig):
             verb="post",
         ).perform()
         return resp
-
-    async def translate_image(
-        self, params: TranslateImageParams
+    
+    @overload
+    async def image(self, params: TranslateImageParams) -> TranslateImageResponse: ...
+    @overload
+    async def image(self, file: bytes, options: TranslateImageParams = None) -> TranslateImageParams: ...
+    
+    async def image(
+        self,
+        blob: Union[TranslateImageParams, bytes],
+        options: TranslateImageParams = None,
     ) -> TranslateImageResponse:
+        if isinstance(blob, dict):
+            resp = await AsyncRequest(
+                config=self.config,
+                path="/ai/translate/image",
+                params=cast(Dict[Any, Any], blob),
+                verb="post",
+            ).perform_with_content()
+            return resp
+
+        options = options or {}
+        path = build_path(base_path="/ai/translate/image", params=options)
+        content_type = options.get("content_type", "application/octet-stream")
+        headers = {"Content-Type": content_type}
+
         resp = await AsyncRequest(
             config=self.config,
-            path="/ai/translate/image",
-            params=cast(Dict[Any, Any], params),
+            path=path,
+            params=options,
+            data=blob,
+            headers=headers,
             verb="post",
-        ).perform()
+        ).perform_with_content()
         return resp
-
-    async def translate(
-        self, params: Union[TranslateParams, TranslateImageParams]
-    ) -> Union[TranslateResponse, TranslateListResponse, TranslateImageResponse]:
-        if "url" in params or "file_store_key" in params:
-            return await self.translate_image(params)
-        return await self.translate_text(params)
