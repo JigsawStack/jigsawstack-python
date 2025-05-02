@@ -100,7 +100,7 @@ class JigsawStack:
             api_key=api_key,
             api_url=api_url,
             disable_request_logging=disable_request_logging,
-        ).translate
+        )
         
         self.prompt_engine = PromptEngine(
             api_key=api_key,
@@ -209,7 +209,7 @@ class AsyncJigsawStack:
             api_key=api_key,
             api_url=api_url,
             disable_request_logging=disable_request_logging,
-        ).translate
+        )
 
         self.prompt_engine = AsyncPromptEngine(
             api_key=api_key,

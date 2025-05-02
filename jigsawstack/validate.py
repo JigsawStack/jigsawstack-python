@@ -1,10 +1,10 @@
-from typing import Any, Dict, List, Union, cast
+from typing import Any, Dict, List, Union, cast, overload
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
 from typing import Any, Dict, List, cast
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import NotRequired, TypedDict, Union, Optional
 from .helpers import build_path
 
 
@@ -46,7 +46,9 @@ class ProfanityResponse(TypedDict):
 
 
 class NSFWParams(TypedDict):
-    url: str
+    url: NotRequired[str]
+    file_store_key: NotRequired[str]
+
 
 
 class NSFWResponse(TypedDict):
@@ -99,16 +101,25 @@ class Validate(ClientConfig):
             verb="get",
         ).perform_with_content()
         return resp
+    
+    def nsfw(self, params: Union[NSFWParams, bytes]) -> NSFWResponse:
+        path="/validate/nsfw"
+        if isinstance(params, dict):
+            resp = Request(
+                config=self.config,
+                path=path,
+                params=cast(Dict[Any, Any], params),
+                verb="post",
+            ).perform_with_content()
+            return resp
 
-    def nsfw(self, params: NSFWParams) -> NSFWResponse:
-        path = f"/validate/nsfw"
+        _headers = {"Content-Type": "application/octet-stream"}
         resp = Request(
             config=self.config,
             path=path,
-            params=cast(
-                Dict[Any, Any],
-                params
-            ),
+            params={}, #since we're already passing data.
+            data=params,
+            headers=_headers,
             verb="post",
         ).perform_with_content()
         return resp
@@ -170,7 +181,10 @@ class AsyncValidate(ClientConfig):
         )
 
     async def email(self, params: EmailValidationParams) -> EmailValidationResponse:
-        path = bui
+        path = build_path(
+            base_path="/validate/email",
+            params=params,
+        )
         resp = await AsyncRequest(
             config=self.config,
             path=path,
@@ -178,16 +192,25 @@ class AsyncValidate(ClientConfig):
             verb="get",
         ).perform_with_content()
         return resp
+    
+    async def nsfw(self, params: Union[NSFWParams, bytes]) -> NSFWResponse:
+        path="/validate/nsfw"
+        if isinstance(params, dict):
+            resp = await AsyncRequest(
+                config=self.config,
+                path=path,
+                params=cast(Dict[Any, Any], params),
+                verb="post",
+            ).perform_with_content()
+            return resp
 
-    async def nsfw(self, params: NSFWParams) -> NSFWResponse:
-        path = f"/validate/nsfw"
+        _headers = {"Content-Type": "application/octet-stream"}
         resp = await AsyncRequest(
             config=self.config,
             path=path,
-            params=cast(
-                Dict[Any, Any],
-                params,
-            ),
+            params={},
+            data=params,
+            headers=_headers,
             verb="post",
         ).perform_with_content()
         return resp

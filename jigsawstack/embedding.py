@@ -1,9 +1,10 @@
-from typing import Any, Dict, List, Union, cast, Literal
+from typing import Any, Dict, List, Union, cast, Literal, overload
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest
 from typing import List, Union
 from ._config import ClientConfig
+from .helpers import build_path
 
 
 class EmbeddingParams(TypedDict):
@@ -38,12 +39,37 @@ class Embedding(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    def execute(self, params: EmbeddingParams) -> EmbeddingResponse:
-        path = "/embedding"
+    @overload
+    def execute(self, params: EmbeddingParams) -> EmbeddingResponse: ...
+    @overload
+    def execute(self, file: bytes, options: EmbeddingParams = None) -> EmbeddingResponse: ...
+
+    def execute(
+        self,
+        blob: Union[EmbeddingParams, bytes],
+        options: EmbeddingParams = None,
+    ) -> EmbeddingResponse:
+        path="/embedding"
+        if isinstance(blob, dict):
+            resp = Request(
+                config=self.config,
+                path=path,
+                params=cast(Dict[Any, Any], blob),
+                verb="post",
+            ).perform_with_content()
+            return resp
+
+        options = options or {}
+        path = build_path(base_path=path, params=options)
+        content_type = options.get("content_type", "application/octet-stream")
+        _headers = {"Content-Type": content_type}
+
         resp = Request(
             config=self.config,
             path=path,
-            params=cast(Dict[Any, Any], params),
+            params=options,
+            data=blob,
+            headers=_headers,
             verb="post",
         ).perform_with_content()
         return resp
@@ -66,12 +92,37 @@ class AsyncEmbedding(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    async def execute(self, params: EmbeddingParams) -> EmbeddingResponse:
-        path = "/embedding"
+    @overload
+    async def execute(self, params: EmbeddingParams) -> EmbeddingResponse: ...
+    @overload
+    async def execute(self, file: bytes, options: EmbeddingParams = None) -> EmbeddingResponse: ...
+
+    async def execute(
+        self,
+        blob: Union[EmbeddingParams, bytes],
+        options: EmbeddingParams = None,
+    ) -> EmbeddingResponse:
+        path="/embedding"
+        if isinstance(blob, dict):
+            resp = await AsyncRequest(
+                config=self.config,
+                path=path,
+                params=cast(Dict[Any, Any], blob),
+                verb="post",
+            ).perform_with_content()
+            return resp
+
+        options = options or {}
+        path = build_path(base_path=path, params=options)
+        content_type = options.get("content_type", "application/octet-stream")
+        _headers = {"Content-Type": content_type}
+
         resp = await AsyncRequest(
             config=self.config,
             path=path,
-            params=cast(Dict[Any, Any], params),
+            params=options,
+            data=blob,
+            headers=_headers,
             verb="post",
         ).perform_with_content()
         return resp

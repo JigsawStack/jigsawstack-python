@@ -12,6 +12,14 @@ class FileUploadParams(TypedDict):
     overwrite: NotRequired[bool]
     key: NotRequired[str]
     content_type: NotRequired[str]
+    temp_public_url: NotRequired[bool]
+
+class FileUploadResponse(TypedDict):
+    key: str
+    url: str
+    size: int
+    temp_public_url: NotRequired[str] # Optional, only if temp_public_url is set to True in params
+    
 
 class Store(ClientConfig):
 
@@ -30,7 +38,7 @@ class Store(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    def upload(self, file: bytes, options: Union[FileUploadParams, None] = None) -> Any:
+    def upload(self, file: bytes, options: Union[FileUploadParams, None] = None) -> FileUploadResponse:
         if options is None:
             options = {}
             
@@ -87,7 +95,7 @@ class AsyncStore(ClientConfig):
         )
         
 
-    async def upload(self, file: bytes, options: Union[FileUploadParams, None] = None) -> Any:
+    async def upload(self, file: bytes, options: Union[FileUploadParams, None] = None) -> FileUploadResponse:
         if options is None:
             options = {}
             
