@@ -18,7 +18,7 @@ def test_text_to_speech():
 
         """Test converting text to speech"""
         try:
-            response = client.audio.text_to_speech(
+            response = await client.audio.text_to_speech(
                 {
                     "text": "Hello world, this is a test of the JigsawStack text to speech API."
                 }
@@ -33,16 +33,17 @@ def test_text_to_speech():
 
 
 def test_speaker_voice_accents():
-    client = AsyncJigsawStack()
+    async def _test():
+        client = AsyncJigsawStack()
 
-    """Test getting available voice accents"""
-    try:
-        response = client.audio.speaker_voice_accents()
-        print("Speaker voice accents response:", response)
-        assert response["success"] == True
+        """Test getting available voice accents"""
+        try:
+            response = await client.audio.speaker_voice_accents()
+            print("Speaker voice accents response:", response)
+            assert response["success"] == True
 
-    except Exception as e:
-        print(f"Error in speaker voice accents test: {e}")
+        except Exception as e:
+            print(f"Error in speaker voice accents test: {e}")
 
 
 def test_create_clone():
@@ -54,7 +55,7 @@ def test_create_clone():
             audio_url = (
                 "https://jigsawstack.com/audio/test.mp3"  # Replace with an actual URL
             )
-            clone_response_url = client.audio.create_clone(
+            clone_response_url = await client.audio.create_clone(
                 {"url": audio_url, "name": "Test Voice Clone URL"}
             )
 
@@ -81,7 +82,7 @@ def test_get_clones():
         """Test getting voice clones"""
         try:
             # List available voice clones
-            clones_response = client.audio.get_clones({"limit": 10, "page": 1})
+            clones_response = await client.audio.get_clones({"limit": 10, "page": 1})
 
             assert clones_response["success"] == True
 
@@ -96,13 +97,13 @@ def test_delete_clone():
         client = AsyncJigsawStack()
         """Test getting a voice clone"""
         try:
-            create_clone_response = client.audio.create_clone(
+            create_clone_response = await client.audio.create_clone(
                 {"name": "Test Voice Clone URL", "file_store_key": "hello_audio"}
             )
-            clones = client.audio.get_clones()
+            clones = await client.audio.get_clones({"limit": 10, "page": 1})
             print("Clones:", clones)
-            clone_id = clones[0]["id"]
-            delete_clone_response = client.audio.delete_clone(clone_id)
+            clone_id = clones["data"][0]["id"]
+            delete_clone_response = await client.audio.delete_clone(clone_id)
             print("Delete clone response:", delete_clone_response)
             assert delete_clone_response["success"] == True
 
