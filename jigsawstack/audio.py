@@ -16,6 +16,17 @@ class TextToSpeechParams(TypedDict):
     speaker_clone_file_store_key: NotRequired[str]
 
 
+class TTSCloneParams(TypedDict):
+    url: NotRequired[str]
+    file_store_key: NotRequired[str]
+    name: str
+
+
+class GetTTSVoiceClonesParams(TypedDict):
+    limit: NotRequired[int]
+    page: NotRequired[int]
+
+
 class TextToSpeechResponse(TypedDict):
     success: bool
     text: str
@@ -68,14 +79,18 @@ class Audio(ClientConfig):
     @overload
     def speech_to_text(self, params: SpeechToTextParams) -> SpeechToTextResponse: ...
     @overload
-    def speech_to_text(self, file: bytes, options: Optional[SpeechToTextParams] = None) -> SpeechToTextResponse: ...
+    def speech_to_text(
+        self, file: bytes, options: Optional[SpeechToTextParams] = None
+    ) -> SpeechToTextResponse: ...
 
     def speech_to_text(
         self,
         blob: Union[SpeechToTextParams, bytes],
         options: Optional[SpeechToTextParams] = None,
     ) -> SpeechToTextResponse:
-        if isinstance(blob, dict): # If params is provided as a dict, we assume it's the first argument
+        if isinstance(
+            blob, dict
+        ):  # If params is provided as a dict, we assume it's the first argument
             resp = Request(
                 config=self.config,
                 path="/ai/transcribe",
@@ -99,7 +114,6 @@ class Audio(ClientConfig):
         ).perform_with_content()
         return resp
 
-
     def text_to_speech(self, params: TextToSpeechParams) -> TextToSpeechResponse:
         path = "/ai/tts"
         resp = Request(
@@ -117,6 +131,37 @@ class Audio(ClientConfig):
             path=path,
             params={},
             verb="get",
+        ).perform_with_content()
+        return resp
+
+    def create_clone(self, params: TTSCloneParams) -> TextToSpeechResponse:
+        path = "/ai/tts/clone"
+        resp = Request(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="post",
+        ).perform_with_content()
+
+        return resp
+
+    def get_clones(self, params: GetTTSVoiceClonesParams) -> TextToSpeechResponse:
+        path = "/ai/tts/clone"
+        resp = Request(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="get",
+        ).perform_with_content()
+        return resp
+
+    def delete_clone(self, voice_id: str) -> TextToSpeechResponse:
+        path = f"/ai/tts/clone/{voice_id}"
+        resp = Request(
+            config=self.config,
+            path=path,
+            params={},
+            verb="delete",
         ).perform_with_content()
         return resp
 
@@ -138,9 +183,13 @@ class AsyncAudio(ClientConfig):
         )
 
     @overload
-    async def speech_to_text(self, params: SpeechToTextParams) -> SpeechToTextResponse: ...
+    async def speech_to_text(
+        self, params: SpeechToTextParams
+    ) -> SpeechToTextResponse: ...
     @overload
-    async def speech_to_text(self, file: bytes, options: Optional[SpeechToTextParams] = None) -> SpeechToTextResponse: ...
+    async def speech_to_text(
+        self, file: bytes, options: Optional[SpeechToTextParams] = None
+    ) -> SpeechToTextResponse: ...
 
     async def speech_to_text(
         self,
@@ -155,7 +204,7 @@ class AsyncAudio(ClientConfig):
                 verb="post",
             ).perform_with_content()
             return resp
-        
+
         options = options or {}
         path = build_path(base_path="/ai/transcribe", params=options)
         content_type = options.get("content_type", "application/octet-stream")
