@@ -5,7 +5,6 @@ from jigsawstack import AsyncJigsawStack
 import pytest
 import asyncio
 import logging
-import os
 from jigsawstack import AsyncJigsawStack
 
 logging.basicConfig(level=logging.INFO)
