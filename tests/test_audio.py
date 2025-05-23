@@ -75,13 +75,13 @@ def test_create_clone():
     asyncio.run(_test())
 
 
-def test_get_clones():
+def test_list_clones():
     async def _test():
         client = AsyncJigsawStack()
-        """Test getting voice clones"""
+        """Test listing voice clones"""
         try:
             # List available voice clones
-            clones_response = await client.audio.get_clones({"limit": 10, "page": 1})
+            clones_response = await client.audio.list_clones({"limit": 10, "page": 1})
 
             assert clones_response["success"] == True
 
@@ -99,7 +99,7 @@ def test_delete_clone():
             create_clone_response = await client.audio.create_clone(
                 {"name": "Test Voice Clone URL", "file_store_key": "hello_audio"}
             )
-            clones = await client.audio.get_clones({"limit": 10, "page": 1})
+            clones = await client.audio.list_clones({"limit": 10, "page": 1})
             print("Clones:", clones)
             clone_id = clones["data"][0]["id"]
             delete_clone_response = await client.audio.delete_clone(clone_id)
@@ -107,6 +107,6 @@ def test_delete_clone():
             assert delete_clone_response["success"] == True
 
         except Exception as e:
-            print(f"Error in get_clone test: {e}")
+            print(f"Error in list_clones test: {e}")
 
     asyncio.run(_test())
