@@ -22,7 +22,7 @@ class TTSCloneParams(TypedDict):
     name: str
 
 
-class GetTTSVoiceClonesParams(TypedDict):
+class ListTTSVoiceClonesParams(TypedDict):
     limit: NotRequired[int]
     page: NotRequired[int]
 
@@ -122,7 +122,7 @@ class Audio(ClientConfig):
 
         return resp
 
-    def get_clones(self, params: GetTTSVoiceClonesParams) -> TextToSpeechResponse:
+    def list_clones(self, params: ListTTSVoiceClonesParams) -> TextToSpeechResponse:
         path = "/ai/tts/clone"
         resp = Request(config=self.config, path=path, params=cast(Dict[Any, Any], params), verb="get").perform_with_content()
         return resp
@@ -215,7 +215,7 @@ class AsyncAudio(ClientConfig):
         ).perform_with_content()
         return resp
 
-    async def get_clones(self, params: GetTTSVoiceClonesParams) -> TextToSpeechResponse:
+    async def list_clones(self, params: ListTTSVoiceClonesParams) -> TextToSpeechResponse:
         path = "/ai/tts/clone"
         resp = await AsyncRequest(
             config=self.config, 
