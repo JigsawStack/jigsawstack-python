@@ -3,27 +3,35 @@ import unittest
 from jigsawstack.exceptions import JigsawStackError
 import jigsawstack
 import pytest
+import asyncio
+import logging
 
-# flake8: noq
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 jigsaw = jigsawstack.JigsawStack()
+async_jigsaw = jigsawstack.AsyncJigsawStack()
 
 
-@pytest.mark.skip(reason="Skipping TestWebAPI class for now")
-class TestSearchAPI(unittest.TestCase):
-
-    def test_search_suggestion_response_success(self) -> None:
-        params = {"query": "Time Square New Yor"}
+def test_search_suggestion_response():
+    async def _test():
+        client = jigsawstack.AsyncJigsawStack()
         try:
-            result = jigsaw.search.suggestion(params)
+            result = await client.web.search({"query": "Where is San Francisco"})
             assert result["success"] == True
         except JigsawStackError as e:
-            assert e.message == "Failed to parse API response. Please try again."
+            pytest.fail(f"Unexpected JigsawStackError: {e}")
 
-    def test_ai_search_response_success(self) -> None:
-        params = {"query": "Time Square New Yor"}
+    asyncio.run(_test())
+
+
+def test_ai_search_response():
+    async def _test():
+        client = jigsawstack.AsyncJigsawStack()
         try:
-            result = jigsaw.search.ai_search(params)
+            result = await client.web.search({"query": "Where is San Francisco"})
             assert result["success"] == True
         except JigsawStackError as e:
-            assert e.message == "Failed to parse API response. Please try again."
+            pytest.fail(f"Unexpected JigsawStackError: {e}")
+
+    asyncio.run(_test())
