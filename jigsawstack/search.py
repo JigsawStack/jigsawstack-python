@@ -19,6 +19,12 @@ class SearchResponse(TypedDict):
 
     spell_fixed: str
 
+    geo_results: List[Any]
+
+    image_urls: List[str]
+
+    links: List[str]
+
 
 class SearchSuggestionsResponse(TypedDict):
     success: bool
