@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union, cast
+from typing import Any, Dict, List, Union, cast, Literal
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
@@ -9,30 +9,61 @@ from ._config import ClientConfig
 class SearchResponse(TypedDict):
     success: bool
     """
-    Indicates whether the translation was successful.
+    Whether the search request was successful
     """
-    results: List[Any]
 
-    is_safe: bool
+    query: str
+    """
+    The search query that was used
+    """
 
     ai_overview: str
+    """
+    AI-generated overview/summary of the search results
+    or deep research results if enabled
+    """
 
-    spell_fixed: str
+    results: List[Any]
+    """
+    List of search result items
+    """
+
+    is_safe: bool
+    """
+    Whether the search results passed safe search filtering
+    """
+
+    spell_fixed: bool
+    """
+    Whether the query was spell-checked and fixed
+    """
 
     geo_results: List[Any]
+    """
+    List of location/geographic search results if applicable
+    """
 
     image_urls: List[str]
+    """
+    List of image URLs found in the search results
+    """
 
     links: List[str]
+    """
+    List of web page URLs found in the search results
+    """
 
 
 class SearchSuggestionsResponse(TypedDict):
     success: bool
     """
-    Indicates whether the translation was successful.
+    Whether the search suggestions request was successful
     """
 
     suggestions: List[str]
+    """
+    List of search suggestions
+    """
 
 
 class SearchSuggestionsParams(TypedDict):
@@ -41,26 +72,59 @@ class SearchSuggestionsParams(TypedDict):
     The search value. The maximum query character length is 200.
     """
 
+class DeepResearchConfig(TypedDict):
+    max_depth: NotRequired[int]
+    max_breadth: NotRequired[int]
+    max_output_tokens: NotRequired[int]
+    target_output_tokens: NotRequired[int]
 
 class SearchParams(TypedDict):
     query: str
     """
-    The search value. The maximum query character length is 200.
+    The search query string to execute
     """
-    ai_overview: NotRequired[bool] = True
+
+    spell_check: NotRequired[bool]
     """
-    Include AI powered overview in the search results. The default value is True
+    Whether to perform spell checking on the query. Defaults to True.
     """
-    safe_search: NotRequired[str] = "moderate"
+
+    safe_search: NotRequired[Literal["strict", "moderate", "off"]]
     """
-    Include offensive results in the search results. The default value is "moderate". Supported values:  moderate, strict, off
+    Safe search filtering level. Can be 'strict', 'moderate', or 'off'
     """
-    spell_check: NotRequired[bool] = True
+
+    ai_overview: NotRequired[bool]
     """
-    Spell check the search query.
+    Whether to generate an AI-powered overview of the search results. Defaults to True.
     """
 
     byo_urls: NotRequired[List[str]]
+    """
+    List of custom URLs to include in the search results
+    """
+
+    country_code: NotRequired[str]
+    """
+    Two-letter country code to localize search results (e.g. 'US', 'GB')
+    """
+
+    auto_scrape: bool
+    """
+    Whether to automatically scrape content from search result URLs
+    """
+
+    deep_research: NotRequired[bool]
+    """
+    Enable deep research mode for more comprehensive results
+    """
+
+    deep_research_config: NotRequired[DeepResearchConfig]
+    """
+    Configuration options for deep research mode
+    """
+
+
 
 
 class Search(ClientConfig):
