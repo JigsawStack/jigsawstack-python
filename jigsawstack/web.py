@@ -42,9 +42,9 @@ class DNSResponse(TypedDict):
 # HTML to Any
 #
 class HTMLToAnyParams(TypedDict):
-    html: str
-    url: str
-    goto_options: NotRequired[object]
+    html: NotRequired[str]
+    url: NotRequired[str]
+    goto_options: NotRequired[Dict[str, Union[int, str]]]
     scale: NotRequired[int]
     full_page: NotRequired[bool]
     omit_background: NotRequired[bool]
@@ -59,6 +59,7 @@ class HTMLToAnyParams(TypedDict):
     is_mobile: NotRequired[bool]
     dark_mode: NotRequired[bool]
     use_graphic_renderer: NotRequired[bool]
+    return_type: NotRequired[Literal["url", "binary", "base64"]]
 
 
 class HTMLToAnyResponse(TypedDict):

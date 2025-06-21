@@ -1,5 +1,5 @@
 from typing import Any, Dict, List, Union, cast, overload
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import NotRequired, TypedDict, Literal
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest
 from typing import List, Union
@@ -19,6 +19,8 @@ class TranslateImageParams(TypedDict):
     """
     The file store key of the image to translate.
     """
+
+    return_type: NotRequired[Literal["url", "binary", "base64"]]
 
 class TranslateParams(TypedDict):
     target_language: str
