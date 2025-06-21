@@ -15,6 +15,7 @@ from .prompt_engine import PromptEngine, AsyncPromptEngine
 from .embedding import Embedding, AsyncEmbedding
 from .exceptions import JigsawStackError
 from .image_generation import ImageGeneration, AsyncImageGeneration
+from .object_detection import ObjectDetection, AsyncObjectDetection
 
 
 class JigsawStack:
@@ -117,6 +118,12 @@ class JigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         ).image_generation
+
+        self.object_detection = ObjectDetection(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        )
 
 
 class AsyncJigsawStack:
@@ -227,6 +234,12 @@ class AsyncJigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         ).image_generation
+
+        self.object_detection = AsyncObjectDetection(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        )
 
 
 # Create a global instance of the Web class
