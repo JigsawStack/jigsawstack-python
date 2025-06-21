@@ -53,6 +53,8 @@ class ImageGenerationParams(TypedDict):
     File store key to use as image input.
     """
 
+    return_type: NotRequired[Literal["url", "binary", "base64"]]
+
 class ImageGenerationResponse(TypedDict):
     success: bool
     """

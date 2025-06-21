@@ -4,7 +4,7 @@ from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
 from typing import Any, Dict, List, cast
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import NotRequired, TypedDict, Literal
 from .custom_typing import SupportedAccents
 from .helpers import build_path
 
@@ -14,6 +14,7 @@ class TextToSpeechParams(TypedDict):
     accent: NotRequired[SupportedAccents]
     speaker_clone_url: NotRequired[str]
     speaker_clone_file_store_key: NotRequired[str]
+    return_type: NotRequired[Literal["url", "binary", "base64"]]
 
 
 class TTSCloneParams(TypedDict):
