@@ -109,7 +109,7 @@ class SearchParams(TypedDict):
     Two-letter country code to localize search results (e.g. 'US', 'GB')
     """
 
-    auto_scrape: bool
+    auto_scrape: NotRequired[bool]
     """
     Whether to automatically scrape content from search result URLs
     """
