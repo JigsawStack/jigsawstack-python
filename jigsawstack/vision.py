@@ -212,7 +212,7 @@ class AsyncVision(ClientConfig):
 
     async def object_detection(self, params: ObjectDetectionParams) -> ObjectDetectionResponse:
         path = "/ai/object_detection"
-        resp = AsyncRequest(
+        resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=cast(Dict[Any, Any], params),
