@@ -14,6 +14,22 @@ async_jigsaw = jigsawstack.AsyncJigsawStack()
 
 
 def test_search_suggestion_response():
+    try:
+        result = jigsaw.web.search({"query": "Where is San Francisco"})
+        assert result["success"] == True
+    except JigsawStackError as e:
+        pytest.fail(f"Unexpected JigsawStackError: {e}")
+
+
+def test_ai_search_response():
+    try:
+        result = jigsaw.web.search({"query": "Where is San Francisco"})
+        assert result["success"] == True  
+    except JigsawStackError as e:
+        pytest.fail(f"Unexpected JigsawStackError: {e}")
+
+
+def test_search_suggestion_response_async():
     async def _test():
         client = jigsawstack.AsyncJigsawStack()
         try:
@@ -25,7 +41,7 @@ def test_search_suggestion_response():
     asyncio.run(_test())
 
 
-def test_ai_search_response():
+def test_ai_search_response_async():
     async def _test():
         client = jigsawstack.AsyncJigsawStack()
         try:

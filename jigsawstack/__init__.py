@@ -119,6 +119,7 @@ class JigsawStack:
         ).image_generation
 
 
+
 class AsyncJigsawStack:
     validate: AsyncValidate
     web: AsyncWeb
@@ -227,6 +228,7 @@ class AsyncJigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         ).image_generation
+
 
 
 # Create a global instance of the Web class
