@@ -19,3 +19,6 @@ dist/
 
 test.py
 test_web.py
+
+.eggs/
+.conda/

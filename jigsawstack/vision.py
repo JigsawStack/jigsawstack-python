@@ -174,7 +174,7 @@ class Vision(ClientConfig):
         return resp
 
     def object_detection(self, params: ObjectDetectionParams) -> ObjectDetectionResponse:
-        path = "/ai/object_detection"
+        path = "/object_detection"
         resp = Request(
             config=self.config,
             path=path,
@@ -211,7 +211,7 @@ class AsyncVision(ClientConfig):
         return resp
 
     async def object_detection(self, params: ObjectDetectionParams) -> ObjectDetectionResponse:
-        path = "/ai/object_detection"
+        path = "/object_detection"
         resp = await AsyncRequest(
             config=self.config,
             path=path,
