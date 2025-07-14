@@ -93,10 +93,16 @@ class WaitFor(TypedDict):
     value: Union[str, int]
 
 
-class AdvanceConfig(TypedDict):
+class AdvanceConfigRequest(TypedDict):
     console: bool
     network: bool
     cookies: bool
+
+
+class AdvanceConfigResponse(TypedDict):
+    console: list
+    network: list
+    cookies: list
 
 
 class BYOProxyAuth(TypedDict):
@@ -117,7 +123,7 @@ class BaseAIScrapeParams(TypedDict):
     reject_request_pattern: NotRequired[List[str]]
     goto_options: NotRequired[GotoOptions]
     wait_for: NotRequired[WaitFor]
-    advance_config: NotRequired[AdvanceConfig]
+    advance_config: NotRequired[AdvanceConfigRequest]
     size_preset: NotRequired[str]
     is_mobile: NotRequired[bool]
     scale: NotRequired[int]
@@ -164,13 +170,22 @@ class Link(TypedDict):
     type: Literal["a", "img"]
 
 
+class Meta(TypedDict):
+    title: Optional[str]
+    description: Optional[str]
+    keywords: Optional[str]
+    og_image: Optional[str]
+
+
 class AIScrapeResponse(TypedDict):
     success: bool
     data: List[DataItem]
     page_position: int
     page_position_length: int
-    context: Dict[str, List[str]]
+    advance_config: Optional[AdvanceConfigResponse]
+    context: Any
     selectors: Dict[str, List[str]]
+    meta: Optional[Meta]
     link: List[Link]
 
 
