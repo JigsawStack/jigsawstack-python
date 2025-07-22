@@ -53,6 +53,12 @@ class NSFWParams(TypedDict):
 
 class NSFWResponse(TypedDict):
     success: bool
+    nsfw: bool
+    nudity: bool
+    gore: bool
+    nsfw_score: float
+    nudity_score: float
+    gore_score: float
 
 
 class EmailValidationParams(TypedDict):
