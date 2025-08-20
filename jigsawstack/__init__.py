@@ -15,6 +15,7 @@ from .prompt_engine import PromptEngine, AsyncPromptEngine
 from .embedding import Embedding, AsyncEmbedding
 from .exceptions import JigsawStackError
 from .image_generation import ImageGeneration, AsyncImageGeneration
+from .classification import Classification, AsyncClassification
 
 
 class JigsawStack:
@@ -25,6 +26,7 @@ class JigsawStack:
     web: Web
     search: Search
     prompt_engine: PromptEngine
+    classification: Classification
     api_key: str
     api_url: str
     disable_request_logging: bool
@@ -117,6 +119,12 @@ class JigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         ).image_generation
+
+        self.classification = Classification(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        )
 
 
 
@@ -228,6 +236,12 @@ class AsyncJigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         ).image_generation
+
+        self.classification = AsyncClassification(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        )
 
 
 
