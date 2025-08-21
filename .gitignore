@@ -23,7 +23,10 @@ test_web.py
 .eggs/
 .conda/
 
-.python-version
+
 main.py
+.python-version
 pyproject.toml
 uv.lock
+
+.ruff_cache/
