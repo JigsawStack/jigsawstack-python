@@ -18,9 +18,8 @@ To learn more about all available JigsawStack AI services, view the [Documentati
 | ----------------- | -------------------------------------------------- |
 | **👉 General**    | Translation, Summarization, Sentiment Analysis     |
 | **🌐 Web**        | AI Web Scraping, AI Web Search                     |
-| **🎵 Audio**      | Text to Speech, Speech to Text                     |
+| **🎵 Audio**      | Speech to Text                                    |
 | **👀 Vision**     | vOCR, Object Detection                             |
-| **🧠 LLMs**       | Prompt Engine                                      |
 | **🖼️ Generative** | AI Image (Flux, SD, SDXL-Fast & more), HTML to Any |
 | **✅ Validation** | Email, NSFW images, profanity & more               |
 
@@ -56,13 +55,6 @@ params = {
  "element_prompts": ["prices"]
 }
 result = jigsaw.web.ai_scrape(params)
-```
-
-Text To Speech Example:
-
-```py
-params = {"text": "Hello, how are you doing?"}
-result = jigsaw.audio.text_to_speech(params)
 ```
 
 Speech To Text Example:

@@ -22,3 +22,8 @@ test_web.py
 
 .eggs/
 .conda/
+
+.python-version
+main.py
+pyproject.toml
+uv.lock
