@@ -37,7 +37,7 @@ class TextToSpeechResponse(TypedDict):
 class SpeechToTextParams(TypedDict):
     url: NotRequired[str]
     file_store_key: NotRequired[str]
-    language: NotRequired[str]
+    language: NotRequired[Union[str, Literal["auto"]]]
     translate: NotRequired[bool]
     by_speaker: NotRequired[bool]
     webhook_url: NotRequired[str]
@@ -80,9 +80,15 @@ class Audio(ClientConfig):
     @overload
     def speech_to_text(self, params: SpeechToTextParams) -> SpeechToTextResponse: ...
     @overload
-    def speech_to_text(self, file: bytes, options: Optional[SpeechToTextParams] = None) -> SpeechToTextResponse: ...
+    def speech_to_text(
+        self, file: bytes, options: Optional[SpeechToTextParams] = None
+    ) -> SpeechToTextResponse: ...
 
-    def speech_to_text(self, blob: Union[SpeechToTextParams, bytes], options: Optional[SpeechToTextParams] = None) -> SpeechToTextResponse:
+    def speech_to_text(
+        self,
+        blob: Union[SpeechToTextParams, bytes],
+        options: Optional[SpeechToTextParams] = None,
+    ) -> SpeechToTextResponse:
         if isinstance(
             blob, dict
         ):  # If params is provided as a dict, we assume it's the first argument
@@ -99,7 +105,14 @@ class Audio(ClientConfig):
         content_type = options.get("content_type", "application/octet-stream")
         headers = {"Content-Type": content_type}
 
-        resp = Request(config=self.config, path=path, params=options, data=blob, headers=headers, verb="post").perform_with_content()
+        resp = Request(
+            config=self.config,
+            path=path,
+            params=options,
+            data=blob,
+            headers=headers,
+            verb="post",
+        ).perform_with_content()
         return resp
 
     def text_to_speech(self, params: TextToSpeechParams) -> TextToSpeechResponse:
@@ -114,23 +127,37 @@ class Audio(ClientConfig):
 
     def speaker_voice_accents(self) -> TextToSpeechResponse:
         path = "/ai/tts"
-        resp = Request(config=self.config, path=path, params={}, verb="get").perform_with_content()
+        resp = Request(
+            config=self.config, path=path, params={}, verb="get"
+        ).perform_with_content()
         return resp
 
     def create_clone(self, params: TTSCloneParams) -> TextToSpeechResponse:
         path = "/ai/tts/clone"
-        resp = Request(config=self.config, path=path, params=cast(Dict[Any, Any], params), verb="post").perform_with_content()
+        resp = Request(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="post",
+        ).perform_with_content()
 
         return resp
 
     def list_clones(self, params: ListTTSVoiceClonesParams) -> TextToSpeechResponse:
         path = "/ai/tts/clone"
-        resp = Request(config=self.config, path=path, params=cast(Dict[Any, Any], params), verb="get").perform_with_content()
+        resp = Request(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="get",
+        ).perform_with_content()
         return resp
 
     def delete_clone(self, voice_id: str) -> TextToSpeechResponse:
         path = f"/ai/tts/clone/{voice_id}"
-        resp = Request(config=self.config, path=path, params={}, verb="delete").perform_with_content()
+        resp = Request(
+            config=self.config, path=path, params={}, verb="delete"
+        ).perform_with_content()
         return resp
 
 
@@ -151,7 +178,9 @@ class AsyncAudio(ClientConfig):
         )
 
     @overload
-    async def speech_to_text(self, params: SpeechToTextParams) -> SpeechToTextResponse: ...
+    async def speech_to_text(
+        self, params: SpeechToTextParams
+    ) -> SpeechToTextResponse: ...
     @overload
     async def speech_to_text(
         self, file: bytes, options: Optional[SpeechToTextParams] = None
@@ -209,29 +238,28 @@ class AsyncAudio(ClientConfig):
     async def create_clone(self, params: TTSCloneParams) -> TextToSpeechResponse:
         path = "/ai/tts/clone"
         resp = await AsyncRequest(
-            config=self.config, 
-            path=path, 
-            params=cast(Dict[Any, Any], params), 
-            verb="post"
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="post",
         ).perform_with_content()
         return resp
 
-    async def list_clones(self, params: ListTTSVoiceClonesParams) -> TextToSpeechResponse:
+    async def list_clones(
+        self, params: ListTTSVoiceClonesParams
+    ) -> TextToSpeechResponse:
         path = "/ai/tts/clone"
         resp = await AsyncRequest(
-            config=self.config, 
-            path=path, 
-            params=cast(Dict[Any, Any], params), 
-            verb="get"
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="get",
         ).perform_with_content()
         return resp
 
     async def delete_clone(self, voice_id: str) -> TextToSpeechResponse:
         path = f"/ai/tts/clone/{voice_id}"
         resp = await AsyncRequest(
-            config=self.config, 
-            path=path, 
-            params={}, 
-            verb="delete"
+            config=self.config, path=path, params={}, verb="delete"
         ).perform_with_content()
         return resp
