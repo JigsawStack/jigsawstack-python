@@ -23,9 +23,16 @@ test_web.py
 .eggs/
 .conda/
 
+<<<<<<< HEAD
 main.py
 .python-version
 pyproject.toml
 uv.lock
 
 .ruff_cache/
+=======
+.python-version
+main.py
+pyproject.toml
+uv.lock
+>>>>>>> rm/tts-promptEngine

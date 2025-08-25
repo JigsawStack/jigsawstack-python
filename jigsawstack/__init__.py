@@ -11,7 +11,6 @@ from .web import Web, AsyncWeb
 from .sentiment import Sentiment, AsyncSentiment
 from .validate import Validate, AsyncValidate
 from .summary import Summary, AsyncSummary
-from .prompt_engine import PromptEngine, AsyncPromptEngine
 from .embedding import Embedding, AsyncEmbedding
 from .exceptions import JigsawStackError
 from .image_generation import ImageGeneration, AsyncImageGeneration
@@ -25,8 +24,6 @@ class JigsawStack:
     file: Store
     web: Web
     search: Search
-    prompt_engine: PromptEngine
-    classification: Classification
     api_key: str
     api_url: str
     disable_request_logging: bool
@@ -103,12 +100,7 @@ class JigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         )
-        
-        self.prompt_engine = PromptEngine(
-            api_key=api_key,
-            api_url=api_url,
-            disable_request_logging=disable_request_logging,
-        )
+
         self.embedding = Embedding(
             api_key=api_key,
             api_url=api_url,
@@ -127,7 +119,6 @@ class JigsawStack:
         )
 
 
-
 class AsyncJigsawStack:
     validate: AsyncValidate
     web: AsyncWeb
@@ -135,7 +126,6 @@ class AsyncJigsawStack:
     vision: AsyncVision
     image_generation: AsyncImageGeneration
     store: AsyncStore
-    prompt_engine: AsyncPromptEngine
     api_key: str
     api_url: str
     disable_request_logging: bool
@@ -220,11 +210,6 @@ class AsyncJigsawStack:
             disable_request_logging=disable_request_logging,
         )
 
-        self.prompt_engine = AsyncPromptEngine(
-            api_key=api_key,
-            api_url=api_url,
-            disable_request_logging=disable_request_logging,
-        )
         self.embedding = AsyncEmbedding(
             api_key=api_key,
             api_url=api_url,
@@ -242,7 +227,6 @@ class AsyncJigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         )
-
 
 
 # Create a global instance of the Web class
