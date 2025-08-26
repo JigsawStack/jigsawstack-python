@@ -124,7 +124,7 @@ class ObjectDetectionResponse(TypedDict):
 
 
 class VOCRParams(TypedDict):
-    prompt: Union[str, List[str]]
+    prompt: NotRequired[Union[str, List[str]]]
     url: NotRequired[str]
     file_store_key: NotRequired[str]
     page_range: NotRequired[List[int]]

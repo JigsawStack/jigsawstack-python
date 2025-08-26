@@ -9,30 +9,6 @@ from .custom_typing import SupportedAccents
 from .helpers import build_path
 
 
-class TextToSpeechParams(TypedDict):
-    text: str
-    accent: NotRequired[SupportedAccents]
-    speaker_clone_url: NotRequired[str]
-    speaker_clone_file_store_key: NotRequired[str]
-    return_type: NotRequired[Literal["url", "binary", "base64"]]
-
-
-class TTSCloneParams(TypedDict):
-    url: NotRequired[str]
-    file_store_key: NotRequired[str]
-    name: str
-
-
-class ListTTSVoiceClonesParams(TypedDict):
-    limit: NotRequired[int]
-    page: NotRequired[int]
-
-
-class TextToSpeechResponse(TypedDict):
-    success: bool
-    text: str
-    chunks: List[object]
-
 
 class SpeechToTextParams(TypedDict):
     url: NotRequired[str]
@@ -115,51 +91,6 @@ class Audio(ClientConfig):
         ).perform_with_content()
         return resp
 
-    def text_to_speech(self, params: TextToSpeechParams) -> TextToSpeechResponse:
-        path = "/ai/tts"
-        resp = Request(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="post",
-        ).perform_with_content()
-        return resp
-
-    def speaker_voice_accents(self) -> TextToSpeechResponse:
-        path = "/ai/tts"
-        resp = Request(
-            config=self.config, path=path, params={}, verb="get"
-        ).perform_with_content()
-        return resp
-
-    def create_clone(self, params: TTSCloneParams) -> TextToSpeechResponse:
-        path = "/ai/tts/clone"
-        resp = Request(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="post",
-        ).perform_with_content()
-
-        return resp
-
-    def list_clones(self, params: ListTTSVoiceClonesParams) -> TextToSpeechResponse:
-        path = "/ai/tts/clone"
-        resp = Request(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="get",
-        ).perform_with_content()
-        return resp
-
-    def delete_clone(self, voice_id: str) -> TextToSpeechResponse:
-        path = f"/ai/tts/clone/{voice_id}"
-        resp = Request(
-            config=self.config, path=path, params={}, verb="delete"
-        ).perform_with_content()
-        return resp
-
 
 class AsyncAudio(ClientConfig):
     config: AsyncRequestConfig
@@ -215,51 +146,3 @@ class AsyncAudio(ClientConfig):
         ).perform_with_content()
         return resp
 
-    async def text_to_speech(self, params: TextToSpeechParams) -> TextToSpeechResponse:
-        path = "/ai/tts"
-        resp = await AsyncRequest(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="post",
-        ).perform_with_content()
-        return resp
-
-    async def speaker_voice_accents(self) -> TextToSpeechResponse:
-        path = "/ai/tts"
-        resp = await AsyncRequest(
-            config=self.config,
-            path=path,
-            params={},
-            verb="get",
-        ).perform_with_content()
-        return resp
-
-    async def create_clone(self, params: TTSCloneParams) -> TextToSpeechResponse:
-        path = "/ai/tts/clone"
-        resp = await AsyncRequest(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="post",
-        ).perform_with_content()
-        return resp
-
-    async def list_clones(
-        self, params: ListTTSVoiceClonesParams
-    ) -> TextToSpeechResponse:
-        path = "/ai/tts/clone"
-        resp = await AsyncRequest(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="get",
-        ).perform_with_content()
-        return resp
-
-    async def delete_clone(self, voice_id: str) -> TextToSpeechResponse:
-        path = f"/ai/tts/clone/{voice_id}"
-        resp = await AsyncRequest(
-            config=self.config, path=path, params={}, verb="delete"
-        ).perform_with_content()
-        return resp
