@@ -12,7 +12,7 @@ class Point(TypedDict):
     """
     X coordinate of the point
     """
-    
+
     y: int
     """
     Y coordinate of the point
@@ -24,27 +24,27 @@ class BoundingBox(TypedDict):
     """
     Top-left corner of the bounding box
     """
-    
+
     top_right: Point
     """
     Top-right corner of the bounding box
     """
-    
+
     bottom_left: Point
     """
     Bottom-left corner of the bounding box
     """
-    
+
     bottom_right: Point
     """
     Bottom-right corner of the bounding box
     """
-    
+
     width: int
     """
     Width of the bounding box
     """
-    
+
     height: int
     """
     Height of the bounding box
@@ -56,7 +56,7 @@ class GuiElement(TypedDict):
     """
     Bounding box coordinates of the GUI element
     """
-    
+
     content: Union[str, None]
     """
     Content of the GUI element, can be null if no object detected
@@ -68,12 +68,11 @@ class DetectedObject(TypedDict):
     """
     Bounding box coordinates of the detected object
     """
-    
+
     mask: NotRequired[str]
     """
     URL or base64 string depending on return_type - only present for some objects
     """
-
 
 
 class ObjectDetectionParams(TypedDict):
@@ -81,27 +80,27 @@ class ObjectDetectionParams(TypedDict):
     """
     URL of the image to process
     """
-    
+
     file_store_key: NotRequired[str]
     """
     File store key of the image to process
     """
-    
+
     prompts: NotRequired[List[str]]
     """
     List of prompts for object detection
     """
-    
+
     features: NotRequired[List[Literal["object_detection", "gui"]]]
     """
     List of features to enable: object_detection, gui
     """
-    
+
     annotated_image: NotRequired[bool]
     """
     Whether to return an annotated image
     """
-    
+
     return_type: NotRequired[Literal["url", "base64"]]
     """
     Format for returned images: url or base64
@@ -113,12 +112,12 @@ class ObjectDetectionResponse(TypedDict):
     """
     URL or base64 string of annotated image (included only if annotated_image=true and objects/gui_elements exist)
     """
-    
+
     gui_elements: NotRequired[List[GuiElement]]
     """
     List of detected GUI elements (included only if features includes "gui")
     """
-    
+
     objects: NotRequired[List[DetectedObject]]
     """
     List of detected objects (included only if features includes "object_detection")
@@ -126,7 +125,7 @@ class ObjectDetectionResponse(TypedDict):
 
 
 class VOCRParams(TypedDict):
-    prompt: Union[str, List[str]]
+    prompt: NotRequired[Union[str, List[str]]]
     url: NotRequired[str]
     file_store_key: NotRequired[str]
     page_range: NotRequired[List[int]]
@@ -173,7 +172,9 @@ class Vision(ClientConfig):
         ).perform_with_content()
         return resp
 
-    def object_detection(self, params: ObjectDetectionParams) -> ObjectDetectionResponse:
+    def object_detection(
+        self, params: ObjectDetectionParams
+    ) -> ObjectDetectionResponse:
         path = "/object_detection"
         resp = Request(
             config=self.config,
@@ -210,7 +211,9 @@ class AsyncVision(ClientConfig):
         ).perform_with_content()
         return resp
 
-    async def object_detection(self, params: ObjectDetectionParams) -> ObjectDetectionResponse:
+    async def object_detection(
+        self, params: ObjectDetectionParams
+    ) -> ObjectDetectionResponse:
         path = "/object_detection"
         resp = await AsyncRequest(
             config=self.config,

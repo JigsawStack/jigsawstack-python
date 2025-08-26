@@ -24,6 +24,7 @@ class JigsawStack:
     file: Store
     web: Web
     search: Search
+    classification: Classification
     api_key: str
     api_url: str
     disable_request_logging: bool
