@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Dict
 import os
 from .audio import Audio, AsyncAudio
 from .vision import Vision, AsyncVision
@@ -27,13 +27,15 @@ class JigsawStack:
     classification: Classification
     api_key: str
     api_url: str
-    disable_request_logging: bool
+    headers: Dict[str, str]
+    # disable_request_logging: bool
 
     def __init__(
         self,
         api_key: Union[str, None] = None,
         api_url: Union[str, None] = None,
-        disable_request_logging: Union[bool, None] = None,
+        # disable_request_logging: Union[bool, None] = None,
+        headers: Union[Dict[str, str], None] = None,
     ) -> None:
         if api_key is None:
             api_key = os.environ.get("JIGSAWSTACK_API_KEY")
@@ -50,6 +52,10 @@ class JigsawStack:
 
         self.api_key = api_key
         self.api_url = api_url
+
+        self.headers = headers or {}
+
+        disable_request_logging = self.headers.get("x-jigsaw-no-request-log")
 
         self.audio = Audio(
             api_key=api_key,

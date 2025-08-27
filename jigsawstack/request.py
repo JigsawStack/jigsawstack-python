@@ -12,7 +12,7 @@ T = TypeVar("T")
 class RequestConfig(TypedDict):
     api_url: str
     api_key: str
-    headers: Dict[str, str]
+    disable_request_logging: Union[bool, None] = False
 
 
 # This class wraps the HTTP request creation logic
@@ -34,9 +34,7 @@ class Request(Generic[T]):
         self.api_key = config.get("api_key")
         self.data = data
         self.headers = headers
-        self.disable_request_logging = config.get("headers", {}).get(
-            "x-jigsaw-no-request-log"
-        )
+        self.disable_request_logging = config.get("disable_request_logging")
         self.stream = stream
 
     def perform(self) -> Union[T, None]:

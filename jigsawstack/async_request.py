@@ -36,7 +36,9 @@ class AsyncRequest(Generic[T]):
         self.disable_request_logging = config.get("disable_request_logging")
         self.stream = stream
 
-    def __convert_params(self, params: Union[Dict[Any, Any], List[Dict[Any, Any]]]) -> Dict[str, str]:
+    def __convert_params(
+        self, params: Union[Dict[Any, Any], List[Dict[Any, Any]]]
+    ) -> Dict[str, str]:
         """
         Convert parameters to string values for URL encoding.
         """
@@ -45,10 +47,10 @@ class AsyncRequest(Generic[T]):
 
         if isinstance(params, str):
             return params
-        
+
         if isinstance(params, list):
             return {}  # List params are only used in JSON body
-        
+
         converted = {}
         for key, value in params.items():
             if isinstance(value, bool):
@@ -67,7 +69,15 @@ class AsyncRequest(Generic[T]):
             # For binary responses
             if resp.status == 200:
                 content_type = resp.headers.get("content-type", "")
-                if not resp.text or any(t in content_type for t in ["audio/", "image/", "application/octet-stream", "image/png"]):
+                if not resp.text or any(
+                    t in content_type
+                    for t in [
+                        "audio/",
+                        "image/",
+                        "application/octet-stream",
+                        "image/png",
+                    ]
+                ):
                     content = await resp.read()
                     return cast(T, content)
 
