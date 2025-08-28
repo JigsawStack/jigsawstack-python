@@ -9,7 +9,6 @@ from .custom_typing import SupportedAccents
 from .helpers import build_path
 
 
-
 class SpeechToTextParams(TypedDict):
     url: NotRequired[str]
     file_store_key: NotRequired[str]
@@ -57,7 +56,7 @@ class Audio(ClientConfig):
     def speech_to_text(self, params: SpeechToTextParams) -> SpeechToTextResponse: ...
     @overload
     def speech_to_text(
-        self, file: bytes, options: Optional[SpeechToTextParams] = None
+        self, blob: bytes, options: Optional[SpeechToTextParams] = None
     ) -> SpeechToTextResponse: ...
 
     def speech_to_text(
@@ -114,7 +113,7 @@ class AsyncAudio(ClientConfig):
     ) -> SpeechToTextResponse: ...
     @overload
     async def speech_to_text(
-        self, file: bytes, options: Optional[SpeechToTextParams] = None
+        self, blob: bytes, options: Optional[SpeechToTextParams] = None
     ) -> SpeechToTextResponse: ...
 
     async def speech_to_text(
@@ -145,4 +144,3 @@ class AsyncAudio(ClientConfig):
             verb="post",
         ).perform_with_content()
         return resp
-

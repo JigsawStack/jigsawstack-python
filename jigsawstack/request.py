@@ -50,13 +50,16 @@ class Request(Generic[T]):
         """
         resp = self.make_request(url=f"{self.api_url}{self.path}")
 
-        #for binary responses
+        # for binary responses
         if resp.status_code == 200:
             content_type = resp.headers.get("content-type", "")
-            if not resp.text or any(t in content_type for t in ["audio/", "image/", "application/octet-stream", "image/png"]):
+            if not resp.text or any(
+                t in content_type
+                for t in ["audio/", "image/", "application/octet-stream", "image/png"]
+            ):
                 return cast(T, resp.content)
 
-        #for json resposes.
+        # for json resposes.
         if resp.status_code != 200:
             try:
                 error = resp.json()
@@ -105,7 +108,7 @@ class Request(Generic[T]):
                 err=error.get("error"),
             )
 
-        #for binary responses
+        # for binary responses
         if resp.status_code == 200:
             content_type = resp.headers.get("content-type", "")
             if "application/json" not in content_type:

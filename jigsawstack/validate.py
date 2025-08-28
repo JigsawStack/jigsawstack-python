@@ -50,7 +50,6 @@ class NSFWParams(TypedDict):
     file_store_key: NotRequired[str]
 
 
-
 class NSFWResponse(TypedDict):
     success: bool
     nsfw: bool
@@ -107,25 +106,39 @@ class Validate(ClientConfig):
             verb="get",
         ).perform_with_content()
         return resp
-    
-    def nsfw(self, params: Union[NSFWParams, bytes]) -> NSFWResponse:
-        path="/validate/nsfw"
-        if isinstance(params, dict):
+
+    @overload
+    def nsfw(self, params: NSFWParams) -> NSFWResponse: ...
+    @overload
+    def nsfw(self, blob: bytes, options: NSFWParams = None) -> NSFWResponse: ...
+
+    def nsfw(
+        self,
+        blob: Union[NSFWParams, bytes],
+        options: NSFWParams = None,
+    ) -> NSFWResponse:
+        if isinstance(
+            blob, dict
+        ):  # If params is provided as a dict, we assume it's the first argument
             resp = Request(
                 config=self.config,
-                path=path,
-                params=cast(Dict[Any, Any], params),
+                path="/validate/nsfw",
+                params=cast(Dict[Any, Any], blob),
                 verb="post",
             ).perform_with_content()
             return resp
 
-        _headers = {"Content-Type": "application/octet-stream"}
+        options = options or {}
+        path = build_path(base_path="/validate/nsfw", params=options)
+        content_type = options.get("content_type", "application/octet-stream")
+        headers = {"Content-Type": content_type}
+
         resp = Request(
             config=self.config,
             path=path,
-            params={}, #since we're already passing data.
-            data=params,
-            headers=_headers,
+            params=options,
+            data=blob,
+            headers=headers,
             verb="post",
         ).perform_with_content()
         return resp
@@ -138,9 +151,7 @@ class Validate(ClientConfig):
         resp = Request(
             config=self.config,
             path=path,
-            params=cast(
-                Dict[Any, Any], params
-            ),
+            params=cast(Dict[Any, Any], params),
             verb="post",
         ).perform_with_content()
         return resp
@@ -198,25 +209,39 @@ class AsyncValidate(ClientConfig):
             verb="get",
         ).perform_with_content()
         return resp
-    
-    async def nsfw(self, params: Union[NSFWParams, bytes]) -> NSFWResponse:
-        path="/validate/nsfw"
-        if isinstance(params, dict):
+
+    @overload
+    async def nsfw(self, params: NSFWParams) -> NSFWResponse: ...
+    @overload
+    async def nsfw(self, blob: bytes, options: NSFWParams = None) -> NSFWResponse: ...
+
+    async def nsfw(
+        self,
+        blob: Union[NSFWParams, bytes],
+        options: NSFWParams = None,
+    ) -> NSFWResponse:
+        if isinstance(
+            blob, dict
+        ):  # If params is provided as a dict, we assume it's the first argument
             resp = await AsyncRequest(
                 config=self.config,
-                path=path,
-                params=cast(Dict[Any, Any], params),
+                path="/validate/nsfw",
+                params=cast(Dict[Any, Any], blob),
                 verb="post",
             ).perform_with_content()
             return resp
 
-        _headers = {"Content-Type": "application/octet-stream"}
+        options = options or {}
+        path = build_path(base_path="/validate/nsfw", params=options)
+        content_type = options.get("content_type", "application/octet-stream")
+        headers = {"Content-Type": content_type}
+
         resp = await AsyncRequest(
             config=self.config,
             path=path,
-            params={},
-            data=params,
-            headers=_headers,
+            params=options,
+            data=blob,
+            headers=headers,
             verb="post",
         ).perform_with_content()
         return resp
@@ -229,9 +254,7 @@ class AsyncValidate(ClientConfig):
         resp = await AsyncRequest(
             config=self.config,
             path=path,
-            params=cast(
-                Dict[Any, Any], params
-            ),
+            params=cast(Dict[Any, Any], params),
             verb="post",
         ).perform_with_content()
         return resp
