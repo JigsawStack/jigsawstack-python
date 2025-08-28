@@ -164,7 +164,7 @@ class Vision(ClientConfig):
     @overload
     def vocr(self, params: VOCRParams) -> OCRResponse: ...
     @overload
-    def vocr(self, file: bytes, options: VOCRParams = None) -> VOCRParams: ...
+    def vocr(self, blob: bytes, options: VOCRParams = None) -> OCRResponse: ...
 
     def vocr(
         self,
@@ -203,7 +203,7 @@ class Vision(ClientConfig):
     ) -> ObjectDetectionResponse: ...
     @overload
     def object_detection(
-        self, file: bytes, options: ObjectDetectionParams = None
+        self, blob: bytes, options: ObjectDetectionParams = None
     ) -> ObjectDetectionResponse: ...
 
     def object_detection(
@@ -255,7 +255,7 @@ class AsyncVision(ClientConfig):
     @overload
     async def vocr(self, params: VOCRParams) -> OCRResponse: ...
     @overload
-    async def vocr(self, file: bytes, options: VOCRParams = None) -> VOCRParams: ...
+    async def vocr(self, blob: bytes, options: VOCRParams = None) -> OCRResponse: ...
 
     async def vocr(
         self,
@@ -263,7 +263,7 @@ class AsyncVision(ClientConfig):
         options: VOCRParams = None,
     ) -> OCRResponse:
         if isinstance(blob, dict):
-            resp = AsyncRequest(
+            resp = await AsyncRequest(
                 config=self.config,
                 path="/vocr",
                 params=cast(Dict[Any, Any], blob),
@@ -276,7 +276,7 @@ class AsyncVision(ClientConfig):
         content_type = options.get("content_type", "application/octet-stream")
         headers = {"Content-Type": content_type}
 
-        resp = Request(
+        resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=options,
@@ -292,7 +292,7 @@ class AsyncVision(ClientConfig):
     ) -> ObjectDetectionResponse: ...
     @overload
     async def object_detection(
-        self, file: bytes, options: ObjectDetectionParams = None
+        self, blob: bytes, options: ObjectDetectionParams = None
     ) -> ObjectDetectionResponse: ...
 
     async def object_detection(
