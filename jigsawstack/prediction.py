@@ -1,9 +1,7 @@
 from typing import Any, Dict, List, Union, cast
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import TypedDict
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest
-
-from typing import List, Union
 from ._config import ClientConfig
 
 
@@ -22,11 +20,12 @@ class Dataset(TypedDict):
 class PredictionParams(TypedDict):
     dataset: List[Dataset]
     """
-    The dataset to make predictions on. This is an array of object with keys date and value. See example below for more information.
+    The dataset to make predictions on. This is an array of object with keys date and value.
+    See example below for more information.
     """
     steps: int
     """
-    The number of predictions to make. The defualt is 5.
+    The number of predictions to make. The default is 5.
     """
 
 

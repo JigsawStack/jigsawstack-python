@@ -104,7 +104,6 @@ class ClassificationResponse(TypedDict):
     """
 
 
-
 class Classification(ClientConfig):
 
     config: RequestConfig
@@ -131,6 +130,7 @@ class Classification(ClientConfig):
             verb="post",
         ).perform_with_content()
         return resp
+
     def image(self, params: ClassificationImageParams) -> ClassificationResponse:
         path = "/classification"
         resp = Request(
@@ -140,7 +140,6 @@ class Classification(ClientConfig):
             verb="post",
         ).perform_with_content()
         return resp
-
 
 
 class AsyncClassification(ClientConfig):

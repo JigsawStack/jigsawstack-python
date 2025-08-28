@@ -4,10 +4,12 @@ from .request import Request, RequestConfig
 from .async_request import AsyncRequest
 from ._config import ClientConfig
 
+
 class AdvanceConfig(TypedDict):
     negative_prompt: NotRequired[str]
     guidance: NotRequired[int]
     seed: NotRequired[int]
+
 
 class ImageGenerationParams(TypedDict):
     prompt: Required[str]
@@ -53,6 +55,7 @@ class ImageGenerationParams(TypedDict):
 
     return_type: NotRequired[Literal["url", "binary", "base64"]]
 
+
 class ImageGenerationResponse(TypedDict):
     success: bool
     """
@@ -62,6 +65,7 @@ class ImageGenerationResponse(TypedDict):
     """
     The generated image as a blob.
     """
+
 
 class ImageGeneration(ClientConfig):
     config: RequestConfig
@@ -84,10 +88,11 @@ class ImageGeneration(ClientConfig):
         resp = Request(
             config=self.config,
             path=path,
-            params=cast(Dict[Any, Any], params), # type: ignore
+            params=cast(Dict[Any, Any], params),  # type: ignore
             verb="post",
         ).perform()
         return resp
+
 
 class AsyncImageGeneration(ClientConfig):
     config: RequestConfig
@@ -110,11 +115,7 @@ class AsyncImageGeneration(ClientConfig):
         resp = await AsyncRequest(
             config=self.config,
             path=path,
-            params=cast(Dict[Any, Any], params), # type: ignore
+            params=cast(Dict[Any, Any], params),  # type: ignore
             verb="post",
         ).perform()
         return resp
-
-
-
-

@@ -71,11 +71,13 @@ class SearchSuggestionsParams(TypedDict):
     The search value. The maximum query character length is 200.
     """
 
+
 class DeepResearchConfig(TypedDict):
     max_depth: NotRequired[int]
     max_breadth: NotRequired[int]
     max_output_tokens: NotRequired[int]
     target_output_tokens: NotRequired[int]
+
 
 class SearchParams(TypedDict):
     query: str
@@ -124,8 +126,6 @@ class SearchParams(TypedDict):
     """
 
 
-
-
 class Search(ClientConfig):
     config: RequestConfig
 
@@ -156,7 +156,7 @@ class Search(ClientConfig):
             "spell_check": spell_check,
         }
 
-        path = f"/web/search"
+        path = "/web/search"
         resp = Request(
             config=self.config,
             path=path,
@@ -195,7 +195,7 @@ class AsyncSearch(ClientConfig):
         )
 
     async def search(self, params: SearchParams) -> SearchResponse:
-        path = f"/web/search"
+        path = "/web/search"
         query = params["query"]
         ai_overview = params.get("ai_overview", "True")
         safe_search = params.get("safe_search", "moderate")

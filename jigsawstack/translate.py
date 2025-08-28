@@ -5,6 +5,7 @@ from .async_request import AsyncRequest
 from ._config import ClientConfig
 from .helpers import build_path
 
+
 class TranslateImageParams(TypedDict):
     target_language: str
     """
@@ -21,6 +22,7 @@ class TranslateImageParams(TypedDict):
 
     return_type: NotRequired[Literal["url", "binary", "base64"]]
 
+
 class TranslateParams(TypedDict):
     target_language: str
     """
@@ -35,6 +37,7 @@ class TranslateParams(TypedDict):
     The text to translate.
     """
 
+
 class TranslateResponse(TypedDict):
     success: bool
     """
@@ -45,6 +48,7 @@ class TranslateResponse(TypedDict):
     The translated text.
     """
 
+
 class TranslateImageResponse(TypedDict):
     success: bool
     """
@@ -54,6 +58,7 @@ class TranslateImageResponse(TypedDict):
     """
     The image data that was translated.
     """
+
 
 class TranslateListResponse(TypedDict):
     success: bool
@@ -104,7 +109,7 @@ class Translate(ClientConfig):
         blob: Union[TranslateImageParams, bytes],
         options: TranslateImageParams = None,
     ) -> TranslateImageResponse:
-        if isinstance(blob, dict): # If params is provided as a dict, we assume it's the first argument
+        if isinstance(blob, dict):  # If params is provided as a dict, we assume it's the first argument
             resp = Request(
                 config=self.config,
                 path="/ai/translate/image",

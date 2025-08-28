@@ -6,7 +6,6 @@ This module defines the base types for platform-wide error
 
 from typing import Any, Dict, Union
 
-
 class JigsawStackError(Exception):
     """Base class for all errors raised by JigsawStack SDK.
     This is the parent class of all exceptions (server side)
@@ -37,7 +36,6 @@ class JigsawStackError(Exception):
         self.error = err
         self.success = False
 
-
 class MissingApiKeyError(JigsawStackError):
 
     def __init__(
@@ -59,10 +57,7 @@ class MissingApiKeyError(JigsawStackError):
             error_type=error_type,
         )
 
-
 class InvalidApiKeyError(JigsawStackError):
-
-
     def __init__(
         self,
         message: str,
@@ -79,10 +74,7 @@ class InvalidApiKeyError(JigsawStackError):
             error_type=error_type,
         )
 
-
 class ValidationError(JigsawStackError):
-
-
     def __init__(
         self,
         message: str,
@@ -105,7 +97,6 @@ class ValidationError(JigsawStackError):
             suggested_action=suggested_action,
             error_type=error_type,
         )
-
 
 class MissingRequiredFieldsError(JigsawStackError):
 
@@ -132,10 +123,7 @@ class MissingRequiredFieldsError(JigsawStackError):
             error_type=error_type,
         )
 
-
 class ApplicationError(JigsawStackError):
-
-
     def __init__(
         self,
         message: str,
@@ -157,8 +145,6 @@ class ApplicationError(JigsawStackError):
             suggested_action=suggested_action,
             error_type=error_type,
         )
-
-
 # Dict with error code -> error type mapping
 ERRORS: Dict[str, Dict[str, Any]] = {
     "400": {"validation_error": ValidationError},
@@ -170,7 +156,6 @@ ERRORS: Dict[str, Dict[str, Any]] = {
     "403": {"invalid_api_key": InvalidApiKeyError},
     "500": {"application_error": ApplicationError},
 }
-
 
 def raise_for_code_and_type(
     code: Union[str, int], message: str, err : Union[str, Dict[str, Any]] = None
@@ -209,7 +194,6 @@ def raise_for_code_and_type(
     raise JigsawStackError(
         code=code, message=message, err=err,  suggested_action=""
     )
-
 
 class NoContentError(Exception):
     """Raised when the response body is empty."""

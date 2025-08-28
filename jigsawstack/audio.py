@@ -51,6 +51,7 @@ class Audio(ClientConfig):
 
     @overload
     def speech_to_text(self, params: SpeechToTextParams) -> SpeechToTextResponse: ...
+
     @overload
     def speech_to_text(
         self, file: bytes, options: Optional[SpeechToTextParams] = None
@@ -108,6 +109,7 @@ class AsyncAudio(ClientConfig):
     async def speech_to_text(
         self, params: SpeechToTextParams
     ) -> SpeechToTextResponse: ...
+
     @overload
     async def speech_to_text(
         self, file: bytes, options: Optional[SpeechToTextParams] = None
@@ -141,4 +143,3 @@ class AsyncAudio(ClientConfig):
             verb="post",
         ).perform_with_content()
         return resp
-
