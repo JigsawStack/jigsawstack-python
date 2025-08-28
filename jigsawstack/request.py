@@ -97,6 +97,7 @@ class Request(Generic[T]):
             raise_for_code_and_type(
                 code=500,
                 message="Failed to parse JigsawStack API response. Please try again.",
+                error_type="InternalServerError",
             )
 
         if resp.status_code != 200:
