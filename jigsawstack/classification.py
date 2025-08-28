@@ -10,7 +10,7 @@ class DatasetItemText(TypedDict):
     """
     Type of the dataset item: text
     """
-    
+
     value: str
     """
     Value of the dataset item
@@ -22,7 +22,7 @@ class DatasetItemImage(TypedDict):
     """
     Type of the dataset item: image
     """
-    
+
     value: str
     """
     Value of the dataset item
@@ -34,12 +34,12 @@ class LabelItemText(TypedDict):
     """
     Optional key for the label
     """
-    
+
     type: Literal["text"]
     """
     Type of the label: text
     """
-    
+
     value: str
     """
     Value of the label
@@ -51,12 +51,12 @@ class LabelItemImage(TypedDict):
     """
     Optional key for the label
     """
-    
+
     type: Literal["image", "text"]
     """
     Type of the label: image or text
     """
-    
+
     value: str
     """
     Value of the label
@@ -68,12 +68,12 @@ class ClassificationTextParams(TypedDict):
     """
     List of text dataset items to classify
     """
-    
+
     labels: List[LabelItemText]
     """
     List of text labels for classification
     """
-    
+
     multiple_labels: NotRequired[bool]
     """
     Whether to allow multiple labels per item
@@ -85,12 +85,12 @@ class ClassificationImageParams(TypedDict):
     """
     List of image dataset items to classify
     """
-    
+
     labels: List[LabelItemImage]
     """
     List of labels for classification
     """
-    
+
     multiple_labels: NotRequired[bool]
     """
     Whether to allow multiple labels per item

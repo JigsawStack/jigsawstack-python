@@ -61,7 +61,7 @@ class MissingApiKeyError(JigsawStackError):
 
 
 class InvalidApiKeyError(JigsawStackError):
-   
+
 
     def __init__(
         self,

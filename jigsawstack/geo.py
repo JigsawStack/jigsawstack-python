@@ -2,7 +2,6 @@ from typing import Any, Dict, List, Union, cast
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from .async_request import AsyncRequestConfig, AsyncRequest
-from typing import List, Union
 from ._config import ClientConfig
 
 

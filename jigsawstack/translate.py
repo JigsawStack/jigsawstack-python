@@ -2,7 +2,6 @@ from typing import Any, Dict, List, Union, cast, overload
 from typing_extensions import NotRequired, TypedDict, Literal
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest
-from typing import List, Union
 from ._config import ClientConfig
 from .helpers import build_path
 
@@ -94,7 +93,7 @@ class Translate(ClientConfig):
             verb="post",
         ).perform()
         return resp
-    
+
     @overload
     def image(self, params: TranslateImageParams) -> TranslateImageResponse: ...
     @overload
@@ -156,12 +155,12 @@ class AsyncTranslate(ClientConfig):
             verb="post",
         ).perform()
         return resp
-    
+
     @overload
     async def image(self, params: TranslateImageParams) -> TranslateImageResponse: ...
     @overload
     async def image(self, file: bytes, options: TranslateImageParams = None) -> TranslateImageParams: ...
-    
+
     async def image(
         self,
         blob: Union[TranslateImageParams, bytes],

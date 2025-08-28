@@ -26,7 +26,7 @@ class PredictionParams(TypedDict):
     """
     steps: int
     """
-    The number of predictions to make. The defualt is 5. 
+    The number of predictions to make. The defualt is 5.
     """
 
 

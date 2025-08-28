@@ -45,10 +45,10 @@ class AsyncRequest(Generic[T]):
 
         if isinstance(params, str):
             return params
-        
+
         if isinstance(params, list):
             return {}  # List params are only used in JSON body
-        
+
         converted = {}
         for key, value in params.items():
             if isinstance(value, bool):

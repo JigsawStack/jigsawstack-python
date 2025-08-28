@@ -2,7 +2,6 @@ from typing import Any, Dict, List, Union, cast, Literal, overload
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest
-from typing import List, Union
 from ._config import ClientConfig
 from .helpers import build_path
 
@@ -49,7 +48,7 @@ class Embedding(ClientConfig):
         blob: Union[EmbeddingParams, bytes],
         options: EmbeddingParams = None,
     ) -> EmbeddingResponse:
-        path="/embedding"
+        path = "/embedding"
         if isinstance(blob, dict):
             resp = Request(
                 config=self.config,
@@ -102,7 +101,7 @@ class AsyncEmbedding(ClientConfig):
         blob: Union[EmbeddingParams, bytes],
         options: EmbeddingParams = None,
     ) -> EmbeddingResponse:
-        path="/embedding"
+        path = "/embedding"
         if isinstance(blob, dict):
             resp = await AsyncRequest(
                 config=self.config,

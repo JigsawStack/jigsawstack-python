@@ -1,9 +1,7 @@
-from typing import Any, Dict, List, Union, cast
+from typing import Any, Dict, Union, cast
 from typing_extensions import NotRequired, TypedDict, Literal, Required
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest
-
-from typing import List, Union
 from ._config import ClientConfig
 
 class AdvanceConfig(TypedDict):
@@ -90,7 +88,7 @@ class ImageGeneration(ClientConfig):
             verb="post",
         ).perform()
         return resp
-    
+
 class AsyncImageGeneration(ClientConfig):
     config: RequestConfig
 
@@ -116,7 +114,7 @@ class AsyncImageGeneration(ClientConfig):
             verb="post",
         ).perform()
         return resp
-    
 
 
-    
+
+

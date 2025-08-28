@@ -1,10 +1,9 @@
-from typing import Any, Dict, List, cast, Union, Optional
+from typing import Any, Dict, List, cast, Union, Optional, overload
 from typing_extensions import NotRequired, TypedDict, Literal
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
 from .helpers import build_path
-
 
 
 class SpeechToTextParams(TypedDict):
