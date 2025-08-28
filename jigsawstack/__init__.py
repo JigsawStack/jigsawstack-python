@@ -40,13 +40,14 @@ class JigsawStack:
 
         if api_key is None:
             raise ValueError(
-                "The api_key client option must be set either by passing api_key to the client or by setting the JIGSAWSTACK_API_KEY environment variable"
+                "The api_key client option must be set either by passing api_key to the client or by setting "
+                "the JIGSAWSTACK_API_KEY environment variable"
             )
 
         if api_url is None:
             api_url = os.environ.get("JIGSAWSTACK_API_URL")
         if api_url is None:
-            api_url = f"https://api.jigsawstack.com/v1"
+            api_url = "https://api.jigsawstack.com/v1"
 
         self.api_key = api_key
         self.api_url = api_url
@@ -101,7 +102,7 @@ class JigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         )
-        
+
         self.embedding = Embedding(
             api_key=api_key,
             api_url=api_url,
@@ -118,7 +119,6 @@ class JigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         )
-
 
 
 class AsyncJigsawStack:
@@ -143,13 +143,14 @@ class AsyncJigsawStack:
 
         if api_key is None:
             raise ValueError(
-                "The api_key client option must be set either by passing api_key to the client or by setting the JIGSAWSTACK_API_KEY environment variable"
+                "The api_key client option must be set either by passing api_key to the client or by setting "
+                "the JIGSAWSTACK_API_KEY environment variable"
             )
 
         if api_url is None:
             api_url = os.environ.get("JIGSAWSTACK_API_URL")
         if api_url is None:
-            api_url = f"https://api.jigsawstack.com/v1"
+            api_url = "https://api.jigsawstack.com/v1"
 
         self.api_key = api_key
         self.api_url = api_url
@@ -212,7 +213,6 @@ class AsyncJigsawStack:
             disable_request_logging=disable_request_logging,
         )
 
-
         self.embedding = AsyncEmbedding(
             api_key=api_key,
             api_url=api_url,
@@ -230,7 +230,6 @@ class AsyncJigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         )
-
 
 
 # Create a global instance of the Web class

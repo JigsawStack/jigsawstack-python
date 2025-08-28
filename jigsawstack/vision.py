@@ -1,7 +1,5 @@
 from typing import Any, Dict, List, Union, cast, Optional
 from typing_extensions import NotRequired, TypedDict, Literal
-from typing import Any, Dict, List, cast
-from typing_extensions import NotRequired, TypedDict, Literal
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig

@@ -1,12 +1,14 @@
-from typing import Any, Dict, List, Union, cast
+from typing import Any, Union
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
 from .helpers import build_path
-from .exceptions import JigsawStackError
+
+
 class FileDeleteResponse(TypedDict):
     success: bool
+
 
 class FileUploadParams(TypedDict):
     overwrite: NotRequired[bool]
@@ -14,12 +16,13 @@ class FileUploadParams(TypedDict):
     content_type: NotRequired[str]
     temp_public_url: NotRequired[bool]
 
+
 class FileUploadResponse(TypedDict):
     key: str
     url: str
     size: int
-    temp_public_url: NotRequired[str] # Optional, only if temp_public_url is set to True in params
-    
+    temp_public_url: NotRequired[str]  # Optional, only if temp_public_url is set to True in params
+
 
 class Store(ClientConfig):
 
@@ -41,10 +44,10 @@ class Store(ClientConfig):
     def upload(self, file: bytes, options: Union[FileUploadParams, None] = None) -> FileUploadResponse:
         if options is None:
             options = {}
-            
+
         path = build_path(base_path="/store/file", params=options)
         content_type = options.get("content_type", "application/octet-stream")
-        
+
         _headers = {"Content-Type": content_type}
 
         resp = Request(
@@ -93,12 +96,11 @@ class AsyncStore(ClientConfig):
             api_key=api_key,
             disable_request_logging=disable_request_logging,
         )
-        
 
     async def upload(self, file: bytes, options: Union[FileUploadParams, None] = None) -> FileUploadResponse:
         if options is None:
             options = {}
-            
+
         path = build_path(base_path="/store/file", params=options)
         content_type = options.get("content_type", "application/octet-stream")
         _headers = {"Content-Type": content_type}
