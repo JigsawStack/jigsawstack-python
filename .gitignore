@@ -30,3 +30,4 @@ pyproject.toml
 uv.lock
 
 .ruff_cache/
+local_tests/

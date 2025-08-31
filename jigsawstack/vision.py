@@ -105,6 +105,11 @@ class ObjectDetectionParams(TypedDict):
     Format for returned images: url or base64
     """
 
+    return_masks: NotRequired[bool]
+    """
+    Whether to return masks for the detected objects
+    """
+
 
 class ObjectDetectionResponse(TypedDict):
     annotated_image: NotRequired[str]
