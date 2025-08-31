@@ -127,6 +127,11 @@ class ObjectDetectionResponse(TypedDict):
     List of detected objects (included only if features includes "object_detection")
     """
 
+    tags: NotRequired[List[str]]
+    """
+    List of tags returned by the object detection model
+    """
+
 
 class VOCRParams(TypedDict):
     prompt: NotRequired[Union[str, List[str]]]
