@@ -13,6 +13,7 @@ from .search import (
     AsyncSearch,
 )
 from .helpers import build_path
+from ._types import BaseResponse
 
 
 #
@@ -62,7 +63,7 @@ class HTMLToAnyParams(TypedDict):
     return_type: NotRequired[Literal["url", "binary", "base64"]]
 
 
-class HTMLToAnyResponse(TypedDict):
+class HTMLToAnyResponse(BaseResponse):
     html: str
 
 
@@ -84,25 +85,23 @@ class CookieParameter(TypedDict):
 
 
 class GotoOptions(TypedDict):
-    timeout: int
-    wait_until: str
+    timeout: NotRequired[int]
+    wait_until: NotRequired[
+        Literal["load", "domcontentloaded", "networkidle0", "networkidle2"]
+    ]
 
 
 class WaitFor(TypedDict):
-    mode: str
+    mode: Literal["selector", "timeout", "function"]
     value: Union[str, int]
 
 
-class AdvanceConfigRequest(TypedDict):
-    console: bool
-    network: bool
-    cookies: bool
+class AdvanceConfig(TypedDict):
+    console: NotRequired[bool]
+    network: NotRequired[bool]
+    cookies: NotRequired[bool]
 
 
-class AdvanceConfigResponse(TypedDict):
-    console: list
-    network: list
-    cookies: list
 
 
 class BYOProxyAuth(TypedDict):
@@ -116,14 +115,13 @@ class BYOProxy(TypedDict):
 
 
 class BaseAIScrapeParams(TypedDict):
-    url: str
-    root_element_selector: NotRequired[str]
-    page_position: NotRequired[int]
+    url: NotRequired[str]
+    html: NotRequired[str]
     http_headers: NotRequired[Dict[str, Any]]
     reject_request_pattern: NotRequired[List[str]]
     goto_options: NotRequired[GotoOptions]
     wait_for: NotRequired[WaitFor]
-    advance_config: NotRequired[AdvanceConfigRequest]
+    advance_config: NotRequired[AdvanceConfig]
     size_preset: NotRequired[str]
     is_mobile: NotRequired[bool]
     scale: NotRequired[int]
@@ -132,19 +130,14 @@ class BaseAIScrapeParams(TypedDict):
     cookies: NotRequired[List[CookieParameter]]
     force_rotate_proxy: NotRequired[bool]
     byo_proxy: NotRequired[BYOProxy]
-
-
-class AIScrapeParamsWithSelector(BaseAIScrapeParams):
-    selectors: List[str]
-    element_prompts: NotRequired[List[str]]
-
-
-class AIScrapeParamsWithPrompts(BaseAIScrapeParams):
+    features: NotRequired[List[Literal["meta", "link"]]]
     selectors: NotRequired[List[str]]
-    element_prompts: List[str]
 
 
-AIScrapeParams = Union[AIScrapeParamsWithSelector, AIScrapeParamsWithPrompts]
+class AIScrapeParams(BaseAIScrapeParams):
+    element_prompts: NotRequired[List[str]]
+    root_element_selector: NotRequired[str]
+    page_position: NotRequired[int]
 
 
 class Attribute(TypedDict):
@@ -177,12 +170,11 @@ class Meta(TypedDict):
     og_image: Optional[str]
 
 
-class AIScrapeResponse(TypedDict):
-    success: bool
+class AIScrapeResponse(BaseResponse):
     data: List[DataItem]
     page_position: int
     page_position_length: int
-    advance_config: Optional[AdvanceConfigResponse]
+    advance_config: Optional[AdvanceConfig]
     context: Any
     selectors: Dict[str, List[str]]
     meta: Optional[Meta]
