@@ -5,92 +5,46 @@ from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
 
 
-class DatasetItemText(TypedDict):
-    type: Literal["text"]
+class DatasetItem(TypedDict):
+    type: Union[Literal["text"], Literal["image"]]
     """
     Type of the dataset item: text
     """
-    
+
     value: str
     """
     Value of the dataset item
     """
 
 
-class DatasetItemImage(TypedDict):
-    type: Literal["image"]
-    """
-    Type of the dataset item: image
-    """
-    
-    value: str
-    """
-    Value of the dataset item
-    """
-
-
-class LabelItemText(TypedDict):
+class LabelItem(TypedDict):
     key: NotRequired[str]
     """
     Optional key for the label
     """
-    
-    type: Literal["text"]
+
+    type: Union[Literal["text"], Literal["image"]]
     """
     Type of the label: text
     """
-    
+
     value: str
     """
     Value of the label
     """
 
 
-class LabelItemImage(TypedDict):
-    key: NotRequired[str]
-    """
-    Optional key for the label
-    """
-    
-    type: Literal["image", "text"]
-    """
-    Type of the label: image or text
-    """
-    
-    value: str
-    """
-    Value of the label
-    """
-
-
-class ClassificationTextParams(TypedDict):
-    dataset: List[DatasetItemText]
+class ClassificationParams(TypedDict):
+    dataset: List[DatasetItem]
     """
     List of text dataset items to classify
     """
-    
-    labels: List[LabelItemText]
+
+    labels: List[LabelItem]
     """
     List of text labels for classification
     """
-    
-    multiple_labels: NotRequired[bool]
-    """
-    Whether to allow multiple labels per item
-    """
 
-
-class ClassificationImageParams(TypedDict):
-    dataset: List[DatasetItemImage]
-    """
-    List of image dataset items to classify
-    """
-    
-    labels: List[LabelItemImage]
-    """
-    List of labels for classification
-    """
-    
     multiple_labels: NotRequired[bool]
     """
     Whether to allow multiple labels per item
@@ -102,7 +56,6 @@ class ClassificationResponse(TypedDict):
     """
     Classification predictions - single labels or multiple labels per item
     """
-
 
 
 class Classification(ClientConfig):
@@ -122,7 +75,7 @@ class Classification(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    def text(self, params: ClassificationTextParams) -> ClassificationResponse:
+    def classify(self, params: ClassificationParams) -> ClassificationResponse:
         path = "/classification"
         resp = Request(
             config=self.config,
@@ -131,16 +84,6 @@ class Classification(ClientConfig):
             verb="post",
         ).perform_with_content()
         return resp
-    def image(self, params: ClassificationImageParams) -> ClassificationResponse:
-        path = "/classification"
-        resp = Request(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="post",
-        ).perform_with_content()
-        return resp
-
 
 
 class AsyncClassification(ClientConfig):
@@ -159,17 +102,7 @@ class AsyncClassification(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    async def text(self, params: ClassificationTextParams) -> ClassificationResponse:
-        path = "/classification"
-        resp = await AsyncRequest(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="post",
-        ).perform_with_content()
-        return resp
-
-    async def image(self, params: ClassificationImageParams) -> ClassificationResponse:
+    async def classify(self, params: ClassificationParams) -> ClassificationResponse:
         path = "/classification"
         resp = await AsyncRequest(
             config=self.config,
