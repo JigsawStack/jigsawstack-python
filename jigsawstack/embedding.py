@@ -13,13 +13,18 @@ class EmbeddingParams(TypedDict):
     type: Literal["text", "text-other", "image", "audio", "pdf"]
     url: NotRequired[str]
     file_store_key: NotRequired[str]
-    token_overflow_mode: NotRequired[Literal["truncate", "chunk", "error"]] = "chunk"
+    token_overflow_mode: NotRequired[Literal["truncate", "error"]]
+
+
+class Chunk(TypedDict):
+    text: str
+    timestamp: List[int]
 
 
 class EmbeddingResponse(TypedDict):
     success: bool
     embeddings: List[List[float]]
-    chunks: List[str]
+    chunks: List[Chunk]
 
 
 class Embedding(ClientConfig):
@@ -42,14 +47,16 @@ class Embedding(ClientConfig):
     @overload
     def execute(self, params: EmbeddingParams) -> EmbeddingResponse: ...
     @overload
-    def execute(self, blob: bytes, options: EmbeddingParams = None) -> EmbeddingResponse: ...
+    def execute(
+        self, blob: bytes, options: EmbeddingParams = None
+    ) -> EmbeddingResponse: ...
 
     def execute(
         self,
         blob: Union[EmbeddingParams, bytes],
         options: EmbeddingParams = None,
     ) -> EmbeddingResponse:
-        path="/embedding"
+        path = "/embedding"
         if isinstance(blob, dict):
             resp = Request(
                 config=self.config,
@@ -95,14 +102,16 @@ class AsyncEmbedding(ClientConfig):
     @overload
     async def execute(self, params: EmbeddingParams) -> EmbeddingResponse: ...
     @overload
-    async def execute(self, blob: bytes, options: EmbeddingParams = None) -> EmbeddingResponse: ...
+    async def execute(
+        self, blob: bytes, options: EmbeddingParams = None
+    ) -> EmbeddingResponse: ...
 
     async def execute(
         self,
         blob: Union[EmbeddingParams, bytes],
         options: EmbeddingParams = None,
     ) -> EmbeddingResponse:
-        path="/embedding"
+        path = "/embedding"
         if isinstance(blob, dict):
             resp = await AsyncRequest(
                 config=self.config,
