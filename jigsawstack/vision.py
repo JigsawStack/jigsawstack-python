@@ -4,6 +4,7 @@ from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
 from .helpers import build_path
+from ._types import BaseResponse
 
 
 class Point(TypedDict):
@@ -111,7 +112,7 @@ class ObjectDetectionParams(TypedDict):
     """
 
 
-class ObjectDetectionResponse(TypedDict):
+class ObjectDetectionResponse(BaseResponse):
     annotated_image: NotRequired[str]
     """
     URL or base64 string of annotated image (included only if annotated_image=true and objects/gui_elements exist)
@@ -140,8 +141,7 @@ class VOCRParams(TypedDict):
     page_range: NotRequired[List[int]]
 
 
-class OCRResponse(TypedDict):
-    success: bool
+class OCRResponse(BaseResponse):
     context: str
     width: int
     height: int

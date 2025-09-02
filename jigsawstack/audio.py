@@ -7,6 +7,7 @@ from typing import Any, Dict, List, cast
 from typing_extensions import NotRequired, TypedDict, Literal
 from .custom_typing import SupportedAccents
 from .helpers import build_path
+from ._types import BaseResponse
 
 
 class SpeechToTextParams(TypedDict):
@@ -31,13 +32,13 @@ class BySpeakerParams(ChunkParams):
     text: str
 
 
-class SpeechToTextResponse(TypedDict):
+class SpeechToTextResponse(BaseResponse):
     text: str
     chunks: List[ChunkParams]
     speakers: Optional[List[BySpeakerParams]]
 
 
-class SpeechToTextWebhookResponse(TypedDict):
+class SpeechToTextWebhookResponse(BaseResponse):
     status: Literal["processing", "error"]
     """
     the status of the transcription process
