@@ -3,6 +3,7 @@ from typing_extensions import NotRequired, TypedDict, Literal
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
+from ._types import BaseResponse
 
 
 class DatasetItem(TypedDict):
@@ -51,7 +52,7 @@ class ClassificationParams(TypedDict):
     """
 
 
-class ClassificationResponse(TypedDict):
+class ClassificationResponse(BaseResponse):
     predictions: List[Union[str, List[str]]]
     """
     Classification predictions - single labels or multiple labels per item

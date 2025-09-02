@@ -5,6 +5,7 @@ from .async_request import AsyncRequest
 from typing import List, Union
 from ._config import ClientConfig
 from .helpers import build_path
+from ._types import BaseResponse
 
 
 class EmbeddingParams(TypedDict):
@@ -21,8 +22,7 @@ class Chunk(TypedDict):
     timestamp: List[int]
 
 
-class EmbeddingResponse(TypedDict):
-    success: bool
+class EmbeddingResponse(BaseResponse):
     embeddings: List[List[float]]
     chunks: List[Chunk]
 
