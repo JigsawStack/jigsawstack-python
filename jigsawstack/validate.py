@@ -6,6 +6,7 @@ from ._config import ClientConfig
 from typing import Any, Dict, List, cast
 from typing_extensions import NotRequired, TypedDict, Union, Optional
 from .helpers import build_path
+from ._types import BaseResponse
 
 
 class Spam(TypedDict):
@@ -17,8 +18,7 @@ class SpamCheckParams(TypedDict):
     text: Union[str, List[str]]
 
 
-class SpamCheckResponse(TypedDict):
-    success: bool
+class SpamCheckResponse(BaseResponse):
     check: Spam
 
 
@@ -27,8 +27,7 @@ class SpellCheckParams(TypedDict):
     language_code: str
 
 
-class SpellCheckResponse(TypedDict):
-    success: bool
+class SpellCheckResponse(BaseResponse):
     misspellings_found: int
     auto_correct_text: str
 
@@ -38,8 +37,7 @@ class ProfanityParams(TypedDict):
     censor_replacement: NotRequired[str]
 
 
-class ProfanityResponse(TypedDict):
-    success: bool
+class ProfanityResponse(BaseResponse):
     clean_text: str
     profanities: List[str]
     profanities_found: int
@@ -50,8 +48,7 @@ class NSFWParams(TypedDict):
     file_store_key: NotRequired[str]
 
 
-class NSFWResponse(TypedDict):
-    success: bool
+class NSFWResponse(BaseResponse):
     nsfw: bool
     nudity: bool
     gore: bool
