@@ -11,6 +11,8 @@ from .search import (
     SearchSuggestionsResponse,
     SearchResponse,
     AsyncSearch,
+    DeepResearchParams,
+    DeepResearchResponse,
 )
 from .helpers import build_path
 from ._types import BaseResponse
@@ -302,6 +304,14 @@ class Web(ClientConfig):
         )
         return s.suggestions(params)
 
+    def deep_research(self, params: DeepResearchParams) -> DeepResearchResponse:
+        s = Search(
+            self.api_key,
+            self.api_url,
+            disable_request_logging=self.config.get("disable_request_logging"),
+        )
+        return s.deep_research(params)
+
 
 #
 # Async Web Client
@@ -394,3 +404,11 @@ class AsyncWeb(ClientConfig):
             disable_request_logging=self.config.get("disable_request_logging"),
         )
         return await s.suggestions(params)
+
+    async def deep_research(self, params: DeepResearchParams) -> DeepResearchResponse:
+        s = AsyncSearch(
+            self.api_key,
+            self.api_url,
+            disable_request_logging=self.config.get("disable_request_logging"),
+        )
+        return await s.deep_research(params)
