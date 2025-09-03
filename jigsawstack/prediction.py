@@ -5,10 +5,11 @@ from .async_request import AsyncRequest
 
 from typing import List, Union
 from ._config import ClientConfig
+from ._types import BaseResponse
 
 
 class Dataset(TypedDict):
-    value: int
+    value: Union[int, str]
     """
     The value of the dataset.
     """
@@ -30,12 +31,11 @@ class PredictionParams(TypedDict):
     """
 
 
-class PredictionResponse(TypedDict):
-    success: bool
+class PredictionResponse(BaseResponse):
+    prediction: List[Dataset]
     """
-    Indicates whether the translation was successful.
+    The predictions made on the dataset.
     """
-    prediction: object
 
 
 class Prediction(ClientConfig):
