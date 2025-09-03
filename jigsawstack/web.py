@@ -66,8 +66,15 @@ class HTMLToAnyParams(TypedDict):
     pdf_display_header_footer: NotRequired[bool]
     pdf_print_background: NotRequired[bool]
     pdf_page_range: NotRequired[str]
-    return_type: NotRequired[Literal["url", "binary", "base64"]]
     quality: NotRequired[int]
+
+
+class HTMLToAnyURLParams(HTMLToAnyParams):
+    return_type: NotRequired[Literal["url", "base64"]]
+
+
+class HTMLToAnyBinaryParams(HTMLToAnyParams):
+    return_type: NotRequired[Literal["binary"]]
 
 
 # Response types for different return_type values
@@ -236,10 +243,10 @@ class Web(ClientConfig):
         return resp
 
     @overload
-    def html_to_any(self, params: HTMLToAnyParams) -> HTMLToAnyURLResponse: ...
+    def html_to_any(self, params: HTMLToAnyURLParams) -> HTMLToAnyURLResponse: ...
 
     @overload
-    def html_to_any(self, params: HTMLToAnyParams) -> HTMLToAnyBinaryResponse: ...
+    def html_to_any(self, params: HTMLToAnyBinaryParams) -> HTMLToAnyBinaryResponse: ...
 
     def html_to_any(
         self, params: HTMLToAnyParams
@@ -327,10 +334,12 @@ class AsyncWeb(ClientConfig):
         return resp
 
     @overload
-    async def html_to_any(self, params: HTMLToAnyParams) -> HTMLToAnyURLResponse: ...
+    async def html_to_any(self, params: HTMLToAnyURLParams) -> HTMLToAnyURLResponse: ...
 
     @overload
-    async def html_to_any(self, params: HTMLToAnyParams) -> HTMLToAnyBinaryResponse: ...
+    async def html_to_any(
+        self, params: HTMLToAnyBinaryParams
+    ) -> HTMLToAnyBinaryResponse: ...
 
     async def html_to_any(
         self, params: HTMLToAnyParams
