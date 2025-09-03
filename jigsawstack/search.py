@@ -1,29 +1,67 @@
 from typing import Any, Dict, List, Union, cast, Literal
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import NotRequired, TypedDict, Optional
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
-from typing_extensions import NotRequired, TypedDict
 from ._config import ClientConfig
+from ._types import BaseResponse
 
 
-class SearchResponse(TypedDict):
-    success: bool
-    """
-    Whether the search request was successful
-    """
+class RelatedIndex(TypedDict):
+    text: str
+    url: str
 
+
+class Content(TypedDict):
+    text: str
+    image_urls: List[str]
+    links: List[str]
+
+
+class Result(TypedDict):
+    title: str
+    url: str
+    description: str
+    content: Union[str, Content]
+    is_safe: bool
+    site_name: str
+    site_long_name: str
+    age: str
+    language: str
+    favicon: str
+    snippets: List[str]
+    related_index: List[RelatedIndex]
+
+
+class GeoResult(TypedDict):
+    type: str
+    full_address: str
+    name: str
+    name_preferred: str
+    place_formatted: str
+    postcode: NotRequired[str]
+    district: NotRequired[str]
+    place: NotRequired[str]
+    region: NotRequired[Any]
+    country: NotRequired[Any]
+    language: str
+    geoloc: Dict[str, Any]
+    poi_category: NotRequired[str]
+    additional_properties: NotRequired[Any]
+
+
+class SearchResponse(BaseResponse):
     query: str
     """
     The search query that was used
     """
 
-    ai_overview: str
+    ai_overview: Optional[str]
     """
     AI-generated overview/summary of the search results
     or deep research results if enabled
     """
 
-    results: List[Any]
+    results: List[Result]
     """
     List of search result items
     """
@@ -38,7 +76,7 @@ class SearchResponse(TypedDict):
     Whether the query was spell-checked and fixed
     """
 
-    geo_results: List[Any]
+    geo_results: List[GeoResult]
     """
     List of location/geographic search results if applicable
     """
@@ -72,11 +110,13 @@ class SearchSuggestionsParams(TypedDict):
     The search value. The maximum query character length is 200.
     """
 
+
 class DeepResearchConfig(TypedDict):
     max_depth: NotRequired[int]
     max_breadth: NotRequired[int]
     max_output_tokens: NotRequired[int]
     target_output_tokens: NotRequired[int]
+
 
 class SearchParams(TypedDict):
     query: str
@@ -123,8 +163,6 @@ class SearchParams(TypedDict):
     """
     Configuration options for deep research mode
     """
-
-
 
 
 class Search(ClientConfig):
