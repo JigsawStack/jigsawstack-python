@@ -19,16 +19,25 @@ class SpamCheckParams(TypedDict):
 
 
 class SpamCheckResponse(BaseResponse):
-    check: Spam
+    check: Union[Spam, List[Spam]]
 
 
 class SpellCheckParams(TypedDict):
     text: str
-    language_code: str
+    language_code: NotRequired[str]
+
+
+class Misspelling(TypedDict):
+    word: Union[str, None]
+    startIndex: int
+    endIndex: int
+    expected: List[str]
+    auto_corrected: bool
 
 
 class SpellCheckResponse(BaseResponse):
-    misspellings_found: int
+    misspellings_found: bool
+    misspellings: List[Misspelling]
     auto_correct_text: str
 
 
