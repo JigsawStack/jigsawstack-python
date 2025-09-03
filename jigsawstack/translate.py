@@ -23,6 +23,9 @@ class TranslateImageParams(TypedDict):
     """
 
     return_type: NotRequired[Literal["url", "binary", "base64"]]
+    """
+    The return type of the response.
+    """
 
 
 class TranslateParams(TypedDict):
@@ -47,11 +50,7 @@ class TranslateResponse(BaseResponse):
     """
 
 
-class TranslateImageResponse(TypedDict):
-    success: bool
-    """
-    Indicates whether the translation was successful.
-    """
+class TranslateImageResponse(BaseResponse):
     image: bytes
     """
     The image data that was translated.
