@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union, Optional, cast, Literal
+from typing import Any, Dict, List, Union, Optional, cast, Literal, overload
 from typing_extensions import NotRequired, TypedDict
 
 from .request import Request, RequestConfig
@@ -39,32 +39,50 @@ class DNSResponse(TypedDict):
     authority: List
 
 
+class GotoOptions(TypedDict):
+    timeout: NotRequired[int]
+    wait_until: NotRequired[
+        Literal["load", "domcontentloaded", "networkidle0", "networkidle2"]
+    ]
+
+
 #
 # HTML to Any
 #
 class HTMLToAnyParams(TypedDict):
     html: NotRequired[str]
     url: NotRequired[str]
-    goto_options: NotRequired[Dict[str, Union[int, str]]]
-    scale: NotRequired[int]
+    goto_options: NotRequired[GotoOptions]
     full_page: NotRequired[bool]
     omit_background: NotRequired[bool]
-    quality: NotRequired[int]
-    type: NotRequired[str]
+    type: NotRequired[Literal["pdf", "png", "jpeg", "webp"]]
     width: NotRequired[int]
     height: NotRequired[int]
+    scale: NotRequired[int]
+    is_mobile: NotRequired[bool]
+    dark_mode: NotRequired[bool]
+    use_graphic_renderer: NotRequired[bool]
     size_preset: NotRequired[str]
     pdf_display_header_footer: NotRequired[bool]
     pdf_print_background: NotRequired[bool]
     pdf_page_range: NotRequired[str]
-    is_mobile: NotRequired[bool]
-    dark_mode: NotRequired[bool]
-    use_graphic_renderer: NotRequired[bool]
     return_type: NotRequired[Literal["url", "binary", "base64"]]
+    quality: NotRequired[int]
+
+
+# Response types for different return_type values
+class HTMLToAnyURLResponse(BaseResponse):
+    """Response for 'url' and 'base64' return types"""
+
+    url: str
+
+
+# For binary responses, we return the raw bytes
+HTMLToAnyBinaryResponse = bytes
 
 
 class HTMLToAnyResponse(BaseResponse):
-    html: str
+    url: str
 
 
 #
@@ -82,13 +100,6 @@ class CookieParameter(TypedDict):
     expires: NotRequired[bool]
     priority: NotRequired[str]
     sameParty: NotRequired[bool]
-
-
-class GotoOptions(TypedDict):
-    timeout: NotRequired[int]
-    wait_until: NotRequired[
-        Literal["load", "domcontentloaded", "networkidle0", "networkidle2"]
-    ]
 
 
 class WaitFor(TypedDict):
@@ -224,15 +235,34 @@ class Web(ClientConfig):
         ).perform_with_content()
         return resp
 
-    def html_to_any(self, params: HTMLToAnyParams) -> Any:
+    @overload
+    def html_to_any(self, params: HTMLToAnyParams) -> HTMLToAnyURLResponse: ...
+
+    @overload
+    def html_to_any(self, params: HTMLToAnyParams) -> HTMLToAnyBinaryResponse: ...
+
+    def html_to_any(
+        self, params: HTMLToAnyParams
+    ) -> Union[HTMLToAnyURLResponse, HTMLToAnyBinaryResponse]:
         path = "/web/html_to_any"
-        resp = Request(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="post",
-        ).perform_with_content_file()
-        return resp
+        return_type = params.get("return_type", "url")
+
+        if return_type == "binary":
+            resp = Request(
+                config=self.config,
+                path=path,
+                params=cast(Dict[Any, Any], params),
+                verb="post",
+            ).perform_with_content_file()
+            return cast(HTMLToAnyBinaryResponse, resp)
+        else:  # "url" or "base64"
+            resp = Request(
+                config=self.config,
+                path=path,
+                params=cast(Dict[Any, Any], params),
+                verb="post",
+            ).perform_with_content()
+            return cast(HTMLToAnyURLResponse, resp)
 
     def dns(self, params: DNSParams) -> DNSResponse:
         path = build_path(
@@ -280,7 +310,7 @@ class AsyncWeb(ClientConfig):
         disable_request_logging: Union[bool, None] = False,
     ):
         super().__init__(api_key, api_url, disable_request_logging)
-        self.config = RequestConfig(
+        self.config = AsyncRequestConfig(
             api_url=api_url,
             api_key=api_key,
             disable_request_logging=disable_request_logging,
@@ -296,15 +326,34 @@ class AsyncWeb(ClientConfig):
         ).perform_with_content()
         return resp
 
-    async def html_to_any(self, params: HTMLToAnyParams) -> Any:
+    @overload
+    async def html_to_any(self, params: HTMLToAnyParams) -> HTMLToAnyURLResponse: ...
+
+    @overload
+    async def html_to_any(self, params: HTMLToAnyParams) -> HTMLToAnyBinaryResponse: ...
+
+    async def html_to_any(
+        self, params: HTMLToAnyParams
+    ) -> Union[HTMLToAnyURLResponse, HTMLToAnyBinaryResponse]:
         path = "/web/html_to_any"
-        resp = await AsyncRequest(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="post",
-        ).perform_with_content_file()
-        return resp
+        return_type = params.get("return_type", "url")
+
+        if return_type == "binary":
+            resp = await AsyncRequest(
+                config=self.config,
+                path=path,
+                params=cast(Dict[Any, Any], params),
+                verb="post",
+            ).perform_with_content_file()
+            return cast(HTMLToAnyBinaryResponse, resp)
+        else:  # "url" or "base64"
+            resp = await AsyncRequest(
+                config=self.config,
+                path=path,
+                params=cast(Dict[Any, Any], params),
+                verb="post",
+            ).perform_with_content()
+            return cast(HTMLToAnyURLResponse, resp)
 
     async def dns(self, params: DNSParams) -> DNSResponse:
         path = build_path(
