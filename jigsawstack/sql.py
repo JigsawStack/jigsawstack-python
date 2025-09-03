@@ -4,6 +4,7 @@ from .request import Request, RequestConfig
 from .async_request import AsyncRequest
 from typing import List, Union
 from ._config import ClientConfig
+from ._types import BaseResponse
 
 
 class SQLParams(TypedDict):
@@ -28,11 +29,7 @@ class SQLParams(TypedDict):
     """
 
 
-class SQLResponse(TypedDict):
-    success: bool
-    """
-    Indicates whether the translation was successful.
-    """
+class SQLResponse(BaseResponse):
     sql: str
     """
     The SQL statement.
