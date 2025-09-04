@@ -46,10 +46,17 @@ class ProfanityParams(TypedDict):
     censor_replacement: NotRequired[str]
 
 
+class Profanity(TypedDict):
+    profanity: Union[str, None]
+    startIndex: int
+    endIndex: int
+
+
 class ProfanityResponse(BaseResponse):
+    message: str
     clean_text: str
-    profanities: List[str]
-    profanities_found: int
+    profanities: List[Profanity]
+    profanities_found: bool
 
 
 class NSFWParams(TypedDict):
