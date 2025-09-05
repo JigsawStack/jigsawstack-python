@@ -53,7 +53,7 @@ class EmbeddingV2(ClientConfig):
         blob: Union[EmbeddingV2Params, bytes],
         options: EmbeddingV2Params = None,
     ) -> EmbeddingV2Response:
-        path = "/v2/embedding"
+        path = "/embedding"
         if isinstance(blob, dict):
             resp = Request(
                 config=self.config,
@@ -108,7 +108,7 @@ class AsyncEmbeddingV2(ClientConfig):
         blob: Union[EmbeddingV2Params, bytes],
         options: EmbeddingV2Params = None,
     ) -> EmbeddingV2Response:
-        path = "/v2/embedding"
+        path = "/embedding"
         if isinstance(blob, dict):
             resp = await AsyncRequest(
                 config=self.config,
