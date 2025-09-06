@@ -28,7 +28,6 @@ class EmbeddingResponse(BaseResponse):
 
 
 class Embedding(ClientConfig):
-
     config: RequestConfig
 
     def __init__(
@@ -83,7 +82,6 @@ class Embedding(ClientConfig):
 
 
 class AsyncEmbedding(ClientConfig):
-
     config: RequestConfig
 
     def __init__(

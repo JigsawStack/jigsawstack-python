@@ -7,7 +7,7 @@ from ._types import BaseResponse
 
 
 class DatasetItem(TypedDict):
-    type: Union[Literal["text"], Literal["image"]]
+    type: Literal["text", "image"]
     """
     Type of the dataset item: text
     """
@@ -24,7 +24,7 @@ class LabelItem(TypedDict):
     Optional key for the label
     """
 
-    type: Union[Literal["text"], Literal["image"]]
+    type: Literal["text", "image"]
     """
     Type of the label: text
     """
@@ -60,7 +60,6 @@ class ClassificationResponse(BaseResponse):
 
 
 class Classification(ClientConfig):
-
     config: RequestConfig
 
     def __init__(

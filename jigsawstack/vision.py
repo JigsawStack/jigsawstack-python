@@ -155,7 +155,6 @@ class OCRResponse(BaseResponse):
 
 
 class Vision(ClientConfig):
-
     config: RequestConfig
 
     def __init__(

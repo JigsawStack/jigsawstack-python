@@ -6,17 +6,33 @@ from .async_request import AsyncRequest
 from typing import List, Union
 from ._config import ClientConfig
 
+
 class AdvanceConfig(TypedDict):
     negative_prompt: NotRequired[str]
     guidance: NotRequired[int]
     seed: NotRequired[int]
+
 
 class ImageGenerationParams(TypedDict):
     prompt: Required[str]
     """
     The text to generate the image from.
     """
-    aspect_ratio: NotRequired[Literal["1:1", "16:9", "21:9", "3:2", "2:3", "4:5", "5:4", "3:4", "4:3", "9:16", "9:21"]]
+    aspect_ratio: NotRequired[
+        Literal[
+            "1:1",
+            "16:9",
+            "21:9",
+            "3:2",
+            "2:3",
+            "4:5",
+            "5:4",
+            "3:4",
+            "4:3",
+            "9:16",
+            "9:21",
+        ]
+    ]
     """
     The aspect ratio of the image. The default is 1:1.
     """
@@ -55,6 +71,7 @@ class ImageGenerationParams(TypedDict):
 
     return_type: NotRequired[Literal["url", "binary", "base64"]]
 
+
 class ImageGenerationResponse(TypedDict):
     success: bool
     """
@@ -65,6 +82,7 @@ class ImageGenerationResponse(TypedDict):
     The generated image as a blob.
     """
 
+
 class ImageGeneration(ClientConfig):
     config: RequestConfig
 
@@ -74,23 +92,28 @@ class ImageGeneration(ClientConfig):
         api_url: str,
         disable_request_logging: Union[bool, None] = False,
     ):
-        super().__init__(api_key, api_url, disable_request_logging=disable_request_logging)
+        super().__init__(
+            api_key, api_url, disable_request_logging=disable_request_logging
+        )
         self.config = RequestConfig(
             api_url=api_url,
             api_key=api_key,
             disable_request_logging=disable_request_logging,
         )
 
-    def image_generation(self, params: ImageGenerationParams) -> ImageGenerationResponse:
+    def image_generation(
+        self, params: ImageGenerationParams
+    ) -> ImageGenerationResponse:
         path = "/ai/image_generation"
         resp = Request(
             config=self.config,
             path=path,
-            params=cast(Dict[Any, Any], params), # type: ignore
+            params=cast(Dict[Any, Any], params),  # type: ignore
             verb="post",
         ).perform()
         return resp
-    
+
+
 class AsyncImageGeneration(ClientConfig):
     config: RequestConfig
 
@@ -100,23 +123,23 @@ class AsyncImageGeneration(ClientConfig):
         api_url: str,
         disable_request_logging: Union[bool, None] = False,
     ):
-        super().__init__(api_key, api_url, disable_request_logging=disable_request_logging)
+        super().__init__(
+            api_key, api_url, disable_request_logging=disable_request_logging
+        )
         self.config = RequestConfig(
             api_url=api_url,
             api_key=api_key,
             disable_request_logging=disable_request_logging,
         )
 
-    async def image_generation(self, params: ImageGenerationParams) -> ImageGenerationResponse:
+    async def image_generation(
+        self, params: ImageGenerationParams
+    ) -> ImageGenerationResponse:
         path = "/ai/image_generation"
         resp = await AsyncRequest(
             config=self.config,
             path=path,
-            params=cast(Dict[Any, Any], params), # type: ignore
+            params=cast(Dict[Any, Any], params),  # type: ignore
             verb="post",
         ).perform()
         return resp
-    
-
-
-    

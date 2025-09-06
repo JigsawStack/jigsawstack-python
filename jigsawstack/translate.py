@@ -50,26 +50,14 @@ class TranslateResponse(BaseResponse):
     """
 
 
-class TranslateImageResponse(BaseResponse):
+class TranslateImageResponse(TypedDict):
     image: bytes
     """
     The image data that was translated.
     """
 
 
-class TranslateListResponse(TypedDict):
-    success: bool
-    """
-    Indicates whether the translation was successful.
-    """
-    translated_text: List[str]
-    """
-    The translated text.
-    """
-
-
 class Translate(ClientConfig):
-
     config: RequestConfig
 
     def __init__(
@@ -85,9 +73,7 @@ class Translate(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    def text(
-        self, params: TranslateParams
-    ) -> Union[TranslateResponse, TranslateListResponse]:
+    def text(self, params: TranslateParams) -> TranslateResponse:
         resp = Request(
             config=self.config,
             path="/ai/translate",
@@ -151,9 +137,7 @@ class AsyncTranslate(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    async def text(
-        self, params: TranslateParams
-    ) -> Union[TranslateResponse, TranslateListResponse]:
+    async def text(self, params: TranslateParams) -> TranslateResponse:
         resp = await AsyncRequest(
             config=self.config,
             path="/ai/translate",

@@ -74,7 +74,6 @@ class NSFWResponse(BaseResponse):
 
 
 class Validate(ClientConfig):
-
     config: RequestConfig
 
     def __init__(
@@ -164,7 +163,6 @@ class Validate(ClientConfig):
 
 
 class AsyncValidate(ClientConfig):
-
     config: AsyncRequestConfig
 
     def __init__(

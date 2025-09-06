@@ -42,7 +42,6 @@ class SentimentResponse(BaseResponse):
 
 
 class Sentiment(ClientConfig):
-
     config: RequestConfig
 
     def __init__(
@@ -70,7 +69,6 @@ class Sentiment(ClientConfig):
 
 
 class AsyncSentiment(ClientConfig):
-
     config: RequestConfig
 
     def __init__(

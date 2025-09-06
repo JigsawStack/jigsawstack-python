@@ -39,7 +39,6 @@ class PredictionResponse(BaseResponse):
 
 
 class Prediction(ClientConfig):
-
     config: RequestConfig
 
     def __init__(
@@ -67,7 +66,6 @@ class Prediction(ClientConfig):
 
 
 class AsyncPrediction(ClientConfig):
-
     config: RequestConfig
 
     def __init__(

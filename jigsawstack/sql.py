@@ -37,7 +37,6 @@ class SQLResponse(BaseResponse):
 
 
 class SQL(ClientConfig):
-
     config: RequestConfig
 
     def __init__(
@@ -65,7 +64,6 @@ class SQL(ClientConfig):
 
 
 class AsyncSQL(ClientConfig):
-
     config: RequestConfig
 
     def __init__(

@@ -47,7 +47,6 @@ class SummaryResponse(BaseResponse):
 
 
 class Summary(ClientConfig):
-
     config: RequestConfig
 
     def __init__(
@@ -75,7 +74,6 @@ class Summary(ClientConfig):
 
 
 class AsyncSummary(ClientConfig):
-
     config: RequestConfig
 
     def __init__(

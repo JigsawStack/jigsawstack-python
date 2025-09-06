@@ -218,7 +218,6 @@ class AIScrapeResponse(BaseResponse):
 # Web Client
 #
 class Web(ClientConfig):
-
     config: RequestConfig
 
     def __init__(
@@ -317,7 +316,6 @@ class Web(ClientConfig):
 # Async Web Client
 #
 class AsyncWeb(ClientConfig):
-
     config: AsyncRequestConfig
 
     def __init__(
