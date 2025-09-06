@@ -233,7 +233,7 @@ class AsyncJigsawStack:
             api_key=api_key,
             api_url=api_url,
             disable_request_logging=disable_request_logging,
-        )
+        ).classify
 
 
 # Create a global instance of the Web class

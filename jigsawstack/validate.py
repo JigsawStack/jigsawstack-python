@@ -73,22 +73,6 @@ class NSFWResponse(BaseResponse):
     gore_score: float
 
 
-class EmailValidationParams(TypedDict):
-    email: str
-
-
-class EmailValidationResponse(TypedDict):
-    success: bool
-    email: str
-    disposable: bool
-    role_account: bool
-    free: bool
-    has_mx_records: bool
-    username: bool
-    domain: bool
-    valid: bool
-
-
 class Validate(ClientConfig):
 
     config: RequestConfig
@@ -105,20 +89,6 @@ class Validate(ClientConfig):
             api_key=api_key,
             disable_request_logging=disable_request_logging,
         )
-
-    def email(self, params: EmailValidationParams) -> EmailValidationResponse:
-        path = build_path(
-            base_path="/validate/email",
-            params=params,
-        )
-
-        resp = Request(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="get",
-        ).perform_with_content()
-        return resp
 
     @overload
     def nsfw(self, params: NSFWParams) -> NSFWResponse: ...
@@ -209,19 +179,6 @@ class AsyncValidate(ClientConfig):
             api_key=api_key,
             disable_request_logging=disable_request_logging,
         )
-
-    async def email(self, params: EmailValidationParams) -> EmailValidationResponse:
-        path = build_path(
-            base_path="/validate/email",
-            params=params,
-        )
-        resp = await AsyncRequest(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="get",
-        ).perform_with_content()
-        return resp
 
     @overload
     async def nsfw(self, params: NSFWParams) -> NSFWResponse: ...
