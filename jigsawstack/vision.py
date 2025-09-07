@@ -62,6 +62,16 @@ class GuiElement(TypedDict):
     Content of the GUI element, can be null if no object detected
     """
 
+    interactivity: bool
+    """
+    Interactivity of the GUI element
+    """
+
+    type: str
+    """
+    Type of the GUI element
+    """
+
 
 class DetectedObject(TypedDict):
     bounds: BoundingBox
