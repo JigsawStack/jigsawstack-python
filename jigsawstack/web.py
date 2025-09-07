@@ -14,31 +14,7 @@ from .search import (
     DeepResearchParams,
     DeepResearchResponse,
 )
-from .helpers import build_path
 from ._types import BaseResponse
-
-
-#
-# DNS
-#
-class DNSParams(TypedDict):
-    domain: str
-    type: NotRequired[str]
-
-
-class DNSResponse(TypedDict):
-    success: bool
-    domain: str
-    type: str
-    type_value: int
-    records: List[object]
-    DNSSEC_validation_disabled: bool
-    DNSSEC_verified: bool
-    recursion_available: bool
-    recursion_desired: bool
-    truncated: bool
-    additional: List
-    authority: List
 
 
 class GotoOptions(TypedDict):
@@ -272,19 +248,6 @@ class Web(ClientConfig):
             ).perform_with_content()
             return cast(HTMLToAnyURLResponse, resp)
 
-    def dns(self, params: DNSParams) -> DNSResponse:
-        path = build_path(
-            base_path="/web/html_to_any",
-            params=params,
-        )
-        resp = Request(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="get",
-        ).perform_with_content()
-        return resp
-
     def search(self, params: SearchParams) -> SearchResponse:
         s = Search(
             self.api_key,
@@ -371,19 +334,6 @@ class AsyncWeb(ClientConfig):
                 verb="post",
             ).perform_with_content()
             return cast(HTMLToAnyURLResponse, resp)
-
-    async def dns(self, params: DNSParams) -> DNSResponse:
-        path = build_path(
-            base_path="/web/html_to_any",
-            params=params,
-        )
-        resp = await AsyncRequest(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="get",
-        ).perform_with_content()
-        return resp
 
     async def search(self, params: SearchParams) -> SearchResponse:
         s = AsyncSearch(

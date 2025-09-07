@@ -289,7 +289,7 @@ class AsyncSearch(ClientConfig):
         disable_request_logging: Union[bool, None] = False,
     ):
         super().__init__(api_key, api_url, disable_request_logging)
-        self.config = RequestConfig(
+        self.config = AsyncRequestConfig(
             api_url=api_url,
             api_key=api_key,
             disable_request_logging=disable_request_logging,
