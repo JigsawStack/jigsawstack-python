@@ -5,6 +5,7 @@ from .async_request import AsyncRequest
 from typing import List, Union
 from ._config import ClientConfig
 from .helpers import build_path
+from .embedding import Chunk
 
 
 class EmbeddingV2Params(TypedDict):
@@ -20,12 +21,11 @@ class EmbeddingV2Params(TypedDict):
 class EmbeddingV2Response(TypedDict):
     success: bool
     embeddings: List[List[float]]
-    chunks: List[str]
+    chunks: Union[List[str], List[Chunk]]
     speaker_embeddings: List[List[float]]
 
 
 class EmbeddingV2(ClientConfig):
-
     config: RequestConfig
 
     def __init__(
@@ -80,7 +80,6 @@ class EmbeddingV2(ClientConfig):
 
 
 class AsyncEmbeddingV2(ClientConfig):
-
     config: RequestConfig
 
     def __init__(

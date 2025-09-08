@@ -24,7 +24,7 @@ class Chunk(TypedDict):
 
 class EmbeddingResponse(BaseResponse):
     embeddings: List[List[float]]
-    chunks: List[Chunk]
+    chunks: Union[List[Chunk], List[str]]
 
 
 class Embedding(ClientConfig):
