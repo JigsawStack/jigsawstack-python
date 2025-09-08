@@ -81,7 +81,6 @@ class Request(Generic[T]):
             return cast(T, resp)
 
     def perform_file(self) -> Union[T, None]:
-
         resp = self.make_request(url=f"{self.api_url}{self.path}")
 
         # delete calls do not return a body

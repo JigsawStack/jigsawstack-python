@@ -4,6 +4,7 @@ from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
 from .helpers import build_path
+from ._types import BaseResponse
 
 
 class Point(TypedDict):
@@ -61,6 +62,16 @@ class GuiElement(TypedDict):
     Content of the GUI element, can be null if no object detected
     """
 
+    interactivity: bool
+    """
+    Interactivity of the GUI element
+    """
+
+    type: str
+    """
+    Type of the GUI element
+    """
+
 
 class DetectedObject(TypedDict):
     bounds: BoundingBox
@@ -105,8 +116,13 @@ class ObjectDetectionParams(TypedDict):
     Format for returned images: url or base64
     """
 
+    return_masks: NotRequired[bool]
+    """
+    Whether to return masks for the detected objects
+    """
 
-class ObjectDetectionResponse(TypedDict):
+
+class ObjectDetectionResponse(BaseResponse):
     annotated_image: NotRequired[str]
     """
     URL or base64 string of annotated image (included only if annotated_image=true and objects/gui_elements exist)
@@ -122,16 +138,20 @@ class ObjectDetectionResponse(TypedDict):
     List of detected objects (included only if features includes "object_detection")
     """
 
+    tags: NotRequired[List[str]]
+    """
+    List of tags returned by the object detection model
+    """
+
 
 class VOCRParams(TypedDict):
-    prompt: NotRequired[Union[str, List[str]]]
+    prompt: NotRequired[Union[str, List[str], Dict[str, str]]]
     url: NotRequired[str]
     file_store_key: NotRequired[str]
     page_range: NotRequired[List[int]]
 
 
-class OCRResponse(TypedDict):
-    success: bool
+class OCRResponse(BaseResponse):
     context: str
     width: int
     height: int
@@ -145,7 +165,6 @@ class OCRResponse(TypedDict):
 
 
 class Vision(ClientConfig):
-
     config: RequestConfig
 
     def __init__(

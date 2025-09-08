@@ -24,7 +24,7 @@ def test_search_suggestion_response():
 def test_ai_search_response():
     try:
         result = jigsaw.web.search({"query": "Where is San Francisco"})
-        assert result["success"] == True  
+        assert result["success"] == True
     except JigsawStackError as e:
         pytest.fail(f"Unexpected JigsawStackError: {e}")
 

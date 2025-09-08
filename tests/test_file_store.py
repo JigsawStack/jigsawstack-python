@@ -19,7 +19,7 @@ class TestStoreAPI(unittest.TestCase):
             "key": "test-file.txt",
             "content_type": "text/plain",
             "overwrite": True,
-            "temp_public_url": True
+            "temp_public_url": True,
         }
         try:
             result = client.store.upload(file_content, options)
@@ -56,10 +56,7 @@ class TestStoreAPI(unittest.TestCase):
     def test_upload_with_partial_options_success_response(self) -> None:
         # Test upload with partial options
         file_content = b"This is a test file with partial options"
-        options = {
-            "key": "partial-test-file.txt",
-            "overwrite": False
-        }
+        options = {"key": "partial-test-file.txt", "overwrite": False}
         try:
             result = client.store.upload(file_content, options)
             assert result["success"] == True

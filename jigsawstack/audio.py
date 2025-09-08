@@ -7,6 +7,7 @@ from typing import Any, Dict, List, cast
 from typing_extensions import NotRequired, TypedDict, Literal
 from .custom_typing import SupportedAccents
 from .helpers import build_path
+from ._types import BaseResponse
 
 
 class SpeechToTextParams(TypedDict):
@@ -27,13 +28,26 @@ class ChunkParams(TypedDict):
 
 class BySpeakerParams(ChunkParams):
     speaker: str
+    timestamp: tuple[int, int]
+    text: str
 
 
-class SpeechToTextResponse(TypedDict):
-    success: bool
+class SpeechToTextResponse(BaseResponse):
     text: str
     chunks: List[ChunkParams]
     speakers: Optional[List[BySpeakerParams]]
+
+
+class SpeechToTextWebhookResponse(BaseResponse):
+    status: Literal["processing", "error"]
+    """
+    the status of the transcription process
+    """
+
+    id: str
+    """
+    the id of the transcription process
+    """
 
 
 class Audio(ClientConfig):
@@ -53,17 +67,19 @@ class Audio(ClientConfig):
         )
 
     @overload
-    def speech_to_text(self, params: SpeechToTextParams) -> SpeechToTextResponse: ...
+    def speech_to_text(
+        self, params: SpeechToTextParams
+    ) -> Union[SpeechToTextResponse, SpeechToTextWebhookResponse]: ...
     @overload
     def speech_to_text(
         self, blob: bytes, options: Optional[SpeechToTextParams] = None
-    ) -> SpeechToTextResponse: ...
+    ) -> Union[SpeechToTextResponse, SpeechToTextWebhookResponse]: ...
 
     def speech_to_text(
         self,
         blob: Union[SpeechToTextParams, bytes],
         options: Optional[SpeechToTextParams] = None,
-    ) -> SpeechToTextResponse:
+    ) -> Union[SpeechToTextResponse, SpeechToTextWebhookResponse]:
         if isinstance(
             blob, dict
         ):  # If params is provided as a dict, we assume it's the first argument
@@ -110,17 +126,17 @@ class AsyncAudio(ClientConfig):
     @overload
     async def speech_to_text(
         self, params: SpeechToTextParams
-    ) -> SpeechToTextResponse: ...
+    ) -> Union[SpeechToTextResponse, SpeechToTextWebhookResponse]: ...
     @overload
     async def speech_to_text(
         self, blob: bytes, options: Optional[SpeechToTextParams] = None
-    ) -> SpeechToTextResponse: ...
+    ) -> Union[SpeechToTextResponse, SpeechToTextWebhookResponse]: ...
 
     async def speech_to_text(
         self,
         blob: Union[SpeechToTextParams, bytes],
         options: Optional[SpeechToTextParams] = None,
-    ) -> SpeechToTextResponse:
+    ) -> Union[SpeechToTextResponse, SpeechToTextWebhookResponse]:
         if isinstance(blob, dict):
             resp = await AsyncRequest(
                 config=self.config,
