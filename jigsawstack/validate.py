@@ -6,6 +6,7 @@ from ._config import ClientConfig
 from typing import Any, Dict, List, cast
 from typing_extensions import NotRequired, TypedDict, Union, Optional
 from .helpers import build_path
+from ._types import BaseResponse
 
 
 class Spam(TypedDict):
@@ -17,19 +18,26 @@ class SpamCheckParams(TypedDict):
     text: Union[str, List[str]]
 
 
-class SpamCheckResponse(TypedDict):
-    success: bool
-    check: Spam
+class SpamCheckResponse(BaseResponse):
+    check: Union[Spam, List[Spam]]
 
 
 class SpellCheckParams(TypedDict):
     text: str
-    language_code: str
+    language_code: NotRequired[str]
 
 
-class SpellCheckResponse(TypedDict):
-    success: bool
-    misspellings_found: int
+class Misspelling(TypedDict):
+    word: Union[str, None]
+    startIndex: int
+    endIndex: int
+    expected: List[str]
+    auto_corrected: bool
+
+
+class SpellCheckResponse(BaseResponse):
+    misspellings_found: bool
+    misspellings: List[Misspelling]
     auto_correct_text: str
 
 
@@ -38,11 +46,17 @@ class ProfanityParams(TypedDict):
     censor_replacement: NotRequired[str]
 
 
-class ProfanityResponse(TypedDict):
-    success: bool
+class Profanity(TypedDict):
+    profanity: Union[str, None]
+    startIndex: int
+    endIndex: int
+
+
+class ProfanityResponse(BaseResponse):
+    message: str
     clean_text: str
-    profanities: List[str]
-    profanities_found: int
+    profanities: List[Profanity]
+    profanities_found: bool
 
 
 class NSFWParams(TypedDict):
@@ -50,8 +64,7 @@ class NSFWParams(TypedDict):
     file_store_key: NotRequired[str]
 
 
-class NSFWResponse(TypedDict):
-    success: bool
+class NSFWResponse(BaseResponse):
     nsfw: bool
     nudity: bool
     gore: bool
@@ -60,24 +73,7 @@ class NSFWResponse(TypedDict):
     gore_score: float
 
 
-class EmailValidationParams(TypedDict):
-    email: str
-
-
-class EmailValidationResponse(TypedDict):
-    success: bool
-    email: str
-    disposable: bool
-    role_account: bool
-    free: bool
-    has_mx_records: bool
-    username: bool
-    domain: bool
-    valid: bool
-
-
 class Validate(ClientConfig):
-
     config: RequestConfig
 
     def __init__(
@@ -92,20 +88,6 @@ class Validate(ClientConfig):
             api_key=api_key,
             disable_request_logging=disable_request_logging,
         )
-
-    def email(self, params: EmailValidationParams) -> EmailValidationResponse:
-        path = build_path(
-            base_path="/validate/email",
-            params=params,
-        )
-
-        resp = Request(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="get",
-        ).perform_with_content()
-        return resp
 
     @overload
     def nsfw(self, params: NSFWParams) -> NSFWResponse: ...
@@ -181,7 +163,6 @@ class Validate(ClientConfig):
 
 
 class AsyncValidate(ClientConfig):
-
     config: AsyncRequestConfig
 
     def __init__(
@@ -196,19 +177,6 @@ class AsyncValidate(ClientConfig):
             api_key=api_key,
             disable_request_logging=disable_request_logging,
         )
-
-    async def email(self, params: EmailValidationParams) -> EmailValidationResponse:
-        path = build_path(
-            base_path="/validate/email",
-            params=params,
-        )
-        resp = await AsyncRequest(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="get",
-        ).perform_with_content()
-        return resp
 
     @overload
     async def nsfw(self, params: NSFWParams) -> NSFWResponse: ...

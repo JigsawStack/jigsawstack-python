@@ -4,10 +4,11 @@ from .request import Request, RequestConfig
 from .async_request import AsyncRequest
 from typing import List, Union
 from ._config import ClientConfig
+from ._types import BaseResponse
 
 
 class SummaryParams(TypedDict):
-    text: Union[str, List[str]]
+    text: NotRequired[str]
     """
     The text to summarize.
     """
@@ -18,35 +19,34 @@ class SummaryParams(TypedDict):
    The summary result type. Supported values are: text, points
     """
     url: NotRequired[str]
+    """
+    The URL to summarize.
+    """
+
     file_store_key: NotRequired[str]
+    """
+    The file store key to summarize.
+    """
+
     max_points: NotRequired[int]
+    """
+    The maximum number of points of summary.
+    """
+
     max_characters: NotRequired[int]
-
-
-class SummaryResponse(TypedDict):
-    success: bool
     """
-    Indicates whether the translation was successful.
-    """
-    summary: str
-    """
-    The summarized text.
+    The maximum number of characters of summary.
     """
 
 
-class SummaryListResponse(TypedDict):
-    success: bool
-    """
-    Indicates whether the translation was successful.
-    """
-    summary: List[str]
+class SummaryResponse(BaseResponse):
+    summary: Union[str, List[str]]
     """
     The summarized text.
     """
 
 
 class Summary(ClientConfig):
-
     config: RequestConfig
 
     def __init__(
@@ -62,9 +62,7 @@ class Summary(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    def summarize(
-        self, params: SummaryParams
-    ) -> Union[SummaryResponse, SummaryListResponse]:
+    def summarize(self, params: SummaryParams) -> SummaryResponse:
         path = "/ai/summary"
         resp = Request(
             config=self.config,
@@ -76,7 +74,6 @@ class Summary(ClientConfig):
 
 
 class AsyncSummary(ClientConfig):
-
     config: RequestConfig
 
     def __init__(
@@ -92,9 +89,7 @@ class AsyncSummary(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    async def summarize(
-        self, params: SummaryParams
-    ) -> Union[SummaryResponse, SummaryListResponse]:
+    async def summarize(self, params: SummaryParams) -> SummaryResponse:
         path = "/ai/summary"
         resp = await AsyncRequest(
             config=self.config,

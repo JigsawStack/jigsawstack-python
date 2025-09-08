@@ -5,6 +5,8 @@ from .async_request import AsyncRequest
 from typing import List, Union
 from ._config import ClientConfig
 from .helpers import build_path
+from ._types import BaseResponse
+
 
 class TranslateImageParams(TypedDict):
     target_language: str
@@ -21,13 +23,17 @@ class TranslateImageParams(TypedDict):
     """
 
     return_type: NotRequired[Literal["url", "binary", "base64"]]
+    """
+    The return type of the response.
+    """
+
 
 class TranslateParams(TypedDict):
     target_language: str
     """
     Target langauge to translate to.
     """
-    current_language: str
+    current_language: NotRequired[str]
     """
     Language to translate from.
     """
@@ -36,39 +42,22 @@ class TranslateParams(TypedDict):
     The text to translate.
     """
 
-class TranslateResponse(TypedDict):
-    success: bool
-    """
-    Indicates whether the translation was successful.
-    """
-    translated_text: str
+
+class TranslateResponse(BaseResponse):
+    translated_text: Union[str, List[str]]
     """
     The translated text.
     """
 
+
 class TranslateImageResponse(TypedDict):
-    success: bool
-    """
-    Indicates whether the translation was successful.
-    """
     image: bytes
     """
     The image data that was translated.
     """
 
-class TranslateListResponse(TypedDict):
-    success: bool
-    """
-    Indicates whether the translation was successful.
-    """
-    translated_text: List[str]
-    """
-    The translated text.
-    """
-
 
 class Translate(ClientConfig):
-
     config: RequestConfig
 
     def __init__(
@@ -84,9 +73,7 @@ class Translate(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    def text(
-        self, params: TranslateParams
-    ) -> Union[TranslateResponse, TranslateListResponse]:
+    def text(self, params: TranslateParams) -> TranslateResponse:
         resp = Request(
             config=self.config,
             path="/ai/translate",
@@ -94,18 +81,22 @@ class Translate(ClientConfig):
             verb="post",
         ).perform()
         return resp
-    
+
     @overload
     def image(self, params: TranslateImageParams) -> TranslateImageResponse: ...
     @overload
-    def image(self, blob: bytes, options: TranslateImageParams = None) -> TranslateImageParams: ...
+    def image(
+        self, blob: bytes, options: TranslateImageParams = None
+    ) -> TranslateImageParams: ...
 
     def image(
         self,
         blob: Union[TranslateImageParams, bytes],
         options: TranslateImageParams = None,
     ) -> TranslateImageResponse:
-        if isinstance(blob, dict): # If params is provided as a dict, we assume it's the first argument
+        if isinstance(
+            blob, dict
+        ):  # If params is provided as a dict, we assume it's the first argument
             resp = Request(
                 config=self.config,
                 path="/ai/translate/image",
@@ -146,9 +137,7 @@ class AsyncTranslate(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    async def text(
-        self, params: TranslateParams
-    ) -> Union[TranslateResponse, TranslateListResponse]:
+    async def text(self, params: TranslateParams) -> TranslateResponse:
         resp = await AsyncRequest(
             config=self.config,
             path="/ai/translate",
@@ -156,12 +145,14 @@ class AsyncTranslate(ClientConfig):
             verb="post",
         ).perform()
         return resp
-    
+
     @overload
     async def image(self, params: TranslateImageParams) -> TranslateImageResponse: ...
     @overload
-    async def image(self, blob: bytes, options: TranslateImageParams = None) -> TranslateImageParams: ...
-    
+    async def image(
+        self, blob: bytes, options: TranslateImageParams = None
+    ) -> TranslateImageParams: ...
+
     async def image(
         self,
         blob: Union[TranslateImageParams, bytes],

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union, Optional, cast, Literal
+from typing import Any, Dict, List, Union, Optional, cast, Literal, overload
 from typing_extensions import NotRequired, TypedDict
 
 from .request import Request, RequestConfig
@@ -11,31 +11,17 @@ from .search import (
     SearchSuggestionsResponse,
     SearchResponse,
     AsyncSearch,
+    DeepResearchParams,
+    DeepResearchResponse,
 )
-from .helpers import build_path
+from ._types import BaseResponse
 
 
-#
-# DNS
-#
-class DNSParams(TypedDict):
-    domain: str
-    type: NotRequired[str]
-
-
-class DNSResponse(TypedDict):
-    success: bool
-    domain: str
-    type: str
-    type_value: int
-    records: List[object]
-    DNSSEC_validation_disabled: bool
-    DNSSEC_verified: bool
-    recursion_available: bool
-    recursion_desired: bool
-    truncated: bool
-    additional: List
-    authority: List
+class GotoOptions(TypedDict):
+    timeout: NotRequired[int]
+    wait_until: NotRequired[
+        Literal["load", "domcontentloaded", "networkidle0", "networkidle2"]
+    ]
 
 
 #
@@ -44,26 +30,44 @@ class DNSResponse(TypedDict):
 class HTMLToAnyParams(TypedDict):
     html: NotRequired[str]
     url: NotRequired[str]
-    goto_options: NotRequired[Dict[str, Union[int, str]]]
-    scale: NotRequired[int]
+    goto_options: NotRequired[GotoOptions]
     full_page: NotRequired[bool]
     omit_background: NotRequired[bool]
-    quality: NotRequired[int]
-    type: NotRequired[str]
+    type: NotRequired[Literal["pdf", "png", "jpeg", "webp"]]
     width: NotRequired[int]
     height: NotRequired[int]
+    scale: NotRequired[int]
+    is_mobile: NotRequired[bool]
+    dark_mode: NotRequired[bool]
+    use_graphic_renderer: NotRequired[bool]
     size_preset: NotRequired[str]
     pdf_display_header_footer: NotRequired[bool]
     pdf_print_background: NotRequired[bool]
     pdf_page_range: NotRequired[str]
-    is_mobile: NotRequired[bool]
-    dark_mode: NotRequired[bool]
-    use_graphic_renderer: NotRequired[bool]
-    return_type: NotRequired[Literal["url", "binary", "base64"]]
+    quality: NotRequired[int]
 
 
-class HTMLToAnyResponse(TypedDict):
-    html: str
+class HTMLToAnyURLParams(HTMLToAnyParams):
+    return_type: NotRequired[Literal["url", "base64"]]
+
+
+class HTMLToAnyBinaryParams(HTMLToAnyParams):
+    return_type: NotRequired[Literal["binary"]]
+
+
+# Response types for different return_type values
+class HTMLToAnyURLResponse(BaseResponse):
+    """Response for 'url' and 'base64' return types"""
+
+    url: str
+
+
+# For binary responses, we return the raw bytes
+HTMLToAnyBinaryResponse = bytes
+
+
+class HTMLToAnyResponse(BaseResponse):
+    url: str
 
 
 #
@@ -83,26 +87,15 @@ class CookieParameter(TypedDict):
     sameParty: NotRequired[bool]
 
 
-class GotoOptions(TypedDict):
-    timeout: int
-    wait_until: str
-
-
 class WaitFor(TypedDict):
-    mode: str
+    mode: Literal["selector", "timeout", "function"]
     value: Union[str, int]
 
 
-class AdvanceConfigRequest(TypedDict):
-    console: bool
-    network: bool
-    cookies: bool
-
-
-class AdvanceConfigResponse(TypedDict):
-    console: list
-    network: list
-    cookies: list
+class AdvanceConfigParams(TypedDict):
+    console: NotRequired[bool]
+    network: NotRequired[bool]
+    cookies: NotRequired[bool]
 
 
 class BYOProxyAuth(TypedDict):
@@ -116,14 +109,13 @@ class BYOProxy(TypedDict):
 
 
 class BaseAIScrapeParams(TypedDict):
-    url: str
-    root_element_selector: NotRequired[str]
-    page_position: NotRequired[int]
+    url: NotRequired[str]
+    html: NotRequired[str]
     http_headers: NotRequired[Dict[str, Any]]
     reject_request_pattern: NotRequired[List[str]]
     goto_options: NotRequired[GotoOptions]
     wait_for: NotRequired[WaitFor]
-    advance_config: NotRequired[AdvanceConfigRequest]
+    advance_config: NotRequired[AdvanceConfigParams]
     size_preset: NotRequired[str]
     is_mobile: NotRequired[bool]
     scale: NotRequired[int]
@@ -132,19 +124,14 @@ class BaseAIScrapeParams(TypedDict):
     cookies: NotRequired[List[CookieParameter]]
     force_rotate_proxy: NotRequired[bool]
     byo_proxy: NotRequired[BYOProxy]
-
-
-class AIScrapeParamsWithSelector(BaseAIScrapeParams):
-    selectors: List[str]
-    element_prompts: NotRequired[List[str]]
-
-
-class AIScrapeParamsWithPrompts(BaseAIScrapeParams):
+    features: NotRequired[List[Literal["meta", "link"]]]
     selectors: NotRequired[List[str]]
-    element_prompts: List[str]
 
 
-AIScrapeParams = Union[AIScrapeParamsWithSelector, AIScrapeParamsWithPrompts]
+class AIScrapeParams(BaseAIScrapeParams):
+    element_prompts: NotRequired[List[str]]
+    root_element_selector: NotRequired[str]
+    page_position: NotRequired[int]
 
 
 class Attribute(TypedDict):
@@ -177,8 +164,22 @@ class Meta(TypedDict):
     og_image: Optional[str]
 
 
-class AIScrapeResponse(TypedDict):
-    success: bool
+class NetworkItem(TypedDict):
+    url: str
+    method: str
+    status: int
+    headers: Dict[str, str]
+    body: Optional[str]
+    type: Literal["request", "response"]
+
+
+class AdvanceConfigResponse(TypedDict):
+    console: NotRequired[Any]
+    network: NotRequired[NetworkItem]
+    cookies: NotRequired[Any]
+
+
+class AIScrapeResponse(BaseResponse):
     data: List[DataItem]
     page_position: int
     page_position_length: int
@@ -193,7 +194,6 @@ class AIScrapeResponse(TypedDict):
 # Web Client
 #
 class Web(ClientConfig):
-
     config: RequestConfig
 
     def __init__(
@@ -219,28 +219,34 @@ class Web(ClientConfig):
         ).perform_with_content()
         return resp
 
-    def html_to_any(self, params: HTMLToAnyParams) -> Any:
-        path = "/web/html_to_any"
-        resp = Request(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="post",
-        ).perform_with_content_file()
-        return resp
+    @overload
+    def html_to_any(self, params: HTMLToAnyURLParams) -> HTMLToAnyURLResponse: ...
 
-    def dns(self, params: DNSParams) -> DNSResponse:
-        path = build_path(
-            base_path="/web/html_to_any",
-            params=params,
-        )
-        resp = Request(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="get",
-        ).perform_with_content()
-        return resp
+    @overload
+    def html_to_any(self, params: HTMLToAnyBinaryParams) -> HTMLToAnyBinaryResponse: ...
+
+    def html_to_any(
+        self, params: HTMLToAnyParams
+    ) -> Union[HTMLToAnyURLResponse, HTMLToAnyBinaryResponse]:
+        path = "/web/html_to_any"
+        return_type = params.get("return_type", "url")
+
+        if return_type == "binary":
+            resp = Request(
+                config=self.config,
+                path=path,
+                params=cast(Dict[Any, Any], params),
+                verb="post",
+            ).perform_with_content_file()
+            return cast(HTMLToAnyBinaryResponse, resp)
+        else:  # "url" or "base64"
+            resp = Request(
+                config=self.config,
+                path=path,
+                params=cast(Dict[Any, Any], params),
+                verb="post",
+            ).perform_with_content()
+            return cast(HTMLToAnyURLResponse, resp)
 
     def search(self, params: SearchParams) -> SearchResponse:
         s = Search(
@@ -260,12 +266,19 @@ class Web(ClientConfig):
         )
         return s.suggestions(params)
 
+    def deep_research(self, params: DeepResearchParams) -> DeepResearchResponse:
+        s = Search(
+            self.api_key,
+            self.api_url,
+            disable_request_logging=self.config.get("disable_request_logging"),
+        )
+        return s.deep_research(params)
+
 
 #
 # Async Web Client
 #
 class AsyncWeb(ClientConfig):
-
     config: AsyncRequestConfig
 
     def __init__(
@@ -275,7 +288,7 @@ class AsyncWeb(ClientConfig):
         disable_request_logging: Union[bool, None] = False,
     ):
         super().__init__(api_key, api_url, disable_request_logging)
-        self.config = RequestConfig(
+        self.config = AsyncRequestConfig(
             api_url=api_url,
             api_key=api_key,
             disable_request_logging=disable_request_logging,
@@ -291,28 +304,36 @@ class AsyncWeb(ClientConfig):
         ).perform_with_content()
         return resp
 
-    async def html_to_any(self, params: HTMLToAnyParams) -> Any:
-        path = "/web/html_to_any"
-        resp = await AsyncRequest(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="post",
-        ).perform_with_content_file()
-        return resp
+    @overload
+    async def html_to_any(self, params: HTMLToAnyURLParams) -> HTMLToAnyURLResponse: ...
 
-    async def dns(self, params: DNSParams) -> DNSResponse:
-        path = build_path(
-            base_path="/web/html_to_any",
-            params=params,
-        )
-        resp = await AsyncRequest(
-            config=self.config,
-            path=path,
-            params=cast(Dict[Any, Any], params),
-            verb="get",
-        ).perform_with_content()
-        return resp
+    @overload
+    async def html_to_any(
+        self, params: HTMLToAnyBinaryParams
+    ) -> HTMLToAnyBinaryResponse: ...
+
+    async def html_to_any(
+        self, params: HTMLToAnyParams
+    ) -> Union[HTMLToAnyURLResponse, HTMLToAnyBinaryResponse]:
+        path = "/web/html_to_any"
+        return_type = params.get("return_type", "url")
+
+        if return_type == "binary":
+            resp = await AsyncRequest(
+                config=self.config,
+                path=path,
+                params=cast(Dict[Any, Any], params),
+                verb="post",
+            ).perform_with_content_file()
+            return cast(HTMLToAnyBinaryResponse, resp)
+        else:  # "url" or "base64"
+            resp = await AsyncRequest(
+                config=self.config,
+                path=path,
+                params=cast(Dict[Any, Any], params),
+                verb="post",
+            ).perform_with_content()
+            return cast(HTMLToAnyURLResponse, resp)
 
     async def search(self, params: SearchParams) -> SearchResponse:
         s = AsyncSearch(
@@ -331,3 +352,11 @@ class AsyncWeb(ClientConfig):
             disable_request_logging=self.config.get("disable_request_logging"),
         )
         return await s.suggestions(params)
+
+    async def deep_research(self, params: DeepResearchParams) -> DeepResearchResponse:
+        s = AsyncSearch(
+            self.api_key,
+            self.api_url,
+            disable_request_logging=self.config.get("disable_request_logging"),
+        )
+        return await s.deep_research(params)

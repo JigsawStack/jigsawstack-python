@@ -1,29 +1,67 @@
 from typing import Any, Dict, List, Union, cast, Literal
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import NotRequired, TypedDict, Optional
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
-from typing_extensions import NotRequired, TypedDict
 from ._config import ClientConfig
+from ._types import BaseResponse
 
 
-class SearchResponse(TypedDict):
-    success: bool
-    """
-    Whether the search request was successful
-    """
+class RelatedIndex(TypedDict):
+    text: str
+    url: str
 
+
+class Content(TypedDict):
+    text: str
+    image_urls: List[str]
+    links: List[str]
+
+
+class Result(TypedDict):
+    title: str
+    url: str
+    description: str
+    content: Union[str, Content]
+    is_safe: bool
+    site_name: str
+    site_long_name: str
+    age: str
+    language: str
+    favicon: str
+    snippets: List[str]
+    related_index: List[RelatedIndex]
+
+
+class GeoResult(TypedDict):
+    type: str
+    full_address: str
+    name: str
+    name_preferred: str
+    place_formatted: str
+    postcode: NotRequired[str]
+    district: NotRequired[str]
+    place: NotRequired[str]
+    region: NotRequired[Any]
+    country: NotRequired[Any]
+    language: str
+    geoloc: Dict[str, Any]
+    poi_category: NotRequired[str]
+    additional_properties: NotRequired[Any]
+
+
+class SearchResponse(BaseResponse):
     query: str
     """
     The search query that was used
     """
 
-    ai_overview: str
+    ai_overview: Optional[str]
     """
     AI-generated overview/summary of the search results
     or deep research results if enabled
     """
 
-    results: List[Any]
+    results: List[Result]
     """
     List of search result items
     """
@@ -38,7 +76,7 @@ class SearchResponse(TypedDict):
     Whether the query was spell-checked and fixed
     """
 
-    geo_results: List[Any]
+    geo_results: List[GeoResult]
     """
     List of location/geographic search results if applicable
     """
@@ -54,12 +92,7 @@ class SearchResponse(TypedDict):
     """
 
 
-class SearchSuggestionsResponse(TypedDict):
-    success: bool
-    """
-    Whether the search suggestions request was successful
-    """
-
+class SearchSuggestionsResponse(BaseResponse):
     suggestions: List[str]
     """
     List of search suggestions
@@ -72,11 +105,80 @@ class SearchSuggestionsParams(TypedDict):
     The search value. The maximum query character length is 200.
     """
 
-class DeepResearchConfig(TypedDict):
+
+class DeepResearchParams(TypedDict):
+    query: str
+    """
+    The search value. The maximum query character length is 200.
+    """
+
+    spell_check: NotRequired[bool]
+    """
+    Whether to perform spell checking on the query.
+    """
+
+    safe_search: NotRequired[Literal["strict", "moderate", "off"]]
+    """
+    Safe search filtering level. Can be 'strict', 'moderate', or 'off'
+    """
+
+    country_code: NotRequired[str]
+    """
+    Two-letter country code to localize search results (e.g. 'US', 'GB')
+    """
+
     max_depth: NotRequired[int]
+    """
+    Maximum depth for deep research
+    """
+
     max_breadth: NotRequired[int]
+    """
+    Maximum breadth for deep research
+    """
+
     max_output_tokens: NotRequired[int]
+    """
+    Maximum number of output tokens
+    """
+
     target_output_tokens: NotRequired[int]
+    """
+    Target number of output tokens
+    """
+
+
+class DeepResearchResponse(BaseResponse):
+    query: str
+    """
+    The search query that was used
+    """
+
+    results: str
+    """
+    The deep research results as a string
+    """
+
+    sources: List[Result]
+    """
+    List of source search results used for deep research
+    """
+
+    geo_results: List[GeoResult]
+    """
+    List of location/geographic search results if applicable
+    """
+
+    image_urls: List[str]
+    """
+    List of image URLs found in the search results
+    """
+
+    links: List[str]
+    """
+    List of web page URLs found in the search results
+    """
+
 
 class SearchParams(TypedDict):
     query: str
@@ -113,18 +215,6 @@ class SearchParams(TypedDict):
     """
     Whether to automatically scrape content from search result URLs
     """
-
-    deep_research: NotRequired[bool]
-    """
-    Enable deep research mode for more comprehensive results
-    """
-
-    deep_research_config: NotRequired[DeepResearchConfig]
-    """
-    Configuration options for deep research mode
-    """
-
-
 
 
 class Search(ClientConfig):
@@ -178,6 +268,16 @@ class Search(ClientConfig):
         ).perform_with_content()
         return resp
 
+    def deep_research(self, params: DeepResearchParams) -> DeepResearchResponse:
+        path = f"/web/deep_research"
+        resp = Request(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="POST",
+        ).perform_with_content()
+        return resp
+
 
 class AsyncSearch(ClientConfig):
     config: AsyncRequestConfig
@@ -189,7 +289,7 @@ class AsyncSearch(ClientConfig):
         disable_request_logging: Union[bool, None] = False,
     ):
         super().__init__(api_key, api_url, disable_request_logging)
-        self.config = RequestConfig(
+        self.config = AsyncRequestConfig(
             api_url=api_url,
             api_key=api_key,
             disable_request_logging=disable_request_logging,
@@ -227,5 +327,15 @@ class AsyncSearch(ClientConfig):
             path=path,
             params=cast(Dict[Any, Any], params),
             verb="GET",
+        ).perform_with_content()
+        return resp
+
+    async def deep_research(self, params: DeepResearchParams) -> DeepResearchResponse:
+        path = f"/web/deep_research"
+        resp = await AsyncRequest(
+            config=self.config,
+            path=path,
+            params=cast(Dict[Any, Any], params),
+            verb="POST",
         ).perform_with_content()
         return resp

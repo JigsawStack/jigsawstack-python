@@ -4,6 +4,7 @@ from .request import Request, RequestConfig
 from .async_request import AsyncRequest
 from typing import List, Union
 from ._config import ClientConfig
+from ._types import BaseResponse
 
 
 class SentimentParams(TypedDict):
@@ -36,16 +37,11 @@ class SentimentResult(TypedDict):
     sentences: List[SentimentSentenceResult]
 
 
-class SentimentResponse(TypedDict):
-    success: bool
-    """
-    Indicates whether the translation was successful.
-    """
+class SentimentResponse(BaseResponse):
     sentiment: SentimentResult
 
 
 class Sentiment(ClientConfig):
-
     config: RequestConfig
 
     def __init__(
@@ -73,7 +69,6 @@ class Sentiment(ClientConfig):
 
 
 class AsyncSentiment(ClientConfig):
-
     config: RequestConfig
 
     def __init__(

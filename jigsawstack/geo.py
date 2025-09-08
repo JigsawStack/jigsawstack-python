@@ -193,7 +193,6 @@ class GeohashDecodeResponse(BaseResponse):
 
 
 class Geo(ClientConfig):
-
     config: RequestConfig
 
     def __init__(
@@ -301,7 +300,6 @@ class Geo(ClientConfig):
 
 
 class AsyncGeo(ClientConfig):
-
     config: AsyncRequestConfig
 
     def __init__(

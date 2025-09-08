@@ -39,7 +39,6 @@ class JigsawStackError(Exception):
 
 
 class MissingApiKeyError(JigsawStackError):
-
     def __init__(
         self,
         message: str,
@@ -61,8 +60,6 @@ class MissingApiKeyError(JigsawStackError):
 
 
 class InvalidApiKeyError(JigsawStackError):
-   
-
     def __init__(
         self,
         message: str,
@@ -81,8 +78,6 @@ class InvalidApiKeyError(JigsawStackError):
 
 
 class ValidationError(JigsawStackError):
-
-
     def __init__(
         self,
         message: str,
@@ -108,7 +103,6 @@ class ValidationError(JigsawStackError):
 
 
 class MissingRequiredFieldsError(JigsawStackError):
-
     def __init__(
         self,
         message: str,
@@ -134,8 +128,6 @@ class MissingRequiredFieldsError(JigsawStackError):
 
 
 class ApplicationError(JigsawStackError):
-
-
     def __init__(
         self,
         message: str,
@@ -173,7 +165,7 @@ ERRORS: Dict[str, Dict[str, Any]] = {
 
 
 def raise_for_code_and_type(
-    code: Union[str, int], message: str, err : Union[str, Dict[str, Any]] = None
+    code: Union[str, int], message: str, err: Union[str, Dict[str, Any]] = None
 ) -> None:
     """Raise the appropriate error based on the code and type.
 
@@ -201,14 +193,10 @@ def raise_for_code_and_type(
 
     # Handle the case where the error might be unknown
     if error is None:
-        raise JigsawStackError(
-            code=code, message=message, err=err, suggested_action=""
-        )
+        raise JigsawStackError(code=code, message=message, err=err, suggested_action="")
 
     # defaults to JigsawStackError if finally can't find error type
-    raise JigsawStackError(
-        code=code, message=message, err=err,  suggested_action=""
-    )
+    raise JigsawStackError(code=code, message=message, err=err, suggested_action="")
 
 
 class NoContentError(Exception):
