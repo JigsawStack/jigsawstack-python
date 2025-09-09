@@ -15,6 +15,7 @@ from .embedding import Embedding, AsyncEmbedding
 from .exceptions import JigsawStackError
 from .image_generation import ImageGeneration, AsyncImageGeneration
 from .classification import Classification, AsyncClassification
+from .prompt_engine import PromptEngine, AsyncPromptEngine
 
 
 class JigsawStack:
@@ -25,6 +26,7 @@ class JigsawStack:
     web: Web
     search: Search
     classification: Classification
+    prompt_engine: PromptEngine
     api_key: str
     api_url: str
     headers: Dict[str, str]
@@ -125,6 +127,12 @@ class JigsawStack:
             disable_request_logging=disable_request_logging,
         ).classify
 
+        self.prompt_engine = PromptEngine(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        )
+
 
 class AsyncJigsawStack:
     validate: AsyncValidate
@@ -133,6 +141,7 @@ class AsyncJigsawStack:
     vision: AsyncVision
     image_generation: AsyncImageGeneration
     store: AsyncStore
+    prompt_engine: AsyncPromptEngine
     api_key: str
     api_url: str
     disable_request_logging: bool
@@ -234,6 +243,12 @@ class AsyncJigsawStack:
             api_url=api_url,
             disable_request_logging=disable_request_logging,
         ).classify
+
+        self.prompt_engine = AsyncPromptEngine(
+            api_key=api_key,
+            api_url=api_url,
+            disable_request_logging=disable_request_logging,
+        )
 
 
 # Create a global instance of the Web class
