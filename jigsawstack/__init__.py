@@ -137,7 +137,7 @@ class JigsawStack:
 
         self.prompt_engine = PromptEngine(
             api_key=api_key,
-            api_url=api_url,
+            api_url=api_url + "/v1",
             disable_request_logging=disable_request_logging,
         )
 
