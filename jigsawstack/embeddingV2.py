@@ -5,29 +5,27 @@ from .async_request import AsyncRequest
 from typing import List, Union
 from ._config import ClientConfig
 from .helpers import build_path
-from ._types import BaseResponse
+from .embedding import Chunk
 
 
-class EmbeddingParams(TypedDict):
+class EmbeddingV2Params(TypedDict):
     text: NotRequired[str]
     file_content: NotRequired[Any]
     type: Literal["text", "text-other", "image", "audio", "pdf"]
     url: NotRequired[str]
     file_store_key: NotRequired[str]
-    token_overflow_mode: NotRequired[Literal["truncate", "error"]]
+    token_overflow_mode: NotRequired[Literal["truncate", "chunk", "error"]] = "chunk"
+    speaker_fingerprint: NotRequired[bool]
 
 
-class Chunk(TypedDict):
-    text: str
-    timestamp: List[int]
-
-
-class EmbeddingResponse(BaseResponse):
+class EmbeddingV2Response(TypedDict):
+    success: bool
     embeddings: List[List[float]]
-    chunks: Union[List[Chunk], List[str]]
+    chunks: Union[List[str], List[Chunk]]
+    speaker_embeddings: List[List[float]]
 
 
-class Embedding(ClientConfig):
+class EmbeddingV2(ClientConfig):
     config: RequestConfig
 
     def __init__(
@@ -44,17 +42,17 @@ class Embedding(ClientConfig):
         )
 
     @overload
-    def execute(self, params: EmbeddingParams) -> EmbeddingResponse: ...
+    def execute(self, params: EmbeddingV2Params) -> EmbeddingV2Response: ...
     @overload
     def execute(
-        self, blob: bytes, options: EmbeddingParams = None
-    ) -> EmbeddingResponse: ...
+        self, blob: bytes, options: EmbeddingV2Params = None
+    ) -> EmbeddingV2Response: ...
 
     def execute(
         self,
-        blob: Union[EmbeddingParams, bytes],
-        options: EmbeddingParams = None,
-    ) -> EmbeddingResponse:
+        blob: Union[EmbeddingV2Params, bytes],
+        options: EmbeddingV2Params = None,
+    ) -> EmbeddingV2Response:
         path = "/embedding"
         if isinstance(blob, dict):
             resp = Request(
@@ -81,7 +79,7 @@ class Embedding(ClientConfig):
         return resp
 
 
-class AsyncEmbedding(ClientConfig):
+class AsyncEmbeddingV2(ClientConfig):
     config: RequestConfig
 
     def __init__(
@@ -98,17 +96,17 @@ class AsyncEmbedding(ClientConfig):
         )
 
     @overload
-    async def execute(self, params: EmbeddingParams) -> EmbeddingResponse: ...
+    async def execute(self, params: EmbeddingV2Params) -> EmbeddingV2Response: ...
     @overload
     async def execute(
-        self, blob: bytes, options: EmbeddingParams = None
-    ) -> EmbeddingResponse: ...
+        self, blob: bytes, options: EmbeddingV2Params = None
+    ) -> EmbeddingV2Response: ...
 
     async def execute(
         self,
-        blob: Union[EmbeddingParams, bytes],
-        options: EmbeddingParams = None,
-    ) -> EmbeddingResponse:
+        blob: Union[EmbeddingV2Params, bytes],
+        options: EmbeddingV2Params = None,
+    ) -> EmbeddingV2Response:
         path = "/embedding"
         if isinstance(blob, dict):
             resp = await AsyncRequest(
