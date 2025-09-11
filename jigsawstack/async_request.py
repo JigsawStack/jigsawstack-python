@@ -245,20 +245,23 @@ class AsyncRequest(Generic[T]):
         else:
             if data is not None:
                 form_data = aiohttp.FormData()
-                form_data.add_field('file', BytesIO(data), content_type=headers.get("Content-Type", "application/octet-stream"), filename="file")
-                
+                form_data.add_field(
+                    "file",
+                    BytesIO(data),
+                    content_type=headers.get(
+                        "Content-Type", "application/octet-stream"
+                    ),
+                    filename="file",
+                )
+
                 if self.params and isinstance(self.params, dict):
-                    for key, value in self.params.items():
-                        if isinstance(value, bool):
-                            form_data.add_field(key, str(value).lower())
-                        elif isinstance(value, (list, dict, tuple, int, float)):
-                            form_data.add_field(key, json.dumps(value))
-                        else:
-                            form_data.add_field(key, str(value))
-                
+                    form_data.add_field(
+                        "body", json.dumps(self.params), content_type="application/json"
+                    )
+
                 multipart_headers = headers.copy()
-                multipart_headers.pop('Content-Type', None)
-                
+                multipart_headers.pop("Content-Type", None)
+
                 return await session.request(
                     verb,
                     url,
