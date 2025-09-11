@@ -3,9 +3,7 @@ from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
-from typing import Any, Dict, List, cast
-from typing_extensions import NotRequired, TypedDict, Literal
-from .custom_typing import SupportedAccents
+from typing_extensions import Literal
 from .helpers import build_path
 from ._types import BaseResponse
 
@@ -80,21 +78,20 @@ class Audio(ClientConfig):
         blob: Union[SpeechToTextParams, bytes],
         options: Optional[SpeechToTextParams] = None,
     ) -> Union[SpeechToTextResponse, SpeechToTextWebhookResponse]:
+        options = options or {}
+        path = "/ai/transcribe"
+        content_type = options.get("content_type", "application/octet-stream")
+        headers = {"Content-Type": content_type}
         if isinstance(
             blob, dict
         ):  # If params is provided as a dict, we assume it's the first argument
             resp = Request(
                 config=self.config,
-                path="/ai/transcribe",
+                path=path,
                 params=cast(Dict[Any, Any], blob),
                 verb="post",
             ).perform_with_content()
             return resp
-
-        options = options or {}
-        path = build_path(base_path="/ai/transcribe", params=options)
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
 
         resp = Request(
             config=self.config,
@@ -137,19 +134,18 @@ class AsyncAudio(ClientConfig):
         blob: Union[SpeechToTextParams, bytes],
         options: Optional[SpeechToTextParams] = None,
     ) -> Union[SpeechToTextResponse, SpeechToTextWebhookResponse]:
+        options = options or {}
+        path = "/ai/transcribe"
+        content_type = options.get("content_type", "application/octet-stream")
+        headers = {"Content-Type": content_type}
         if isinstance(blob, dict):
             resp = await AsyncRequest(
                 config=self.config,
-                path="/ai/transcribe",
+                path=path,
                 params=cast(Dict[Any, Any], blob),
                 verb="post",
             ).perform_with_content()
             return resp
-
-        options = options or {}
-        path = build_path(base_path="/ai/transcribe", params=options)
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
 
         resp = await AsyncRequest(
             config=self.config,
