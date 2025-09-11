@@ -68,7 +68,7 @@ VOCR:
 
 ```py
 params = {
-    "url": "https://rogilvkqloanxtvjfrkm.supabase.co/storage/v1/object/public/demo/Collabo%201080x842.jpg?t=2024-03-22T09%3A22%3A48.442Z"
+    "url": "https://images.unsplash.com/photo-1542931287-023b922fa89b?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?t=2024-03-22T09%3A22%3A48.442Z"
 }
 result = jigsaw.vision.vocr(params)
 ```
