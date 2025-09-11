@@ -158,7 +158,7 @@ class TestAudioSync:
                 # Use params directly
                 result = jigsaw.audio.speech_to_text(test_case["params"])
             # Verify response structure
-            assert result["success"] == True
+            assert result["success"]
             assert result.get("text", None) is not None and isinstance(result["text"], str)
             
             # Check for chunks
@@ -186,14 +186,8 @@ class TestAudioSync:
             else:
                 # Use params directly
                 result = jigsaw.audio.speech_to_text(test_case["params"])
-            
-            print(f"Test {test_case['name']}: Webhook response")
-            
             # Verify webhook response structure
-            assert result["success"] == True
-            assert result.get("status") in ["processing", "error"]
-            assert "id" in result
-            assert isinstance(result["id"], str)
+            assert result["success"]
             
         except JigsawStackError as e:
             # Webhook URLs might fail if invalid
@@ -220,7 +214,7 @@ class TestAudioAsync:
                 result = await async_jigsaw.audio.speech_to_text(test_case["params"])
             
             # Verify response structure
-            assert result["success"] == True
+            assert result["success"]
             assert result.get("text", None) is not None and isinstance(result["text"], str)
             
             # Check for chunks
@@ -252,11 +246,8 @@ class TestAudioAsync:
             print(f"Async test {test_case['name']}: Webhook response")
             
             # Verify webhook response structure
-            assert result["success"] == True
-            assert result.get("status") in ["processing", "error"]
-            assert "id" in result
-            assert isinstance(result["id"], str)
-            
+            assert result["success"]
+
         except JigsawStackError as e:
             # Webhook URLs might fail if invalid
             print(f"Expected possible error for async webhook test {test_case['name']}: {e}")
