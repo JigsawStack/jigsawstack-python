@@ -3,6 +3,7 @@ import aiohttp
 from typing_extensions import Literal, TypeVar
 from .exceptions import NoContentError, raise_for_code_and_type
 import json
+from io import BytesIO
 
 RequestVerb = Literal["get", "post", "put", "patch", "delete"]
 
@@ -243,12 +244,26 @@ class AsyncRequest(Generic[T]):
             )
         else:
             if data is not None:
+                form_data = aiohttp.FormData()
+                form_data.add_field('file', BytesIO(data), content_type=headers.get("Content-Type", "application/octet-stream"), filename="file")
+                
+                if self.params and isinstance(self.params, dict):
+                    for key, value in self.params.items():
+                        if isinstance(value, bool):
+                            form_data.add_field(key, str(value).lower())
+                        elif isinstance(value, (list, dict, tuple, int, float)):
+                            form_data.add_field(key, json.dumps(value))
+                        else:
+                            form_data.add_field(key, str(value))
+                
+                multipart_headers = headers.copy()
+                multipart_headers.pop('Content-Type', None)
+                
                 return await session.request(
                     verb,
                     url,
-                    data=data,
-                    params=converted_params,  # Use converted params
-                    headers=headers,
+                    data=form_data,
+                    headers=multipart_headers,
                 )
             else:
                 return await session.request(
