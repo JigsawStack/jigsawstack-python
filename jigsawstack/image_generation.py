@@ -1,9 +1,8 @@
-from typing import Any, Dict, List, Union, cast
+from typing import Any, Dict, Union, cast
 from typing_extensions import NotRequired, TypedDict, Literal, Required
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest
 
-from typing import List, Union
 from ._config import ClientConfig
 
 
@@ -77,9 +76,9 @@ class ImageGenerationResponse(TypedDict):
     """
     Indicates whether the image generation was successful.
     """
-    image: bytes
+    url: NotRequired[str]
     """
-    The generated image as a blob.
+    The generated image as a URL or base64 string.
     """
 
 
@@ -103,7 +102,7 @@ class ImageGeneration(ClientConfig):
 
     def image_generation(
         self, params: ImageGenerationParams
-    ) -> ImageGenerationResponse:
+    ) -> Union[ImageGenerationResponse, bytes]:
         path = "/ai/image_generation"
         resp = Request(
             config=self.config,
@@ -134,7 +133,7 @@ class AsyncImageGeneration(ClientConfig):
 
     async def image_generation(
         self, params: ImageGenerationParams
-    ) -> ImageGenerationResponse:
+    ) -> Union[ImageGenerationResponse, bytes]:
         path = "/ai/image_generation"
         resp = await AsyncRequest(
             config=self.config,
