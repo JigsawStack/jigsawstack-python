@@ -16,7 +16,7 @@ from .exceptions import JigsawStackError
 from .image_generation import ImageGeneration, AsyncImageGeneration
 from .classification import Classification, AsyncClassification
 from .prompt_engine import PromptEngine, AsyncPromptEngine
-from .embeddingV2 import EmbeddingV2, AsyncEmbeddingV2
+from .embedding_v2 import EmbeddingV2, AsyncEmbeddingV2
 
 
 class JigsawStack:
@@ -51,7 +51,7 @@ class JigsawStack:
         if api_url is None:
             api_url = os.environ.get("JIGSAWSTACK_API_URL")
         if api_url is None:
-            api_url = f"https://api.jigsawstack.com/"
+            api_url = "https://api.jigsawstack.com/"
 
         self.api_key = api_key
         self.api_url = api_url
@@ -171,7 +171,7 @@ class AsyncJigsawStack:
         if api_url is None:
             api_url = os.environ.get("JIGSAWSTACK_API_URL")
         if api_url is None:
-            api_url = f"https://api.jigsawstack.com/"
+            api_url = "https://api.jigsawstack.com/"
 
         self.api_key = api_key
         self.api_url = api_url
