@@ -2,7 +2,6 @@ from typing import Any, Dict, List, Union, cast, Literal, overload
 from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest
-from typing import List, Union
 from ._config import ClientConfig
 from .helpers import build_path
 from .embedding import Chunk
@@ -14,7 +13,7 @@ class EmbeddingV2Params(TypedDict):
     type: Literal["text", "text-other", "image", "audio", "pdf"]
     url: NotRequired[str]
     file_store_key: NotRequired[str]
-    token_overflow_mode: NotRequired[Literal["truncate", "chunk", "error"]] = "chunk"
+    token_overflow_mode: NotRequired[Literal["truncate", "error"]]
     speaker_fingerprint: NotRequired[bool]
 
 
