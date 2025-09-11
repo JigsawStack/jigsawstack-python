@@ -3,7 +3,6 @@ from typing_extensions import NotRequired, TypedDict, Literal
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
-from .helpers import build_path
 from ._types import BaseResponse
 
 
@@ -190,6 +189,8 @@ class Vision(ClientConfig):
         blob: Union[VOCRParams, bytes],
         options: VOCRParams = None,
     ) -> OCRResponse:
+        path = "/vocr"
+        options = options or {}
         if isinstance(
             blob, dict
         ):  # If params is provided as a dict, we assume it's the first argument
@@ -201,8 +202,6 @@ class Vision(ClientConfig):
             ).perform_with_content()
             return resp
 
-        options = options or {}
-        path = build_path(base_path="/vocr", params=options)
         content_type = options.get("content_type", "application/octet-stream")
         headers = {"Content-Type": content_type}
 
@@ -230,17 +229,17 @@ class Vision(ClientConfig):
         blob: Union[ObjectDetectionParams, bytes],
         options: ObjectDetectionParams = None,
     ) -> ObjectDetectionResponse:
+        path = "/object_detection"
+        options = options or {}
         if isinstance(blob, dict):
             resp = Request(
                 config=self.config,
-                path="/object_detection",
+                path=path,
                 params=cast(Dict[Any, Any], blob),
                 verb="post",
             ).perform_with_content()
             return resp
-
-        options = options or {}
-        path = build_path(base_path="/object_detection", params=options)
+        
         content_type = options.get("content_type", "application/octet-stream")
         headers = {"Content-Type": content_type}
 
@@ -281,17 +280,17 @@ class AsyncVision(ClientConfig):
         blob: Union[VOCRParams, bytes],
         options: VOCRParams = None,
     ) -> OCRResponse:
+        path = "/vocr"
+        options = options or {}
         if isinstance(blob, dict):
             resp = await AsyncRequest(
                 config=self.config,
-                path="/vocr",
+                path=path,
                 params=cast(Dict[Any, Any], blob),
                 verb="post",
             ).perform_with_content()
             return resp
 
-        options = options or {}
-        path = build_path(base_path="/vocr", params=options)
         content_type = options.get("content_type", "application/octet-stream")
         headers = {"Content-Type": content_type}
 
@@ -319,19 +318,19 @@ class AsyncVision(ClientConfig):
         blob: Union[ObjectDetectionParams, bytes],
         options: ObjectDetectionParams = None,
     ) -> ObjectDetectionResponse:
+        path = "/object_detection"
+        options = options or {}
         if isinstance(
             blob, dict
         ):  # If params is provided as a dict, we assume it's the first argument
             resp = await AsyncRequest(
                 config=self.config,
-                path="/object_detection",
+                path=path,
                 params=cast(Dict[Any, Any], blob),
                 verb="post",
             ).perform_with_content()
             return resp
 
-        options = options or {}
-        path = build_path(base_path="/object_detection", params=options)
         content_type = options.get("content_type", "application/octet-stream")
         headers = {"Content-Type": content_type}
 
