@@ -151,7 +151,7 @@ class TestClassificationSync:
         """Test synchronous classification with various inputs"""
         try:
             result = jigsaw.classification(test_case["params"])
-            assert result["success"] == True
+            assert result["success"]
             assert "predictions" in result
             if test_case.get("multiple_labels"):
                 # Ensure predictions are lists when multiple_labels is True
@@ -175,7 +175,7 @@ class TestClassificationAsync:
         """Test asynchronous classification with various inputs"""
         try:
             result = await async_jigsaw.classification(test_case["params"])
-            assert result["success"] == True
+            assert result["success"]
             assert "predictions" in result
 
             if test_case.get("multiple_labels"):
