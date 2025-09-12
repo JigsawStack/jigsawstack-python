@@ -1,0 +1,117 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  ruff-format-check:
+    name: Ruff Format Check - ${{ matrix.file }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        file:
+          - __init__.py
+          - _config.py
+          - _types.py
+          - async_request.py
+          - audio.py
+          - classification.py
+          - embedding_v2.py
+          - embedding.py
+          - exceptions.py
+          - helpers.py
+          - image_generation.py
+          - prediction.py
+          - prompt_engine.py
+          - request.py
+          - search.py
+          - sentiment.py
+          - sql.py
+          - store.py
+          - summary.py
+          - translate.py
+          - validate.py
+          - vision.py
+          - web.py
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      
+      - name: Install ruff
+        run: pip install ruff
+      
+      - name: Check formatting for ${{ matrix.file }}
+        run: |
+          ruff check jigsawstack/${{ matrix.file }} --select I,F,E,W
+          ruff format --check jigsawstack/${{ matrix.file }}
+
+  test:
+    name: Test - ${{ matrix.test-file }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test-file:
+          - test_audio.py
+          - test_classification.py
+          - test_embedding.py
+          - test_file_store.py
+          - test_geo.py
+          - test_image_generation.py
+          - test_object_detection.py
+          - test_prediction.py
+          - test_sentiment.py
+          - test_sql.py
+          - test_summary.py
+          - test_translate.py
+          - test_validate.py
+          - test_vision.py
+          - test_web.py
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio pytest-cov
+          pip install -e .
+      
+      - name: Run test ${{ matrix.test-file }}
+        env:
+          JIGSAWSTACK_API_KEY: ${{ secrets.JIGSAWSTACK_API_KEY }}
+        run: |
+          pytest tests/${{ matrix.test-file }} -v
+        continue-on-error: true
+      
+      - name: Check if critical tests passed
+        if: contains(matrix.test-file, 'test_') && !contains(matrix.test-file, 'skip')
+        run: |
+          pytest tests/${{ matrix.test-file }} -v -m "not skip"
+
+  all-checks-passed:
+    name: All Checks Passed
+    needs: [ruff-format-check, test]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check if all jobs passed
+        run: |
+          if [[ "${{ needs.ruff-format-check.result }}" != "success" || "${{ needs.test.result }}" != "success" ]]; then
+            echo "One or more checks failed"
+            exit 1
+          fi
+          echo "All checks passed successfully!"
