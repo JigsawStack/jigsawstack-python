@@ -1,10 +1,12 @@
-import requests
-from jigsawstack.exceptions import JigsawStackError
-import jigsawstack
-import pytest
 import logging
-from dotenv import load_dotenv
 import os
+
+import pytest
+import requests
+from dotenv import load_dotenv
+
+import jigsawstack
+from jigsawstack.exceptions import JigsawStackError
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
@@ -122,7 +124,7 @@ IMAGE_TO_IMAGE_TEST_CASES = [
 
 class TestImageGenerationSync:
     """Test synchronous image generation methods"""
-    
+
     @pytest.mark.parametrize("test_case", TEST_CASES, ids=[tc["name"] for tc in TEST_CASES])
     def test_image_generation(self, test_case):
         """Test synchronous image generation with various parameters"""
@@ -150,20 +152,20 @@ class TestImageGenerationSync:
                     assert requests.get(result["url"]).status_code == 200
             else:
                 assert isinstance(result, bytes)
-            
+
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
-    
+
     @pytest.mark.parametrize("test_case", IMAGE_TO_IMAGE_TEST_CASES[:1], ids=[tc["name"] for tc in IMAGE_TO_IMAGE_TEST_CASES[:1]])
     def test_image_to_image_generation(self, test_case):
         """Test image-to-image generation with URL input"""
         try:
-            
+
             result = jigsaw.image_generation(test_case["params"])
-            
+
             print(f"Test {test_case['name']}: Generated image from input")
             assert result is not None
-            
+
             if type(result) is dict:
                 assert result.get("success")
                 assert result.get("url") is not None
@@ -177,16 +179,16 @@ class TestImageGenerationSync:
 
 class TestImageGenerationAsync:
     """Test asynchronous image generation methods"""
-    
+
     @pytest.mark.parametrize("test_case", TEST_CASES, ids=[tc["name"] for tc in TEST_CASES])
     @pytest.mark.asyncio
     async def test_image_generation_async(self, test_case):
         """Test asynchronous image generation with various parameters"""
         try:
             result = await async_jigsaw.image_generation(test_case["params"])
-            
+
             print(f"Async test {test_case['name']}: Generated image")
-            
+
             # Check response structure
             assert result is not None
             if type(result) is dict:
@@ -203,10 +205,10 @@ class TestImageGenerationAsync:
                     assert requests.get(result["url"]).status_code == 200
             else:
                 assert isinstance(result, bytes)
-            
+
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in async {test_case['name']}: {e}")
-    
+
     @pytest.mark.parametrize("test_case", IMAGE_TO_IMAGE_TEST_CASES[:1], ids=[tc["name"] for tc in IMAGE_TO_IMAGE_TEST_CASES[:1]])
     @pytest.mark.asyncio
     async def test_image_to_image_generation_async(self, test_case):

@@ -1,9 +1,11 @@
-from typing import Any, Dict, Generic, List, Union, cast, TypedDict, AsyncGenerator
-import aiohttp
-from typing_extensions import Literal, TypeVar
-from .exceptions import NoContentError, raise_for_code_and_type
 import json
 from io import BytesIO
+from typing import Any, AsyncGenerator, Dict, Generic, List, TypedDict, Union, cast
+
+import aiohttp
+from typing_extensions import Literal, TypeVar
+
+from .exceptions import NoContentError, raise_for_code_and_type
 
 RequestVerb = Literal["get", "post", "put", "patch", "delete"]
 

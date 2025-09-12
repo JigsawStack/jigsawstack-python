@@ -1,9 +1,11 @@
 from typing import Any, Union
+
 from typing_extensions import NotRequired, TypedDict
-from .request import Request, RequestConfig
-from .async_request import AsyncRequest, AsyncRequestConfig
+
 from ._config import ClientConfig
+from .async_request import AsyncRequest, AsyncRequestConfig
 from .helpers import build_path
+from .request import Request, RequestConfig
 
 
 class FileDeleteResponse(TypedDict):

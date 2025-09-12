@@ -1,10 +1,12 @@
-import requests
-from jigsawstack.exceptions import JigsawStackError
-import jigsawstack
-import pytest
 import logging
-from dotenv import load_dotenv
 import os
+
+import pytest
+import requests
+from dotenv import load_dotenv
+
+import jigsawstack
+from jigsawstack.exceptions import JigsawStackError
 
 load_dotenv()
 
@@ -138,14 +140,14 @@ class TestTranslateTextSync:
             result = jigsaw.translate.text(test_case["params"])
             assert result["success"]
             assert "translated_text" in result
-            
+
             # Check if the response structure matches the input
             if isinstance(test_case["params"]["text"], list):
                 assert isinstance(result["translated_text"], list)
                 assert len(result["translated_text"]) == len(test_case["params"]["text"])
             else:
                 assert isinstance(result["translated_text"], str)
-                
+
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
 
@@ -165,14 +167,14 @@ class TestTranslateTextAsync:
             result = await async_jigsaw.translate.text(test_case["params"])
             assert result["success"]
             assert "translated_text" in result
-            
+
             # Check if the response structure matches the input
             if isinstance(test_case["params"]["text"], list):
                 assert isinstance(result["translated_text"], list)
                 assert len(result["translated_text"]) == len(test_case["params"]["text"])
             else:
                 assert isinstance(result["translated_text"], str)
-                
+
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
 

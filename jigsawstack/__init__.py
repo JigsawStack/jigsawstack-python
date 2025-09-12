@@ -1,22 +1,23 @@
-from typing import Union, Dict
 import os
-from .audio import Audio, AsyncAudio
-from .vision import Vision, AsyncVision
-from .search import Search
-from .prediction import Prediction, AsyncPrediction
-from .sql import SQL, AsyncSQL
-from .store import Store, AsyncStore
-from .translate import Translate, AsyncTranslate
-from .web import Web, AsyncWeb
-from .sentiment import Sentiment, AsyncSentiment
-from .validate import Validate, AsyncValidate
-from .summary import Summary, AsyncSummary
-from .embedding import Embedding, AsyncEmbedding
+from typing import Dict, Union
+
+from .audio import AsyncAudio, Audio
+from .classification import AsyncClassification, Classification
+from .embedding import AsyncEmbedding, Embedding
+from .embedding_v2 import AsyncEmbeddingV2, EmbeddingV2
 from .exceptions import JigsawStackError
-from .image_generation import ImageGeneration, AsyncImageGeneration
-from .classification import Classification, AsyncClassification
-from .prompt_engine import PromptEngine, AsyncPromptEngine
-from .embedding_v2 import EmbeddingV2, AsyncEmbeddingV2
+from .image_generation import AsyncImageGeneration, ImageGeneration
+from .prediction import AsyncPrediction, Prediction
+from .prompt_engine import AsyncPromptEngine, PromptEngine
+from .search import Search
+from .sentiment import AsyncSentiment, Sentiment
+from .sql import SQL, AsyncSQL
+from .store import AsyncStore, Store
+from .summary import AsyncSummary, Summary
+from .translate import AsyncTranslate, Translate
+from .validate import AsyncValidate, Validate
+from .vision import AsyncVision, Vision
+from .web import AsyncWeb, Web
 
 
 class JigsawStack:

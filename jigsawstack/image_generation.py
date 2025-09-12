@@ -1,9 +1,10 @@
 from typing import Any, Dict, Union, cast
-from typing_extensions import NotRequired, TypedDict, Literal, Required
-from .request import Request, RequestConfig
-from .async_request import AsyncRequest
+
+from typing_extensions import Literal, NotRequired, Required, TypedDict
 
 from ._config import ClientConfig
+from .async_request import AsyncRequest
+from .request import Request, RequestConfig
 
 
 class AdvanceConfig(TypedDict):

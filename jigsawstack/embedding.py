@@ -1,10 +1,12 @@
-from typing import Any, Dict, List, Union, cast, Literal, overload
+from typing import Any, Dict, List, Literal, Union, cast, overload
+
 from typing_extensions import NotRequired, TypedDict
-from .request import Request, RequestConfig
-from .async_request import AsyncRequest
+
 from ._config import ClientConfig
-from .helpers import build_path
 from ._types import BaseResponse
+from .async_request import AsyncRequest
+from .helpers import build_path
+from .request import Request, RequestConfig
 
 
 class EmbeddingParams(TypedDict):

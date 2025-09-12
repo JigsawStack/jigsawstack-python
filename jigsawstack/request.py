@@ -1,8 +1,10 @@
-from typing import Any, Dict, Generic, List, Union, cast, TypedDict, Generator
+import json
+from typing import Any, Dict, Generator, Generic, List, TypedDict, Union, cast
+
 import requests
 from typing_extensions import Literal, TypeVar
+
 from .exceptions import NoContentError, raise_for_code_and_type
-import json
 
 RequestVerb = Literal["get", "post", "put", "patch", "delete"]
 

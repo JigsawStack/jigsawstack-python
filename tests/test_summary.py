@@ -1,9 +1,11 @@
-from jigsawstack.exceptions import JigsawStackError
-import jigsawstack
-import pytest
 import logging
-from dotenv import load_dotenv
 import os
+
+import pytest
+from dotenv import load_dotenv
+
+import jigsawstack
+from jigsawstack.exceptions import JigsawStackError
 
 load_dotenv()
 

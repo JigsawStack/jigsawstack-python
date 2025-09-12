@@ -1,10 +1,11 @@
-from typing import Any, Dict, List, cast, Union, Optional, overload
-from typing_extensions import NotRequired, TypedDict
-from .request import Request, RequestConfig
-from .async_request import AsyncRequest, AsyncRequestConfig
+from typing import Any, Dict, List, Optional, Union, cast, overload
+
+from typing_extensions import Literal, NotRequired, TypedDict
+
 from ._config import ClientConfig
-from typing_extensions import Literal
 from ._types import BaseResponse
+from .async_request import AsyncRequest, AsyncRequestConfig
+from .request import Request, RequestConfig
 
 
 class SpeechToTextParams(TypedDict):

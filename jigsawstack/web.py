@@ -1,20 +1,21 @@
-from typing import Any, Dict, List, Union, Optional, cast, Literal, overload
+from typing import Any, Dict, List, Literal, Optional, Union, cast, overload
+
 from typing_extensions import NotRequired, TypedDict
 
-from .request import Request, RequestConfig
-from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
+from ._types import BaseResponse
+from .async_request import AsyncRequest, AsyncRequestConfig
+from .request import Request, RequestConfig
 from .search import (
-    Search,
-    SearchParams,
-    SearchSuggestionsParams,
-    SearchSuggestionsResponse,
-    SearchResponse,
     AsyncSearch,
     DeepResearchParams,
     DeepResearchResponse,
+    Search,
+    SearchParams,
+    SearchResponse,
+    SearchSuggestionsParams,
+    SearchSuggestionsResponse,
 )
-from ._types import BaseResponse
 
 
 class GotoOptions(TypedDict):

@@ -1,9 +1,11 @@
-from typing import Any, Dict, List, Union, cast, Literal
-from typing_extensions import NotRequired, TypedDict, Optional
-from .request import Request, RequestConfig
-from .async_request import AsyncRequest, AsyncRequestConfig
+from typing import Any, Dict, List, Literal, Optional, Union, cast
+
+from typing_extensions import NotRequired, TypedDict
+
 from ._config import ClientConfig
 from ._types import BaseResponse
+from .async_request import AsyncRequest, AsyncRequestConfig
+from .request import Request, RequestConfig
 
 
 class RelatedIndex(TypedDict):

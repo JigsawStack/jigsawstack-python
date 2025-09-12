@@ -1,9 +1,11 @@
-from typing import Any, Dict, List, Union, cast, Optional, overload
-from typing_extensions import NotRequired, TypedDict, Literal
-from .request import Request, RequestConfig
-from .async_request import AsyncRequest, AsyncRequestConfig
+from typing import Any, Dict, List, Optional, Union, cast, overload
+
+from typing_extensions import Literal, NotRequired, TypedDict
+
 from ._config import ClientConfig
 from ._types import BaseResponse
+from .async_request import AsyncRequest, AsyncRequestConfig
+from .request import Request, RequestConfig
 
 
 class Point(TypedDict):
@@ -239,7 +241,7 @@ class Vision(ClientConfig):
                 verb="post",
             ).perform_with_content()
             return resp
-        
+
         content_type = options.get("content_type", "application/octet-stream")
         headers = {"Content-Type": content_type}
 
