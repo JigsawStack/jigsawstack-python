@@ -50,10 +50,10 @@ class TranslateResponse(BaseResponse):
     """
 
 
-class TranslateImageResponse(TypedDict):
-    image: bytes
+class TranslateImageResponse(BaseResponse):
+    url: str
     """
-    The image data that was translated.
+    The URL or base64 of the translated image.
     """
 
 
@@ -83,17 +83,17 @@ class Translate(ClientConfig):
         return resp
 
     @overload
-    def image(self, params: TranslateImageParams) -> TranslateImageResponse: ...
+    def image(self, params: TranslateImageParams) -> Union[TranslateImageResponse, bytes]: ...
     @overload
     def image(
         self, blob: bytes, options: TranslateImageParams = None
-    ) -> TranslateImageParams: ...
+    ) -> Union[TranslateImageResponse, bytes]: ...
 
     def image(
         self,
         blob: Union[TranslateImageParams, bytes],
         options: TranslateImageParams = None,
-    ) -> TranslateImageResponse:
+    ) -> Union[TranslateImageResponse, bytes]:
         if isinstance(
             blob, dict
         ):  # If params is provided as a dict, we assume it's the first argument
