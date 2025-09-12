@@ -1,7 +1,6 @@
 import json
-from io import BytesIO
 from typing import Any, AsyncGenerator, Dict, Generic, List, TypedDict, Union, cast
-
+from io import BytesIO
 import aiohttp
 from typing_extensions import Literal, TypeVar
 
@@ -28,6 +27,7 @@ class AsyncRequest(Generic[T]):
         headers: Dict[str, str] = None,
         data: Union[bytes, None] = None,
         stream: Union[bool, None] = False,
+        files: Union[Dict[str, Any], None] = None,  # Add files parameter
     ):
         self.path = path
         self.params = params
@@ -38,6 +38,7 @@ class AsyncRequest(Generic[T]):
         self.headers = headers or {"Content-Type": "application/json"}
         self.disable_request_logging = config.get("disable_request_logging")
         self.stream = stream
+        self.files = files  # Store files for multipart requests
 
     def __convert_params(
         self, params: Union[Dict[Any, Any], List[Dict[Any, Any]]]
@@ -171,15 +172,23 @@ class AsyncRequest(Generic[T]):
             Dict[str, str]: Configured HTTP Headers
         """
         h = {
-            "Content-Type": "application/json",
             "Accept": "application/json",
             "x-api-key": f"{self.api_key}",
         }
+
+        # only add Content-Type if not using multipart (files)
+        if not self.files and not self.data:
+            h["Content-Type"] = "application/json"
 
         if self.disable_request_logging:
             h["x-jigsaw-no-request-log"] = "true"
 
         _headers = h.copy()
+        
+        #don't override Content-Type if using multipart
+        if self.files and "Content-Type" in self.headers:
+            self.headers.pop("Content-Type")
+            
         _headers.update(self.headers)
 
         return _headers
@@ -231,50 +240,84 @@ class AsyncRequest(Generic[T]):
         self, session: aiohttp.ClientSession, url: str
     ) -> aiohttp.ClientResponse:
         headers = self.__get_headers()
+        params = self.params
         verb = self.verb
         data = self.data
+        files = self.files
 
-        # Convert params to string values for URL encoding
-        converted_params = self.__convert_params(self.params)
+        _params = None
+        _json = None
+        _data = None
+        _form_data = None
 
         if verb.lower() in ["get", "delete"]:
+            #convert params for URL encoding if needed
+            _params = self.__convert_params(params)
+        elif files:
+            # for multipart requests - matches request.py behavior
+            _form_data = aiohttp.FormData()
+            
+            # add file(s) to form data
+            for field_name, file_data in files.items():
+                if isinstance(file_data, bytes):
+                    # just pass the blob without filename
+                    _form_data.add_field(
+                        field_name,
+                        BytesIO(file_data),
+                        content_type="application/octet-stream"
+                    )
+                elif isinstance(file_data, tuple):
+                    # if tuple format (filename, data, content_type)
+                    filename, content, content_type = file_data
+                    _form_data.add_field(
+                        field_name,
+                        content,
+                        filename=filename,
+                        content_type=content_type
+                    )
+            
+            # add params as 'body' field in multipart form (JSON stringified)
+            if params and isinstance(params, dict):
+                _form_data.add_field(
+                    "body",
+                    json.dumps(params),
+                    content_type="application/json"
+                )
+        elif data:
+            # for binary data without multipart
+            _data = data
+            # pass params as query parameters for binary uploads
+            if params and isinstance(params, dict):
+                _params = self.__convert_params(params)
+        else:
+            # for JSON requests
+            _json = params
+
+        # m,ake the request based on the data type
+        if _form_data:
             return await session.request(
                 verb,
                 url,
-                params=converted_params,
+                params=_params,
+                data=_form_data,
+                headers=headers,
+            )
+        elif _json is not None:
+            return await session.request(
+                verb,
+                url,
+                params=_params,
+                json=_json,
                 headers=headers,
             )
         else:
-            if data is not None:
-                form_data = aiohttp.FormData()
-                form_data.add_field(
-                    "file",
-                    BytesIO(data),
-                    content_type=headers.get("Content-Type", "application/octet-stream"),
-                    filename="file",
-                )
-
-                if self.params and isinstance(self.params, dict):
-                    form_data.add_field(
-                        "body", json.dumps(self.params), content_type="application/json"
-                    )
-
-                multipart_headers = headers.copy()
-                multipart_headers.pop("Content-Type", None)
-
-                return await session.request(
-                    verb,
-                    url,
-                    data=form_data,
-                    headers=multipart_headers,
-                )
-            else:
-                return await session.request(
-                    verb,
-                    url,
-                    json=self.params,  # Keep JSON body as original
-                    headers=headers,
-                )
+            return await session.request(
+                verb,
+                url,
+                params=_params,
+                data=_data,
+                headers=headers,
+            )
 
     def __get_session(self) -> aiohttp.ClientSession:
         """
