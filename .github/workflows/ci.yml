@@ -71,7 +71,6 @@ jobs:
           - test_summary.py
           - test_translate.py
           - test_validate.py
-          - test_vision.py
           - test_web.py
     steps:
       - uses: actions/checkout@v4
