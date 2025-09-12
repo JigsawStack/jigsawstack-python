@@ -15,75 +15,6 @@ async_jigsaw = jigsawstack.AsyncJigsawStack(api_key=os.getenv("JIGSAWSTACK_API_K
 
 URL = "https://jigsawstack.com"
 
-
-# AI Scrape Test Cases
-AI_SCRAPE_TEST_CASES = [
-    {
-        "name": "scrape_with_element_prompts",
-        "params": {
-            "url": URL,
-            "element_prompts": ["title", "main content", "navigation links"],
-        },
-    },
-    {
-        "name": "scrape_with_selectors",
-        "params": {
-            "url": URL,
-            "selectors": ["h1", "p", "a"],
-        },
-    },
-    {
-        "name": "scrape_with_features",
-        "params": {
-            "url": URL,
-            "element_prompts": ["title"],
-            "features": ["meta", "link"],
-        },
-    },
-    {
-        "name": "scrape_with_root_element",
-        "params": {
-            "url": URL,
-            "element_prompts": ["content"],
-            "root_element_selector": "main",
-        },
-    },
-    {
-        "name": "scrape_with_wait_for_timeout",
-        "params": {
-            "url": URL,
-            "element_prompts": ["content"],
-            "wait_for": {"mode": "timeout", "value": 3000},
-        },
-    },
-    {
-        "name": "scrape_mobile_view",
-        "params": {
-            "url": URL,
-            "element_prompts": ["mobile menu"],
-            "is_mobile": True,
-        },
-    },
-    {
-        "name": "scrape_with_cookies",
-        "params": {
-            "url": URL,
-            "element_prompts": ["user data"],
-            "cookies": [
-                {"name": "session", "value": "test123", "domain": "example.com"}
-            ],
-        },
-    },
-    {
-        "name": "scrape_with_advance_config",
-        "params": {
-            "url": URL,
-            "element_prompts": ["content"],
-            "advance_config": {"console": True, "network": True, "cookies": True},
-        },
-    },
-]
-
 # HTML to Any Test Cases
 HTML_TO_ANY_TEST_CASES = [
     {
@@ -212,58 +143,6 @@ SEARCH_SUGGESTIONS_TEST_CASES = [
     },
 ]
 
-# Deep Research Test Cases
-DEEP_RESEARCH_TEST_CASES = [
-    {
-        "name": "basic_deep_research",
-        "params": {
-            "query": "climate change effects",
-        },
-    },
-    {
-        "name": "technical_deep_research",
-        "params": {
-            "query": "quantum computing applications in cryptography",
-        },
-    },
-    {
-        "name": "deep_research_with_depth",
-        "params": {
-            "query": "renewable energy sources",
-            "depth": 2,
-        },
-    },
-]
-
-
-class TestAIScrapeSync:
-    """Test synchronous AI scrape methods"""
-
-    @pytest.mark.parametrize(
-        "test_case",
-        AI_SCRAPE_TEST_CASES,
-        ids=[tc["name"] for tc in AI_SCRAPE_TEST_CASES],
-    )
-    def test_ai_scrape(self, test_case):
-        """Test synchronous AI scrape with various inputs"""
-        try:
-            result = jigsaw.web.ai_scrape(test_case["params"])
-
-            assert result["success"]
-            assert "data" in result
-            assert isinstance(result["data"], list)
-
-            # Check for optional features
-            if "meta" in test_case["params"].get("features", []):
-                assert "meta" in result
-            if "link" in test_case["params"].get("features", []):
-                assert "link" in result
-                assert isinstance(result["link"], list)
-
-        except JigsawStackError as e:
-            pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
-
-
 class TestHTMLToAnySync:
     """Test synchronous HTML to Any methods"""
 
@@ -348,64 +227,7 @@ class TestSearchSuggestionsSync:
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
 
-
-class TestDeepResearchSync:
-    """Test synchronous deep research methods"""
-
-    @pytest.mark.parametrize(
-        "test_case",
-        DEEP_RESEARCH_TEST_CASES,
-        ids=[tc["name"] for tc in DEEP_RESEARCH_TEST_CASES],
-    )
-    def test_deep_research(self, test_case):
-        """Test synchronous deep research with various inputs"""
-        try:
-            result = jigsaw.web.deep_research(test_case["params"])
-
-            assert result["success"]
-            assert "results" in result
-            assert isinstance(result["results"], str)
-            assert len(result["results"]) > 0
-
-            # Check for sources
-            if "sources" in result:
-                assert isinstance(result["sources"], list)
-
-        except JigsawStackError as e:
-            pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
-
-
 # Async Test Classes
-
-
-class TestAIScrapeAsync:
-    """Test asynchronous AI scrape methods"""
-
-    @pytest.mark.parametrize(
-        "test_case",
-        AI_SCRAPE_TEST_CASES,
-        ids=[tc["name"] for tc in AI_SCRAPE_TEST_CASES],
-    )
-    @pytest.mark.asyncio
-    async def test_ai_scrape_async(self, test_case):
-        """Test asynchronous AI scrape with various inputs"""
-        try:
-            result = await async_jigsaw.web.ai_scrape(test_case["params"])
-
-            assert result["success"]
-            assert "data" in result
-            assert isinstance(result["data"], list)
-
-            # Check for optional features
-            if "meta" in test_case["params"].get("features", []):
-                assert "meta" in result
-            if "link" in test_case["params"].get("features", []):
-                assert "link" in result
-                assert isinstance(result["link"], list)
-
-        except JigsawStackError as e:
-            pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
-
 
 class TestHTMLToAnyAsync:
     """Test asynchronous HTML to Any methods"""
@@ -490,33 +312,6 @@ class TestSearchSuggestionsAsync:
             assert "suggestions" in result
             assert isinstance(result["suggestions"], list)
             assert len(result["suggestions"]) > 0
-
-        except JigsawStackError as e:
-            pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
-
-
-class TestDeepResearchAsync:
-    """Test asynchronous deep research methods"""
-
-    @pytest.mark.parametrize(
-        "test_case",
-        DEEP_RESEARCH_TEST_CASES,
-        ids=[tc["name"] for tc in DEEP_RESEARCH_TEST_CASES],
-    )
-    @pytest.mark.asyncio
-    async def test_deep_research_async(self, test_case):
-        """Test asynchronous deep research with various inputs"""
-        try:
-            result = await async_jigsaw.web.deep_research(test_case["params"])
-
-            assert result["success"]
-            assert "results" in result
-            assert isinstance(result["results"], str)
-            assert len(result["results"]) > 0
-
-            # Check for sources
-            if "sources" in result:
-                assert isinstance(result["sources"], list)
 
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")

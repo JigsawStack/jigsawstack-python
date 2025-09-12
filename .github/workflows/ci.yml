@@ -8,35 +8,8 @@ on:
 
 jobs:
   ruff-format-check:
-    name: Ruff Format Check - ${{ matrix.file }}
+    name: Ruff Format Check
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        file:
-          - __init__.py
-          - _config.py
-          - _types.py
-          - async_request.py
-          - audio.py
-          - classification.py
-          - embedding_v2.py
-          - embedding.py
-          - exceptions.py
-          - helpers.py
-          - image_generation.py
-          - prediction.py
-          - prompt_engine.py
-          - request.py
-          - search.py
-          - sentiment.py
-          - sql.py
-          - store.py
-          - summary.py
-          - translate.py
-          - validate.py
-          - vision.py
-          - web.py
     steps:
       - uses: actions/checkout@v4
       
@@ -48,9 +21,10 @@ jobs:
       - name: Install ruff
         run: pip install ruff
       
-      - name: Check formatting for ${{ matrix.file }}
+      - name: Check all files with ruff
         run: |
-          ruff check jigsawstack/${{ matrix.file }} --config .github/ruff.toml
+          ruff check jigsawstack/ --config .github/ruff.toml
+          ruff format --check jigsawstack/ --config .github/ruff.toml
 
   test:
     name: Test - ${{ matrix.test-file }}
@@ -72,6 +46,8 @@ jobs:
           - test_translate.py
           - test_validate.py
           - test_web.py
+          - test_deep_research.py
+          - test_ai_scrape.py
     steps:
       - uses: actions/checkout@v4
       
