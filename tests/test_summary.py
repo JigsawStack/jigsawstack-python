@@ -16,13 +16,13 @@ jigsaw = jigsawstack.JigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
 async_jigsaw = jigsawstack.AsyncJigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
 
 LONG_TEXT = """
-Artificial Intelligence (AI) has become one of the most transformative technologies of the 21st century. 
-From healthcare to finance, transportation to entertainment, AI is reshaping industries and changing the way we live and work. 
-Machine learning algorithms can now diagnose diseases with remarkable accuracy, predict market trends, and even create art. 
-Natural language processing has enabled computers to understand and generate human language, leading to the development of sophisticated chatbots and virtual assistants. 
-Computer vision systems can identify objects, faces, and activities in images and videos with superhuman precision. 
-However, the rapid advancement of AI also raises important ethical questions about privacy, job displacement, and the potential for bias in algorithmic decision-making. 
-As we continue to develop more powerful AI systems, it's crucial that we consider their societal impact and work to ensure that the benefits of AI are distributed equitably. 
+Artificial Intelligence (AI) has become one of the most transformative technologies of the 21st century.
+From healthcare to finance, transportation to entertainment, AI is reshaping industries and changing the way we live and work.
+Machine learning algorithms can now diagnose diseases with remarkable accuracy, predict market trends, and even create art.
+Natural language processing has enabled computers to understand and generate human language, leading to the development of sophisticated chatbots and virtual assistants.
+Computer vision systems can identify objects, faces, and activities in images and videos with superhuman precision.
+However, the rapid advancement of AI also raises important ethical questions about privacy, job displacement, and the potential for bias in algorithmic decision-making.
+As we continue to develop more powerful AI systems, it's crucial that we consider their societal impact and work to ensure that the benefits of AI are distributed equitably.
 The future of AI holds immense promise, but it will require careful planning, regulation, and collaboration between technologists, policymakers, and society at large to realize its full potential while mitigating its risks.
 """
 
@@ -112,9 +112,9 @@ TEST_CASES = [
         "name": "technical_text_summary",
         "params": {
             "text": """
-            Machine learning is a subset of artificial intelligence that focuses on the development of algorithms and statistical models that enable computer systems to improve their performance on a specific task through experience. 
-            Deep learning, a subfield of machine learning, uses artificial neural networks with multiple layers to progressively extract higher-level features from raw input. 
-            Supervised learning involves training models on labeled data, while unsupervised learning discovers patterns in unlabeled data. 
+            Machine learning is a subset of artificial intelligence that focuses on the development of algorithms and statistical models that enable computer systems to improve their performance on a specific task through experience.
+            Deep learning, a subfield of machine learning, uses artificial neural networks with multiple layers to progressively extract higher-level features from raw input.
+            Supervised learning involves training models on labeled data, while unsupervised learning discovers patterns in unlabeled data.
             Reinforcement learning enables agents to learn optimal behaviors through trial and error interactions with an environment.
             """,
             "type": "points",

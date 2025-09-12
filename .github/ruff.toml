@@ -13,5 +13,6 @@ select = [
     "UP", # pyupgrade
 ]
 ignore = [
+    "E501", # ignore line too long.
     "B008", # do not perform function calls in argument defaults
 ]

@@ -25,7 +25,7 @@ class AsyncRequest(Generic[T]):
         path: str,
         params: Union[Dict[Any, Any], List[Dict[Any, Any]]],
         verb: RequestVerb,
-        headers: Dict[str, str] = {"Content-Type": "application/json"},
+        headers: Dict[str, str] = None,
         data: Union[bytes, None] = None,
         stream: Union[bool, None] = False,
     ):
@@ -35,7 +35,7 @@ class AsyncRequest(Generic[T]):
         self.api_url = config.get("api_url")
         self.api_key = config.get("api_key")
         self.data = data
-        self.headers = headers
+        self.headers = headers or {"Content-Type": "application/json"}
         self.disable_request_logging = config.get("disable_request_logging")
         self.stream = stream
 
