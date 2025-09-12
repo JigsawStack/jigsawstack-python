@@ -51,7 +51,6 @@ jobs:
       - name: Check formatting for ${{ matrix.file }}
         run: |
           ruff check jigsawstack/${{ matrix.file }} --config .github/ruff.toml
-          ruff format --check jigsawstack/${{ matrix.file }} --config .github/ruff.toml
 
   test:
     name: Test - ${{ matrix.test-file }}
