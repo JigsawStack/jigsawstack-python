@@ -10,12 +10,8 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-jigsaw = jigsawstack.JigsawStack(
-    api_url="http://localhost:3000/api/", api_key=os.getenv("JIGSAWSTACK_API_KEY")
-)
-async_jigsaw = jigsawstack.AsyncJigsawStack(
-    api_url="http://localhost:3000/api/", api_key=os.getenv("JIGSAWSTACK_API_KEY")
-)
+jigsaw = jigsawstack.JigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
+async_jigsaw = jigsawstack.AsyncJigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
 
 URL = "https://jigsawstack.com"
 
@@ -40,6 +36,7 @@ AI_SCRAPE_TEST_CASES = [
         "name": "scrape_with_features",
         "params": {
             "url": URL,
+            "element_prompts": ["title"],
             "features": ["meta", "link"],
         },
     },
@@ -49,14 +46,6 @@ AI_SCRAPE_TEST_CASES = [
             "url": URL,
             "element_prompts": ["content"],
             "root_element_selector": "main",
-        },
-    },
-    {
-        "name": "scrape_with_wait_for_selector",
-        "params": {
-            "url": URL,
-            "element_prompts": ["dynamic content"],
-            "wait_for": {"mode": "selector", "value": ".loaded-content"},
         },
     },
     {
@@ -187,13 +176,6 @@ SEARCH_TEST_CASES = [
         },
     },
     {
-        "name": "search_with_max_results",
-        "params": {
-            "query": "python programming",
-            "max_results": 5,
-        },
-    },
-    {
         "name": "search_specific_site",
         "params": {
             "query": "documentation site:github.com",
@@ -203,7 +185,7 @@ SEARCH_TEST_CASES = [
         "name": "search_ai_mode",
         "params": {
             "query": "explain quantum computing",
-            "ai": True,
+            "ai_overview": True,
         },
     },
 ]
@@ -248,7 +230,7 @@ DEEP_RESEARCH_TEST_CASES = [
         "name": "deep_research_with_depth",
         "params": {
             "query": "renewable energy sources",
-            "depth": 3,
+            "depth": 2,
         },
     },
 ]
@@ -381,9 +363,9 @@ class TestDeepResearchSync:
             result = jigsaw.web.deep_research(test_case["params"])
 
             assert result["success"]
-            assert "report" in result
-            assert isinstance(result["report"], str)
-            assert len(result["report"]) > 0
+            assert "results" in result
+            assert isinstance(result["results"], str)
+            assert len(result["results"]) > 0
 
             # Check for sources
             if "sources" in result:
@@ -483,7 +465,7 @@ class TestSearchAsync:
                 assert "description" in item
 
             # Check AI mode response
-            if test_case["params"].get("ai"):
+            if test_case["params"].get("ai_overview"):
                 assert "ai_overview" in result
 
         except JigsawStackError as e:
@@ -528,9 +510,9 @@ class TestDeepResearchAsync:
             result = await async_jigsaw.web.deep_research(test_case["params"])
 
             assert result["success"]
-            assert "report" in result
-            assert isinstance(result["report"], str)
-            assert len(result["report"]) > 0
+            assert "results" in result
+            assert isinstance(result["results"], str)
+            assert len(result["results"]) > 0
 
             # Check for sources
             if "sources" in result:

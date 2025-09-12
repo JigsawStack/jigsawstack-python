@@ -32,7 +32,7 @@ TEST_CASES_UPLOAD = [
         "name": "upload_image_with_temp_url",
         "file": BINARY_FILE_CONTENT,
         "options": {
-            "key": f"test_image.jpg",
+            "key": "test_image.jpg",
             "content_type": "image/jpeg",
             "overwrite": True,
             "temp_public_url": True,

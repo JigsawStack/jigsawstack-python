@@ -5,7 +5,6 @@ import pytest
 import logging
 from dotenv import load_dotenv
 import os
-import base64
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
@@ -166,7 +165,7 @@ class TestImageGenerationSync:
             assert result is not None
             
             if type(result) is dict:
-                assert result.get("success") == True
+                assert result.get("success")
                 assert result.get("url") is not None
             elif type(result) is bytes:
                 assert isinstance(result, bytes)
@@ -217,7 +216,7 @@ class TestImageGenerationAsync:
 
             assert result is not None
             if type(result) is dict:
-                assert result.get("success") == True
+                assert result.get("success")
                 assert result.get("url") is not None
             elif type(result) is bytes:
                 assert isinstance(result, bytes)
