@@ -10,12 +10,8 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-jigsaw = jigsawstack.JigsawStack(
-    api_url="http://localhost:3000/api/", api_key=os.getenv("JIGSAWSTACK_API_KEY")
-)
-async_jigsaw = jigsawstack.AsyncJigsawStack(
-    api_url="http://localhost:3000/api/", api_key=os.getenv("JIGSAWSTACK_API_KEY")
-)
+jigsaw = jigsawstack.JigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
+async_jigsaw = jigsawstack.AsyncJigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
 
 TEST_CASES = [
     {
