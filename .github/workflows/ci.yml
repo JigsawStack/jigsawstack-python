@@ -85,7 +85,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest pytest-asyncio pytest-cov
+          pip install pytest pytest-asyncio pytest-cov python-dotenv
           pip install -e .
       
       - name: Run test ${{ matrix.test-file }}
