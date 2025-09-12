@@ -4,7 +4,6 @@ from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
 from typing_extensions import Literal
-from .helpers import build_path
 from ._types import BaseResponse
 
 
