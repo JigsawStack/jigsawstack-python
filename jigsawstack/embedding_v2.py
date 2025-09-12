@@ -1,11 +1,12 @@
-from typing import Any, Dict, List, Union, cast, Literal, overload
+from typing import Any, Dict, List, Literal, Union, cast, overload
+
 from typing_extensions import NotRequired, TypedDict
-from .request import Request, RequestConfig
-from .async_request import AsyncRequest
-from typing import List, Union
+
 from ._config import ClientConfig
-from .helpers import build_path
+from .async_request import AsyncRequest
 from .embedding import Chunk
+from .helpers import build_path
+from .request import Request, RequestConfig
 
 
 class EmbeddingV2Params(TypedDict):
@@ -14,7 +15,7 @@ class EmbeddingV2Params(TypedDict):
     type: Literal["text", "text-other", "image", "audio", "pdf"]
     url: NotRequired[str]
     file_store_key: NotRequired[str]
-    token_overflow_mode: NotRequired[Literal["truncate", "chunk", "error"]] = "chunk"
+    token_overflow_mode: NotRequired[Literal["truncate", "error"]]
     speaker_fingerprint: NotRequired[bool]
 
 
@@ -44,9 +45,7 @@ class EmbeddingV2(ClientConfig):
     @overload
     def execute(self, params: EmbeddingV2Params) -> EmbeddingV2Response: ...
     @overload
-    def execute(
-        self, blob: bytes, options: EmbeddingV2Params = None
-    ) -> EmbeddingV2Response: ...
+    def execute(self, blob: bytes, options: EmbeddingV2Params = None) -> EmbeddingV2Response: ...
 
     def execute(
         self,

@@ -1,27 +1,26 @@
-from typing import Any, Dict, List, Union, Optional, cast, Literal, overload
+from typing import Any, Dict, List, Literal, Optional, Union, cast, overload
+
 from typing_extensions import NotRequired, TypedDict
 
-from .request import Request, RequestConfig
-from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
+from ._types import BaseResponse
+from .async_request import AsyncRequest, AsyncRequestConfig
+from .request import Request, RequestConfig
 from .search import (
-    Search,
-    SearchParams,
-    SearchSuggestionsParams,
-    SearchSuggestionsResponse,
-    SearchResponse,
     AsyncSearch,
     DeepResearchParams,
     DeepResearchResponse,
+    Search,
+    SearchParams,
+    SearchResponse,
+    SearchSuggestionsParams,
+    SearchSuggestionsResponse,
 )
-from ._types import BaseResponse
 
 
 class GotoOptions(TypedDict):
     timeout: NotRequired[int]
-    wait_until: NotRequired[
-        Literal["load", "domcontentloaded", "networkidle0", "networkidle2"]
-    ]
+    wait_until: NotRequired[Literal["load", "domcontentloaded", "networkidle0", "networkidle2"]]
 
 
 #
@@ -256,9 +255,7 @@ class Web(ClientConfig):
         )
         return s.search(params)
 
-    def search_suggestions(
-        self, params: SearchSuggestionsParams
-    ) -> SearchSuggestionsResponse:
+    def search_suggestions(self, params: SearchSuggestionsParams) -> SearchSuggestionsResponse:
         s = Search(
             self.api_key,
             self.api_url,
@@ -308,9 +305,7 @@ class AsyncWeb(ClientConfig):
     async def html_to_any(self, params: HTMLToAnyURLParams) -> HTMLToAnyURLResponse: ...
 
     @overload
-    async def html_to_any(
-        self, params: HTMLToAnyBinaryParams
-    ) -> HTMLToAnyBinaryResponse: ...
+    async def html_to_any(self, params: HTMLToAnyBinaryParams) -> HTMLToAnyBinaryResponse: ...
 
     async def html_to_any(
         self, params: HTMLToAnyParams

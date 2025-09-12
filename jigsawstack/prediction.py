@@ -1,15 +1,15 @@
 from typing import Any, Dict, List, Union, cast
-from typing_extensions import NotRequired, TypedDict
-from .request import Request, RequestConfig
-from .async_request import AsyncRequest
 
-from typing import List, Union
+from typing_extensions import TypedDict
+
 from ._config import ClientConfig
 from ._types import BaseResponse
+from .async_request import AsyncRequest
+from .request import Request, RequestConfig
 
 
 class Dataset(TypedDict):
-    value: Union[int, str]
+    value: Union[int, float, str]
     """
     The value of the dataset.
     """
@@ -27,11 +27,15 @@ class PredictionParams(TypedDict):
     """
     steps: int
     """
-    The number of predictions to make. The defualt is 5. 
+    The number of predictions to make. The default is 5.
     """
 
 
 class PredictionResponse(BaseResponse):
+    steps: int
+    """
+    The number of steps predicted.
+    """
     prediction: List[Dataset]
     """
     The predictions made on the dataset.

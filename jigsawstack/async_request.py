@@ -1,8 +1,11 @@
-from typing import Any, Dict, Generic, List, Union, cast, TypedDict, AsyncGenerator
+import json
+from io import BytesIO
+from typing import Any, AsyncGenerator, Dict, Generic, List, TypedDict, Union, cast
+
 import aiohttp
 from typing_extensions import Literal, TypeVar
+
 from .exceptions import NoContentError, raise_for_code_and_type
-import json
 
 RequestVerb = Literal["get", "post", "put", "patch", "delete"]
 
@@ -22,7 +25,7 @@ class AsyncRequest(Generic[T]):
         path: str,
         params: Union[Dict[Any, Any], List[Dict[Any, Any]]],
         verb: RequestVerb,
-        headers: Dict[str, str] = {"Content-Type": "application/json"},
+        headers: Dict[str, str] = None,
         data: Union[bytes, None] = None,
         stream: Union[bool, None] = False,
     ):
@@ -32,7 +35,7 @@ class AsyncRequest(Generic[T]):
         self.api_url = config.get("api_url")
         self.api_key = config.get("api_key")
         self.data = data
-        self.headers = headers
+        self.headers = headers or {"Content-Type": "application/json"}
         self.disable_request_logging = config.get("disable_request_logging")
         self.stream = stream
 
@@ -243,12 +246,27 @@ class AsyncRequest(Generic[T]):
             )
         else:
             if data is not None:
+                form_data = aiohttp.FormData()
+                form_data.add_field(
+                    "file",
+                    BytesIO(data),
+                    content_type=headers.get("Content-Type", "application/octet-stream"),
+                    filename="file",
+                )
+
+                if self.params and isinstance(self.params, dict):
+                    form_data.add_field(
+                        "body", json.dumps(self.params), content_type="application/json"
+                    )
+
+                multipart_headers = headers.copy()
+                multipart_headers.pop("Content-Type", None)
+
                 return await session.request(
                     verb,
                     url,
-                    data=data,
-                    params=converted_params,  # Use converted params
-                    headers=headers,
+                    data=form_data,
+                    headers=multipart_headers,
                 )
             else:
                 return await session.request(

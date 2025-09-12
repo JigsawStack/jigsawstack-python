@@ -1,10 +1,10 @@
-from typing import Any, Dict, List, Union, cast
-from typing_extensions import NotRequired, TypedDict, Literal, Required
-from .request import Request, RequestConfig
-from .async_request import AsyncRequest
+from typing import Any, Dict, Union, cast
 
-from typing import List, Union
+from typing_extensions import Literal, NotRequired, Required, TypedDict
+
 from ._config import ClientConfig
+from .async_request import AsyncRequest
+from .request import Request, RequestConfig
 
 
 class AdvanceConfig(TypedDict):
@@ -77,9 +77,9 @@ class ImageGenerationResponse(TypedDict):
     """
     Indicates whether the image generation was successful.
     """
-    image: bytes
+    url: NotRequired[str]
     """
-    The generated image as a blob.
+    The generated image as a URL or base64 string.
     """
 
 
@@ -92,9 +92,7 @@ class ImageGeneration(ClientConfig):
         api_url: str,
         disable_request_logging: Union[bool, None] = False,
     ):
-        super().__init__(
-            api_key, api_url, disable_request_logging=disable_request_logging
-        )
+        super().__init__(api_key, api_url, disable_request_logging=disable_request_logging)
         self.config = RequestConfig(
             api_url=api_url,
             api_key=api_key,
@@ -103,7 +101,7 @@ class ImageGeneration(ClientConfig):
 
     def image_generation(
         self, params: ImageGenerationParams
-    ) -> ImageGenerationResponse:
+    ) -> Union[ImageGenerationResponse, bytes]:
         path = "/ai/image_generation"
         resp = Request(
             config=self.config,
@@ -123,9 +121,7 @@ class AsyncImageGeneration(ClientConfig):
         api_url: str,
         disable_request_logging: Union[bool, None] = False,
     ):
-        super().__init__(
-            api_key, api_url, disable_request_logging=disable_request_logging
-        )
+        super().__init__(api_key, api_url, disable_request_logging=disable_request_logging)
         self.config = RequestConfig(
             api_url=api_url,
             api_key=api_key,
@@ -134,7 +130,7 @@ class AsyncImageGeneration(ClientConfig):
 
     async def image_generation(
         self, params: ImageGenerationParams
-    ) -> ImageGenerationResponse:
+    ) -> Union[ImageGenerationResponse, bytes]:
         path = "/ai/image_generation"
         resp = await AsyncRequest(
             config=self.config,

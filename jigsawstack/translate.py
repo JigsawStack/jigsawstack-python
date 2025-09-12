@@ -1,11 +1,12 @@
 from typing import Any, Dict, List, Union, cast, overload
-from typing_extensions import NotRequired, TypedDict, Literal
-from .request import Request, RequestConfig
-from .async_request import AsyncRequest
-from typing import List, Union
+
+from typing_extensions import Literal, NotRequired, TypedDict
+
 from ._config import ClientConfig
-from .helpers import build_path
 from ._types import BaseResponse
+from .async_request import AsyncRequest
+from .helpers import build_path
+from .request import Request, RequestConfig
 
 
 class TranslateImageParams(TypedDict):
@@ -50,10 +51,10 @@ class TranslateResponse(BaseResponse):
     """
 
 
-class TranslateImageResponse(TypedDict):
-    image: bytes
+class TranslateImageResponse(BaseResponse):
+    url: str
     """
-    The image data that was translated.
+    The URL or base64 of the translated image.
     """
 
 
@@ -83,17 +84,17 @@ class Translate(ClientConfig):
         return resp
 
     @overload
-    def image(self, params: TranslateImageParams) -> TranslateImageResponse: ...
+    def image(self, params: TranslateImageParams) -> Union[TranslateImageResponse, bytes]: ...
     @overload
     def image(
         self, blob: bytes, options: TranslateImageParams = None
-    ) -> TranslateImageParams: ...
+    ) -> Union[TranslateImageResponse, bytes]: ...
 
     def image(
         self,
         blob: Union[TranslateImageParams, bytes],
         options: TranslateImageParams = None,
-    ) -> TranslateImageResponse:
+    ) -> Union[TranslateImageResponse, bytes]:
         if isinstance(
             blob, dict
         ):  # If params is provided as a dict, we assume it's the first argument
@@ -147,17 +148,17 @@ class AsyncTranslate(ClientConfig):
         return resp
 
     @overload
-    async def image(self, params: TranslateImageParams) -> TranslateImageResponse: ...
+    async def image(self, params: TranslateImageParams) -> Union[TranslateImageResponse, bytes]: ...
     @overload
     async def image(
         self, blob: bytes, options: TranslateImageParams = None
-    ) -> TranslateImageParams: ...
+    ) -> Union[TranslateImageResponse, bytes]: ...
 
     async def image(
         self,
         blob: Union[TranslateImageParams, bytes],
         options: TranslateImageParams = None,
-    ) -> TranslateImageResponse:
+    ) -> Union[TranslateImageResponse, bytes]:
         if isinstance(blob, dict):
             resp = await AsyncRequest(
                 config=self.config,

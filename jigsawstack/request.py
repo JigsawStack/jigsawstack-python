@@ -1,8 +1,10 @@
-from typing import Any, Dict, Generic, List, Union, cast, TypedDict, Generator
+import json
+from typing import Any, Dict, Generator, Generic, List, TypedDict, Union, cast
+
 import requests
 from typing_extensions import Literal, TypeVar
+
 from .exceptions import NoContentError, raise_for_code_and_type
-import json
 
 RequestVerb = Literal["get", "post", "put", "patch", "delete"]
 
@@ -23,7 +25,7 @@ class Request(Generic[T]):
         path: str,
         params: Union[Dict[Any, Any], List[Dict[Any, Any]]],
         verb: RequestVerb,
-        headers: Dict[str, str] = {"Content-Type": "application/json"},
+        headers: Dict[str, str] = None,
         data: Union[bytes, None] = None,
         stream: Union[bool, None] = False,
     ):
@@ -33,7 +35,7 @@ class Request(Generic[T]):
         self.api_url = config.get("api_url")
         self.api_key = config.get("api_key")
         self.data = data
-        self.headers = headers
+        self.headers = headers or {"Content-Type": "application/json"}
         self.disable_request_logging = config.get("disable_request_logging")
         self.stream = stream
 
@@ -89,10 +91,7 @@ class Request(Generic[T]):
         # handle error in case there is a statusCode attr present
         # and status != 200 and response is a json.
 
-        if (
-            "application/json" not in resp.headers["content-type"]
-            and resp.status_code != 200
-        ):
+        if "application/json" not in resp.headers["content-type"] and resp.status_code != 200:
             raise_for_code_and_type(
                 code=500,
                 message="Failed to parse JigsawStack API response. Please try again.",

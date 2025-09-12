@@ -1,9 +1,11 @@
-from typing import Any, Dict, List, Union, cast, Literal
-from typing_extensions import NotRequired, TypedDict, Optional
-from .request import Request, RequestConfig
-from .async_request import AsyncRequest, AsyncRequestConfig
+from typing import Any, Dict, List, Literal, Optional, Union, cast
+
+from typing_extensions import NotRequired, TypedDict
+
 from ._config import ClientConfig
 from ._types import BaseResponse
+from .async_request import AsyncRequest, AsyncRequestConfig
+from .request import Request, RequestConfig
 
 
 class RelatedIndex(TypedDict):
@@ -247,7 +249,7 @@ class Search(ClientConfig):
             "spell_check": spell_check,
         }
 
-        path = f"/web/search"
+        path = "/web/search"
         resp = Request(
             config=self.config,
             path=path,
@@ -269,7 +271,7 @@ class Search(ClientConfig):
         return resp
 
     def deep_research(self, params: DeepResearchParams) -> DeepResearchResponse:
-        path = f"/web/deep_research"
+        path = "/web/deep_research"
         resp = Request(
             config=self.config,
             path=path,
@@ -296,7 +298,7 @@ class AsyncSearch(ClientConfig):
         )
 
     async def search(self, params: SearchParams) -> SearchResponse:
-        path = f"/web/search"
+        path = "/web/search"
         query = params["query"]
         ai_overview = params.get("ai_overview", "True")
         safe_search = params.get("safe_search", "moderate")
@@ -317,9 +319,7 @@ class AsyncSearch(ClientConfig):
         ).perform_with_content()
         return resp
 
-    async def suggestions(
-        self, params: SearchSuggestionsParams
-    ) -> SearchSuggestionsResponse:
+    async def suggestions(self, params: SearchSuggestionsParams) -> SearchSuggestionsResponse:
         query = params["query"]
         path = f"/web/search/suggest?query={query}"
         resp = await AsyncRequest(
@@ -331,7 +331,7 @@ class AsyncSearch(ClientConfig):
         return resp
 
     async def deep_research(self, params: DeepResearchParams) -> DeepResearchResponse:
-        path = f"/web/deep_research"
+        path = "/web/deep_research"
         resp = await AsyncRequest(
             config=self.config,
             path=path,

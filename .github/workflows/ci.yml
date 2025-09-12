@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  ruff-format-check:
+    name: Ruff Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      
+      - name: Install ruff
+        run: pip install ruff
+      
+      - name: Check all files with ruff
+        run: |
+          ruff check jigsawstack/ --config .github/ruff.toml
+          ruff format --check jigsawstack/ --config .github/ruff.toml
+
+  test:
+    name: Test - ${{ matrix.test-file }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test-file:
+          - test_audio.py
+          - test_classification.py
+          - test_embedding.py
+          - test_file_store.py
+          - test_image_generation.py
+          - test_object_detection.py
+          - test_prediction.py
+          - test_sentiment.py
+          - test_sql.py
+          - test_summary.py
+          - test_translate.py
+          - test_validate.py
+          - test_web.py
+          - test_deep_research.py
+          - test_ai_scrape.py
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio pytest-cov python-dotenv
+          pip install -e .
+      
+      - name: Run test ${{ matrix.test-file }}
+        env:
+          JIGSAWSTACK_API_KEY: ${{ secrets.JIGSAWSTACK_API_KEY }}
+        run: |
+          pytest tests/${{ matrix.test-file }} -v
+
+  all-checks-passed:
+    name: All Checks Passed
+    needs: [ruff-format-check, test]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Verify all checks passed
+        run: |
+          echo "Ruff Format Check: ${{ needs.ruff-format-check.result }}"
+          echo "Tests: ${{ needs.test.result }}"
+          
+          if [[ "${{ needs.ruff-format-check.result }}" != "success" ]]; then
+            echo "❌ Ruff format check failed"
+            exit 1
+          fi
+          
+          if [[ "${{ needs.test.result }}" != "success" ]]; then
+            echo "❌ Tests failed"
+            exit 1
+          fi
+          
+          echo "✅ All checks passed successfully!"

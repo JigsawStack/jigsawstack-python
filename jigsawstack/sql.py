@@ -1,10 +1,11 @@
-from typing import Any, Dict, List, Union, cast, Literal
+from typing import Any, Dict, Literal, Union, cast
+
 from typing_extensions import NotRequired, TypedDict
-from .request import Request, RequestConfig
-from .async_request import AsyncRequest
-from typing import List, Union
+
 from ._config import ClientConfig
 from ._types import BaseResponse
+from .async_request import AsyncRequest
+from .request import Request, RequestConfig
 
 
 class SQLParams(TypedDict):

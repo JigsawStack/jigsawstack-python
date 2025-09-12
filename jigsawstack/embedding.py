@@ -1,11 +1,12 @@
-from typing import Any, Dict, List, Union, cast, Literal, overload
+from typing import Any, Dict, List, Literal, Union, cast, overload
+
 from typing_extensions import NotRequired, TypedDict
-from .request import Request, RequestConfig
-from .async_request import AsyncRequest
-from typing import List, Union
+
 from ._config import ClientConfig
-from .helpers import build_path
 from ._types import BaseResponse
+from .async_request import AsyncRequest
+from .helpers import build_path
+from .request import Request, RequestConfig
 
 
 class EmbeddingParams(TypedDict):
@@ -46,9 +47,7 @@ class Embedding(ClientConfig):
     @overload
     def execute(self, params: EmbeddingParams) -> EmbeddingResponse: ...
     @overload
-    def execute(
-        self, blob: bytes, options: EmbeddingParams = None
-    ) -> EmbeddingResponse: ...
+    def execute(self, blob: bytes, options: EmbeddingParams = None) -> EmbeddingResponse: ...
 
     def execute(
         self,
@@ -100,9 +99,7 @@ class AsyncEmbedding(ClientConfig):
     @overload
     async def execute(self, params: EmbeddingParams) -> EmbeddingResponse: ...
     @overload
-    async def execute(
-        self, blob: bytes, options: EmbeddingParams = None
-    ) -> EmbeddingResponse: ...
+    async def execute(self, blob: bytes, options: EmbeddingParams = None) -> EmbeddingResponse: ...
 
     async def execute(
         self,
