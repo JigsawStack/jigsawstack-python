@@ -1,3 +1,4 @@
+from importlib.resources import files
 import json
 from typing import Any, Dict, Generator, Generic, List, TypedDict, Union, cast
 
@@ -28,6 +29,7 @@ class Request(Generic[T]):
         headers: Dict[str, str] = None,
         data: Union[bytes, None] = None,
         stream: Union[bool, None] = False,
+        files: Union[Dict[str, Any], None] = None,  # Change from 'file' to 'files'
     ):
         self.path = path
         self.params = params
@@ -38,6 +40,7 @@ class Request(Generic[T]):
         self.headers = headers or {"Content-Type": "application/json"}
         self.disable_request_logging = config.get("disable_request_logging")
         self.stream = stream
+        self.files = files  # Change from 'file' to 'files'
 
     def perform(self) -> Union[T, None]:
         """Is the main function that makes the HTTP request
@@ -152,15 +155,23 @@ class Request(Generic[T]):
         """
 
         h = {
-            "Content-Type": "application/json",
             "Accept": "application/json",
             "x-api-key": f"{self.api_key}",
         }
+        
+        # Only add Content-Type if not using multipart (files)
+        if not self.files and not self.data:
+            h["Content-Type"] = "application/json"
 
         if self.disable_request_logging:
             h["x-jigsaw-no-request-log"] = "true"
 
         _headers = h.copy()
+        
+        # Don't override Content-Type if using multipart
+        if self.files and "Content-Type" in self.headers:
+            self.headers.pop("Content-Type")
+            
         _headers.update(self.headers)
 
         return _headers
@@ -243,20 +254,41 @@ class Request(Generic[T]):
         params = self.params
         verb = self.verb
         data = self.data
+        files = self.files  # Change from 'file' to 'files'
 
         _requestParams = None
+        _json = None
+        _data = None
+        _files = None
 
         if verb.lower() in ["get", "delete"]:
             _requestParams = params
+        elif files:
+            # For multipart requests
+            _files = files
+            # Add params as 'body' field in multipart form (JSON stringified)
+            if params and isinstance(params, dict):
+                # Convert params to JSON string and add as 'body' field
+                _data = {"body": json.dumps(params)}
+        elif data:
+            # For binary data without multipart
+            _data = data
+            # Pass params as query parameters for binary uploads
+            if params and isinstance(params, dict):
+                _requestParams = params
+        else:
+            # For JSON requests
+            _json = params
 
         try:
             return requests.request(
                 verb,
                 url,
                 params=_requestParams,
-                json=params,
+                json=_json,
                 headers=headers,
-                data=data,
+                data=_data,
+                files=_files,
                 stream=self.stream,
             )
         except requests.HTTPError as e:
