@@ -13,12 +13,5 @@ select = [
     "UP", # pyupgrade
 ]
 ignore = [
-    "E501", # line too long (handled by formatter)
     "B008", # do not perform function calls in argument defaults
 ]
-
-[format]
-quote-style = "double"
-indent-style = "space"
-skip-magic-trailing-comma = false
-line-ending = "auto"
