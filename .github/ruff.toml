@@ -4,7 +4,6 @@ target-version = "py37"
 
 [lint]
 select = [
-    "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
     "F",  # pyflakes
     "I",  # isort
@@ -13,6 +12,5 @@ select = [
     "UP", # pyupgrade
 ]
 ignore = [
-    "E501", 
     "B008", # do not perform function calls in argument defaults
 ]
