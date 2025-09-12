@@ -1,5 +1,5 @@
 # Ruff configuration for CI/CD
-line-length = 88
+line-length = 100
 target-version = "py37"
 
 [lint]
@@ -13,6 +13,6 @@ select = [
     "UP", # pyupgrade
 ]
 ignore = [
-    "E501", # ignore line too long.
+    "E501", 
     "B008", # do not perform function calls in argument defaults
 ]
