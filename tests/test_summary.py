@@ -147,9 +147,7 @@ class TestSummarySync:
             else:
                 assert isinstance(result["summary"], str)
                 if "max_characters" in test_case["params"]:
-                    assert (
-                        len(result["summary"]) <= test_case["params"]["max_characters"]
-                    )
+                    assert len(result["summary"]) <= test_case["params"]["max_characters"]
 
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
@@ -179,9 +177,7 @@ class TestSummaryAsync:
             else:
                 assert isinstance(result["summary"], str)
                 if "max_characters" in test_case["params"]:
-                    assert (
-                        len(result["summary"]) <= test_case["params"]["max_characters"]
-                    )
+                    assert len(result["summary"]) <= test_case["params"]["max_characters"]
 
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")

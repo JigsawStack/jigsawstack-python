@@ -23,9 +23,7 @@ class FileUploadResponse(TypedDict):
     key: str
     url: str
     size: int
-    temp_public_url: NotRequired[
-        str
-    ]  # Optional, only if temp_public_url is set to True in params
+    temp_public_url: NotRequired[str]  # Optional, only if temp_public_url is set to True in params
 
 
 class Store(ClientConfig):

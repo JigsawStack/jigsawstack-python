@@ -16,11 +16,10 @@ jigsaw = jigsawstack.JigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
 async_jigsaw = jigsawstack.AsyncJigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
 
 IMAGE_URL = "https://images.unsplash.com/photo-1494588024300-e9df7ff98d78?q=80&w=1284&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-FILE_STORE_KEY = jigsaw.store.upload(requests.get(IMAGE_URL).content, {
-                "filename": "test_image.jpg",
-                "content_type": "image/jpeg",
-                "overwrite": True
-            })
+FILE_STORE_KEY = jigsaw.store.upload(
+    requests.get(IMAGE_URL).content,
+    {"filename": "test_image.jpg", "content_type": "image/jpeg", "overwrite": True},
+)
 
 TEST_CASES = [
     {
@@ -33,23 +32,16 @@ TEST_CASES = [
         "name": "with_aspect_ratio",
         "params": {
             "prompt": "A serene lake with mountains in the background",
-            "aspect_ratio": "16:9"
+            "aspect_ratio": "16:9",
         },
     },
     {
         "name": "with_custom_dimensions",
-        "params": {
-            "prompt": "A futuristic city skyline",
-            "width": 1024,
-            "height": 768
-        },
+        "params": {"prompt": "A futuristic city skyline", "width": 1024, "height": 768},
     },
     {
         "name": "with_output_format_png",
-        "params": {
-            "prompt": "A colorful abstract painting",
-            "output_format": "png"
-        },
+        "params": {"prompt": "A colorful abstract painting", "output_format": "png"},
     },
     {
         "name": "with_advanced_config",
@@ -58,8 +50,8 @@ TEST_CASES = [
             "advance_config": {
                 "negative_prompt": "blurry, low quality, distorted",
                 "guidance": 7,
-                "seed": 42
-            }
+                "seed": 42,
+            },
         },
     },
     {
@@ -68,22 +60,16 @@ TEST_CASES = [
             "prompt": "A detailed botanical illustration",
             "steps": 30,
             "aspect_ratio": "3:4",
-            "return_type": "base64"
+            "return_type": "base64",
         },
     },
     {
         "name": "with_return_type_url",
-        "params": {
-            "prompt": "A vintage car on a desert road",
-            "return_type": "url"
-        },
+        "params": {"prompt": "A vintage car on a desert road", "return_type": "url"},
     },
     {
         "name": "with_return_type_base64",
-        "params": {
-            "prompt": "A fantasy castle on a hill",
-            "return_type": "base64"
-        }
+        "params": {"prompt": "A fantasy castle on a hill", "return_type": "base64"},
     },
     {
         "name": "with_all_options",
@@ -95,9 +81,9 @@ TEST_CASES = [
             "advance_config": {
                 "negative_prompt": "simple, plain, boring",
                 "guidance": 8,
-                "seed": 12345
+                "seed": 12345,
             },
-            "return_type": "base64"
+            "return_type": "base64",
         },
     },
 ]
@@ -109,7 +95,7 @@ IMAGE_TO_IMAGE_TEST_CASES = [
         "params": {
             "prompt": "Add snow effects to this image",
             "url": IMAGE_URL,
-            "return_type": "base64"
+            "return_type": "base64",
         },
     },
     {
@@ -118,7 +104,7 @@ IMAGE_TO_IMAGE_TEST_CASES = [
             "prompt": "Apply a cyberpunk style to this image",
             "file_store_key": FILE_STORE_KEY,
         },
-    }
+    },
 ]
 
 
@@ -139,7 +125,6 @@ class TestImageGenerationSync:
             assert result is not None
 
             if type(result) is dict:
-
                 # Check for image data based on return_type
                 if test_case["params"].get("return_type") == "url":
                     assert result.get("url") is not None
@@ -156,11 +141,14 @@ class TestImageGenerationSync:
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
 
-    @pytest.mark.parametrize("test_case", IMAGE_TO_IMAGE_TEST_CASES[:1], ids=[tc["name"] for tc in IMAGE_TO_IMAGE_TEST_CASES[:1]])
+    @pytest.mark.parametrize(
+        "test_case",
+        IMAGE_TO_IMAGE_TEST_CASES[:1],
+        ids=[tc["name"] for tc in IMAGE_TO_IMAGE_TEST_CASES[:1]],
+    )
     def test_image_to_image_generation(self, test_case):
         """Test image-to-image generation with URL input"""
         try:
-
             result = jigsaw.image_generation(test_case["params"])
 
             print(f"Test {test_case['name']}: Generated image from input")
@@ -192,7 +180,7 @@ class TestImageGenerationAsync:
             # Check response structure
             assert result is not None
             if type(result) is dict:
-            # Check for image data based on return_type
+                # Check for image data based on return_type
                 if test_case["params"].get("return_type") == "url":
                     assert result.get("url") is not None
                     assert requests.get(result["url"]).status_code == 200
@@ -209,7 +197,11 @@ class TestImageGenerationAsync:
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in async {test_case['name']}: {e}")
 
-    @pytest.mark.parametrize("test_case", IMAGE_TO_IMAGE_TEST_CASES[:1], ids=[tc["name"] for tc in IMAGE_TO_IMAGE_TEST_CASES[:1]])
+    @pytest.mark.parametrize(
+        "test_case",
+        IMAGE_TO_IMAGE_TEST_CASES[:1],
+        ids=[tc["name"] for tc in IMAGE_TO_IMAGE_TEST_CASES[:1]],
+    )
     @pytest.mark.asyncio
     async def test_image_to_image_generation_async(self, test_case):
         """Test asynchronous image-to-image generation with URL input"""

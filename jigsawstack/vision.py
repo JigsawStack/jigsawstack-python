@@ -218,9 +218,7 @@ class Vision(ClientConfig):
         return resp
 
     @overload
-    def object_detection(
-        self, params: ObjectDetectionParams
-    ) -> ObjectDetectionResponse: ...
+    def object_detection(self, params: ObjectDetectionParams) -> ObjectDetectionResponse: ...
     @overload
     def object_detection(
         self, blob: bytes, options: ObjectDetectionParams = None
@@ -307,9 +305,7 @@ class AsyncVision(ClientConfig):
         return resp
 
     @overload
-    async def object_detection(
-        self, params: ObjectDetectionParams
-    ) -> ObjectDetectionResponse: ...
+    async def object_detection(self, params: ObjectDetectionParams) -> ObjectDetectionResponse: ...
     @overload
     async def object_detection(
         self, blob: bytes, options: ObjectDetectionParams = None

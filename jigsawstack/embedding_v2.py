@@ -45,9 +45,7 @@ class EmbeddingV2(ClientConfig):
     @overload
     def execute(self, params: EmbeddingV2Params) -> EmbeddingV2Response: ...
     @overload
-    def execute(
-        self, blob: bytes, options: EmbeddingV2Params = None
-    ) -> EmbeddingV2Response: ...
+    def execute(self, blob: bytes, options: EmbeddingV2Params = None) -> EmbeddingV2Response: ...
 
     def execute(
         self,

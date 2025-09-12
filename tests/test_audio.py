@@ -22,36 +22,25 @@ AUDIO_URL = AUDIO_URL_LONG = "https://jigsawstack.com/preview/stt-example.wav"
 TEST_CASES = [
     {
         "name": "with_url_only",
-        "params": {
-            "url": AUDIO_URL
-        },
+        "params": {"url": AUDIO_URL},
         "blob": None,
         "options": None,
     },
     {
         "name": "with_url_and_language",
-        "params": {
-            "url": AUDIO_URL,
-            "language": "en"
-        },
+        "params": {"url": AUDIO_URL, "language": "en"},
         "blob": None,
         "options": None,
     },
     {
         "name": "with_url_auto_detect_language",
-        "params": {
-            "url": AUDIO_URL,
-            "language": "auto"
-        },
+        "params": {"url": AUDIO_URL, "language": "auto"},
         "blob": None,
         "options": None,
     },
     {
         "name": "with_url_and_translate",
-        "params": {
-            "url": AUDIO_URL,
-            "translate": True
-        },
+        "params": {"url": AUDIO_URL, "translate": True},
         "blob": None,
         "options": None,
     },
@@ -65,43 +54,29 @@ TEST_CASES = [
         "name": "with_blob_and_language",
         "params": None,
         "blob": AUDIO_URL,
-        "options": {
-            "language": "en"
-        },
+        "options": {"language": "en"},
     },
     {
         "name": "with_blob_auto_detect",
         "params": None,
         "blob": AUDIO_URL,
-        "options": {
-            "language": "auto"
-        },
+        "options": {"language": "auto"},
     },
     {
         "name": "with_blob_and_translate",
         "params": None,
         "blob": AUDIO_URL,
-        "options": {
-            "translate": True,
-            "language": "en"
-        },
+        "options": {"translate": True, "language": "en"},
     },
     {
         "name": "with_by_speaker",
-        "params": {
-            "url": AUDIO_URL_LONG,
-            "by_speaker": True
-        },
+        "params": {"url": AUDIO_URL_LONG, "by_speaker": True},
         "blob": None,
         "options": None,
     },
     {
         "name": "with_chunk_settings",
-        "params": {
-            "url": AUDIO_URL,
-            "batch_size": 5,
-            "chunk_duration": 15
-        },
+        "params": {"url": AUDIO_URL, "batch_size": 5, "chunk_duration": 15},
         "blob": None,
         "options": None,
     },
@@ -114,7 +89,7 @@ TEST_CASES = [
             "translate": False,
             "by_speaker": True,
             "batch_size": 10,
-            "chunk_duration": 15
+            "chunk_duration": 15,
         },
     },
 ]
@@ -123,10 +98,7 @@ TEST_CASES = [
 WEBHOOK_TEST_CASES = [
     {
         "name": "with_webhook_url",
-        "params": {
-            "url": AUDIO_URL,
-            "webhook_url": "https://webhook.site/test-webhook"
-        },
+        "params": {"url": AUDIO_URL, "webhook_url": "https://webhook.site/test-webhook"},
         "blob": None,
         "options": None,
     },
@@ -134,10 +106,7 @@ WEBHOOK_TEST_CASES = [
         "name": "with_blob_and_webhook",
         "params": None,
         "blob": AUDIO_URL,
-        "options": {
-            "webhook_url": "https://webhook.site/test-webhook",
-            "language": "en"
-        },
+        "options": {"webhook_url": "https://webhook.site/test-webhook", "language": "en"},
     },
 ]
 
@@ -152,10 +121,7 @@ class TestAudioSync:
             if test_case.get("blob"):
                 # Download audio content
                 blob_content = requests.get(test_case["blob"]).content
-                result = jigsaw.audio.speech_to_text(
-                    blob_content,
-                    test_case.get("options", {})
-                )
+                result = jigsaw.audio.speech_to_text(blob_content, test_case.get("options", {}))
             else:
                 # Use params directly
                 result = jigsaw.audio.speech_to_text(test_case["params"])
@@ -174,17 +140,16 @@ class TestAudioSync:
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
 
-    @pytest.mark.parametrize("test_case", WEBHOOK_TEST_CASES, ids=[tc["name"] for tc in WEBHOOK_TEST_CASES])
+    @pytest.mark.parametrize(
+        "test_case", WEBHOOK_TEST_CASES, ids=[tc["name"] for tc in WEBHOOK_TEST_CASES]
+    )
     def test_speech_to_text_webhook(self, test_case):
         """Test synchronous speech-to-text with webhook"""
         try:
             if test_case.get("blob"):
                 # Download audio content
                 blob_content = requests.get(test_case["blob"]).content
-                result = jigsaw.audio.speech_to_text(
-                    blob_content,
-                    test_case.get("options", {})
-                )
+                result = jigsaw.audio.speech_to_text(blob_content, test_case.get("options", {}))
             else:
                 # Use params directly
                 result = jigsaw.audio.speech_to_text(test_case["params"])
@@ -208,8 +173,7 @@ class TestAudioAsync:
                 # Download audio content
                 blob_content = requests.get(test_case["blob"]).content
                 result = await async_jigsaw.audio.speech_to_text(
-                    blob_content,
-                    test_case.get("options", {})
+                    blob_content, test_case.get("options", {})
                 )
             else:
                 # Use params directly
@@ -229,7 +193,9 @@ class TestAudioAsync:
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in async {test_case['name']}: {e}")
 
-    @pytest.mark.parametrize("test_case", WEBHOOK_TEST_CASES, ids=[tc["name"] for tc in WEBHOOK_TEST_CASES])
+    @pytest.mark.parametrize(
+        "test_case", WEBHOOK_TEST_CASES, ids=[tc["name"] for tc in WEBHOOK_TEST_CASES]
+    )
     @pytest.mark.asyncio
     async def test_speech_to_text_webhook_async(self, test_case):
         """Test asynchronous speech-to-text with webhook"""
@@ -238,8 +204,7 @@ class TestAudioAsync:
                 # Download audio content
                 blob_content = requests.get(test_case["blob"]).content
                 result = await async_jigsaw.audio.speech_to_text(
-                    blob_content,
-                    test_case.get("options", {})
+                    blob_content, test_case.get("options", {})
                 )
             else:
                 # Use params directly

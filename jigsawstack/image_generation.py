@@ -92,9 +92,7 @@ class ImageGeneration(ClientConfig):
         api_url: str,
         disable_request_logging: Union[bool, None] = False,
     ):
-        super().__init__(
-            api_key, api_url, disable_request_logging=disable_request_logging
-        )
+        super().__init__(api_key, api_url, disable_request_logging=disable_request_logging)
         self.config = RequestConfig(
             api_url=api_url,
             api_key=api_key,
@@ -123,9 +121,7 @@ class AsyncImageGeneration(ClientConfig):
         api_url: str,
         disable_request_logging: Union[bool, None] = False,
     ):
-        super().__init__(
-            api_key, api_url, disable_request_logging=disable_request_logging
-        )
+        super().__init__(api_key, api_url, disable_request_logging=disable_request_logging)
         self.config = RequestConfig(
             api_url=api_url,
             api_key=api_key,

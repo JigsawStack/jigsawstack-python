@@ -119,14 +119,10 @@ class PromptEngine(ClientConfig):
 
     def get(self, id: str) -> PromptEngineGetResponse:
         path = f"/prompt_engine/{id}"
-        resp = Request(
-            config=self.config, path=path, params={}, verb="get"
-        ).perform_with_content()
+        resp = Request(config=self.config, path=path, params={}, verb="get").perform_with_content()
         return resp
 
-    def list(
-        self, params: Union[PromptEngineListParams, None] = None
-    ) -> PromptEngineListResponse:
+    def list(self, params: Union[PromptEngineListParams, None] = None) -> PromptEngineListResponse:
         if params is None:
             params = {}
 
@@ -141,9 +137,7 @@ class PromptEngine(ClientConfig):
             base_path="/prompt_engine",
             params=params,
         )
-        resp = Request(
-            config=self.config, path=path, params={}, verb="get"
-        ).perform_with_content()
+        resp = Request(config=self.config, path=path, params={}, verb="get").perform_with_content()
         return resp
 
     def delete(self, id: str) -> PromptEngineDeleteResponse:
@@ -219,9 +213,7 @@ class AsyncPromptEngine(ClientConfig):
             disable_request_logging=disable_request_logging,
         )
 
-    async def create(
-        self, params: PromptEngineCreateParams
-    ) -> PromptEngineCreateResponse:
+    async def create(self, params: PromptEngineCreateParams) -> PromptEngineCreateResponse:
         path = "/prompt_engine"
         resp = await AsyncRequest(
             config=self.config,

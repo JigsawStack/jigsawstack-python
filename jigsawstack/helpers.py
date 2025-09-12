@@ -2,9 +2,7 @@ from typing import Dict, Optional, Union
 from urllib.parse import urlencode
 
 
-def build_path(
-    base_path: str, params: Optional[Dict[str, Union[str, int, bool]]] = None
-) -> str:
+def build_path(base_path: str, params: Optional[Dict[str, Union[str, int, bool]]] = None) -> str:
     """
     Build an API endpoint path with query parameters.
 
@@ -20,9 +18,7 @@ def build_path(
 
     # remove None values from the parameters
     filtered_params = {
-        k: str(v).lower() if isinstance(v, bool) else v
-        for k, v in params.items()
-        if v is not None
+        k: str(v).lower() if isinstance(v, bool) else v for k, v in params.items() if v is not None
     }
 
     # encode the parameters

@@ -16,12 +16,12 @@ logger = logging.getLogger(__name__)
 jigsaw = jigsawstack.JigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
 async_jigsaw = jigsawstack.AsyncJigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
 
-SAMPLE_TEXT = "The quick brown fox jumps over the lazy dog. This is a sample text for embedding generation."
+SAMPLE_TEXT = (
+    "The quick brown fox jumps over the lazy dog. This is a sample text for embedding generation."
+)
 SAMPLE_IMAGE_URL = "https://images.unsplash.com/photo-1542931287-023b922fa89b?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
 SAMPLE_AUDIO_URL = "https://jigsawstack.com/preview/stt-example.wav"
-SAMPLE_PDF_URL = (
-    "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
-)
+SAMPLE_PDF_URL = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
 
 # Test cases for Embedding V1
 EMBEDDING_V1_TEST_CASES = [

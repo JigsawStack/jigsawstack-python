@@ -319,9 +319,7 @@ class AsyncSearch(ClientConfig):
         ).perform_with_content()
         return resp
 
-    async def suggestions(
-        self, params: SearchSuggestionsParams
-    ) -> SearchSuggestionsResponse:
+    async def suggestions(self, params: SearchSuggestionsParams) -> SearchSuggestionsResponse:
         query = params["query"]
         path = f"/web/search/suggest?query={query}"
         resp = await AsyncRequest(

@@ -91,10 +91,7 @@ class Request(Generic[T]):
         # handle error in case there is a statusCode attr present
         # and status != 200 and response is a json.
 
-        if (
-            "application/json" not in resp.headers["content-type"]
-            and resp.status_code != 200
-        ):
+        if "application/json" not in resp.headers["content-type"] and resp.status_code != 200:
             raise_for_code_and_type(
                 code=500,
                 message="Failed to parse JigsawStack API response. Please try again.",

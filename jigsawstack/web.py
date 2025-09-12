@@ -20,9 +20,7 @@ from .search import (
 
 class GotoOptions(TypedDict):
     timeout: NotRequired[int]
-    wait_until: NotRequired[
-        Literal["load", "domcontentloaded", "networkidle0", "networkidle2"]
-    ]
+    wait_until: NotRequired[Literal["load", "domcontentloaded", "networkidle0", "networkidle2"]]
 
 
 #
@@ -257,9 +255,7 @@ class Web(ClientConfig):
         )
         return s.search(params)
 
-    def search_suggestions(
-        self, params: SearchSuggestionsParams
-    ) -> SearchSuggestionsResponse:
+    def search_suggestions(self, params: SearchSuggestionsParams) -> SearchSuggestionsResponse:
         s = Search(
             self.api_key,
             self.api_url,
@@ -309,9 +305,7 @@ class AsyncWeb(ClientConfig):
     async def html_to_any(self, params: HTMLToAnyURLParams) -> HTMLToAnyURLResponse: ...
 
     @overload
-    async def html_to_any(
-        self, params: HTMLToAnyBinaryParams
-    ) -> HTMLToAnyBinaryResponse: ...
+    async def html_to_any(self, params: HTMLToAnyBinaryParams) -> HTMLToAnyBinaryResponse: ...
 
     async def html_to_any(
         self, params: HTMLToAnyParams

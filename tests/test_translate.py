@@ -193,9 +193,7 @@ class TestTranslateImageSync:
             if test_case.get("blob"):
                 # Download blob content
                 blob_content = requests.get(test_case["blob"]).content
-                result = jigsaw.translate.image(
-                    blob_content, test_case.get("options", {})
-                )
+                result = jigsaw.translate.image(blob_content, test_case.get("options", {}))
             else:
                 # Use params directly
                 result = jigsaw.translate.image(test_case["params"])

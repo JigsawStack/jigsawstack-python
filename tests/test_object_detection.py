@@ -18,7 +18,9 @@ logger = logging.getLogger(__name__)
 jigsaw = jigsawstack.JigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
 async_jigsaw = jigsawstack.AsyncJigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
 
-IMAGE_URL = "https://rogilvkqloanxtvjfrkm.supabase.co/storage/v1/object/public/demo/Collabo%201080x842.jpg"
+IMAGE_URL = (
+    "https://rogilvkqloanxtvjfrkm.supabase.co/storage/v1/object/public/demo/Collabo%201080x842.jpg"
+)
 
 TEST_CASES = [
     {
@@ -102,9 +104,7 @@ class TestObjectDetectionSync:
             if test_case.get("blob"):
                 # Download blob content
                 blob_content = requests.get(test_case["blob"]).content
-                result = jigsaw.vision.object_detection(
-                    blob_content, test_case.get("options", {})
-                )
+                result = jigsaw.vision.object_detection(blob_content, test_case.get("options", {}))
             else:
                 # Use params directly
                 result = jigsaw.vision.object_detection(test_case["params"])

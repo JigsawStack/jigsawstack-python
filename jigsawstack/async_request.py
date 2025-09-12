@@ -250,9 +250,7 @@ class AsyncRequest(Generic[T]):
                 form_data.add_field(
                     "file",
                     BytesIO(data),
-                    content_type=headers.get(
-                        "Content-Type", "application/octet-stream"
-                    ),
+                    content_type=headers.get("Content-Type", "application/octet-stream"),
                     filename="file",
                 )
 

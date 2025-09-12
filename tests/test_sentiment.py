@@ -30,9 +30,7 @@ TEST_CASES = [
     },
     {
         "name": "neutral_sentiment_factual",
-        "params": {
-            "text": "The meeting is scheduled for 3 PM tomorrow in conference room B."
-        },
+        "params": {"text": "The meeting is scheduled for 3 PM tomorrow in conference room B."},
     },
     {
         "name": "mixed_sentiment_paragraph",
@@ -68,9 +66,7 @@ TEST_CASES = [
     },
     {
         "name": "question_sentiment",
-        "params": {
-            "text": "Why is this product so amazing? I can't believe how well it works!"
-        },
+        "params": {"text": "Why is this product so amazing? I can't believe how well it works!"},
     },
 ]
 

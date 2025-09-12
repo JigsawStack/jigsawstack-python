@@ -18,7 +18,9 @@ async_jigsaw = jigsawstack.AsyncJigsawStack(api_key=os.getenv("JIGSAWSTACK_API_K
 
 TEXT_FILE_CONTENT = b"This is a test file content for JigsawStack storage"
 JSON_FILE_CONTENT = b'{"test": "data", "key": "value"}'
-BINARY_FILE_CONTENT = requests.get("https://rogilvkqloanxtvjfrkm.supabase.co/storage/v1/object/public/demo/Collabo%201080x842.jpg").content
+BINARY_FILE_CONTENT = requests.get(
+    "https://rogilvkqloanxtvjfrkm.supabase.co/storage/v1/object/public/demo/Collabo%201080x842.jpg"
+).content
 
 TEST_CASES_UPLOAD = [
     {
@@ -60,7 +62,9 @@ class TestFileStoreSync:
 
     uploaded_keys = []  # Track uploaded files for cleanup
 
-    @pytest.mark.parametrize("test_case", TEST_CASES_UPLOAD, ids=[tc["name"] for tc in TEST_CASES_UPLOAD])
+    @pytest.mark.parametrize(
+        "test_case", TEST_CASES_UPLOAD, ids=[tc["name"] for tc in TEST_CASES_UPLOAD]
+    )
     def test_file_upload(self, test_case):
         """Test synchronous file upload with various options"""
         try:
@@ -87,8 +91,7 @@ class TestFileStoreSync:
         test_key = f"test-get-{uuid.uuid4().hex[:8]}.txt"
         try:
             upload_result = jigsaw.store.upload(
-                TEXT_FILE_CONTENT,
-                {"key": test_key, "content_type": "text/plain"}
+                TEXT_FILE_CONTENT, {"key": test_key, "content_type": "text/plain"}
             )
 
             # Now retrieve it
@@ -108,7 +111,9 @@ class TestFileStoreAsync:
 
     uploaded_keys = []  # Track uploaded files for cleanup
 
-    @pytest.mark.parametrize("test_case", TEST_CASES_UPLOAD, ids=[tc["name"] for tc in TEST_CASES_UPLOAD])
+    @pytest.mark.parametrize(
+        "test_case", TEST_CASES_UPLOAD, ids=[tc["name"] for tc in TEST_CASES_UPLOAD]
+    )
     @pytest.mark.asyncio
     async def test_file_upload_async(self, test_case):
         """Test asynchronous file upload with various options"""
@@ -137,8 +142,7 @@ class TestFileStoreAsync:
         test_key = f"test-async-get-{uuid.uuid4().hex[:8]}.txt"
         try:
             upload_result = await async_jigsaw.store.upload(
-                TEXT_FILE_CONTENT,
-                {"key": test_key, "content_type": "text/plain"}
+                TEXT_FILE_CONTENT, {"key": test_key, "content_type": "text/plain"}
             )
 
             # Now retrieve it
