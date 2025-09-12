@@ -3,8 +3,6 @@ from typing_extensions import NotRequired, TypedDict
 from .request import Request, RequestConfig
 from .async_request import AsyncRequest, AsyncRequestConfig
 from ._config import ClientConfig
-from typing import Any, Dict, List, cast
-from typing_extensions import NotRequired, TypedDict, Union, Optional
 from .helpers import build_path
 from ._types import BaseResponse
 
