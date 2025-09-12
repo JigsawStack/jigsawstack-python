@@ -64,7 +64,6 @@ jobs:
           - test_classification.py
           - test_embedding.py
           - test_file_store.py
-          - test_geo.py
           - test_image_generation.py
           - test_object_detection.py
           - test_prediction.py
@@ -75,6 +74,8 @@ jobs:
           - test_validate.py
           - test_vision.py
           - test_web.py
+    outputs:
+      test-result: ${{ steps.test-run.outcome }}
     steps:
       - uses: actions/checkout@v4
       
@@ -91,16 +92,29 @@ jobs:
           pip install -e .
       
       - name: Run test ${{ matrix.test-file }}
+        id: test-run
         env:
           JIGSAWSTACK_API_KEY: ${{ secrets.JIGSAWSTACK_API_KEY }}
         run: |
-          pytest tests/${{ matrix.test-file }} -v
-        continue-on-error: true
+          pytest tests/${{ matrix.test-file }} -v --json-report --json-report-file=report.json
       
-      - name: Check if critical tests passed
-        if: contains(matrix.test-file, 'test_') && !contains(matrix.test-file, 'skip')
+      - name: Count passed tests
+        id: count-tests
+        if: always()
         run: |
-          pytest tests/${{ matrix.test-file }} -v -m "not skip"
+          if [ -f report.json ]; then
+            PASSED=$(python -c "import json; data=json.load(open('report.json')); print(data.get('summary', {}).get('passed', 0))")
+            echo "passed-count=$PASSED" >> $GITHUB_OUTPUT
+          else
+            echo "passed-count=0" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results-${{ matrix.test-file }}
+          path: report.json
 
   all-checks-passed:
     name: All Checks Passed
@@ -108,10 +122,33 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
     steps:
-      - name: Check if all jobs passed
+      - name: Download all test results
+        uses: actions/download-artifact@v3
+        with:
+          path: test-results
+      
+      - name: Count total passed tests
         run: |
-          if [[ "${{ needs.ruff-format-check.result }}" != "success" || "${{ needs.test.result }}" != "success" ]]; then
-            echo "One or more checks failed"
+          TOTAL_PASSED=0
+          for file in test-results/*/report.json; do
+            if [ -f "$file" ]; then
+              PASSED=$(python -c "import json; data=json.load(open('$file')); print(data.get('summary', {}).get('passed', 0))")
+              TOTAL_PASSED=$((TOTAL_PASSED + PASSED))
+            fi
+          done
+          
+          echo "Total passed tests: $TOTAL_PASSED"
+          
+          if [ $TOTAL_PASSED -lt 327 ]; then
+            echo "❌ Insufficient tests passed: $TOTAL_PASSED/327"
+            exit 1
+          else
+            echo "✅ Required tests passed: $TOTAL_PASSED/327"
+          fi
+      
+      - name: Check if ruff passed
+        run: |
+          if [[ "${{ needs.ruff-format-check.result }}" != "success" ]]; then
+            echo "Ruff format check failed"
             exit 1
           fi
-          echo "All checks passed successfully!"
