@@ -48,6 +48,7 @@ jobs:
           - test_web.py
           - test_deep_research.py
           - test_ai_scrape.py
+          - test_vocr.py
     steps:
       - uses: actions/checkout@v4
       
