@@ -80,11 +80,9 @@ class Audio(ClientConfig):
     ) -> Union[SpeechToTextResponse, SpeechToTextWebhookResponse]:
         options = options or {}
         path = "/ai/transcribe"
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-        if isinstance(
-            blob, dict
-        ):  # If params is provided as a dict, we assume it's the first argument
+        params= options or {}
+        if isinstance(blob, dict): 
+            # URL or file_store_key based request
             resp = Request(
                 config=self.config,
                 path=path,
@@ -93,13 +91,13 @@ class Audio(ClientConfig):
             ).perform_with_content()
             return resp
 
+        files = {"file": blob}
         resp = Request(
             config=self.config,
             path=path,
-            params=options,
-            data=blob,
-            headers=headers,
+            params=params,
             verb="post",
+            files=files,
         ).perform_with_content()
         return resp
 
@@ -136,8 +134,7 @@ class AsyncAudio(ClientConfig):
     ) -> Union[SpeechToTextResponse, SpeechToTextWebhookResponse]:
         options = options or {}
         path = "/ai/transcribe"
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
+        params = options or {}
         if isinstance(blob, dict):
             resp = await AsyncRequest(
                 config=self.config,
@@ -146,13 +143,13 @@ class AsyncAudio(ClientConfig):
                 verb="post",
             ).perform_with_content()
             return resp
-
+        
+        files = {"file": blob}
         resp = await AsyncRequest(
             config=self.config,
             path=path,
-            params=options,
-            data=blob,
-            headers=headers,
+            params=params,
             verb="post",
+            files=files,
         ).perform_with_content()
         return resp
