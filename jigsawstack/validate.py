@@ -99,6 +99,8 @@ class Validate(ClientConfig):
         blob: Union[NSFWParams, bytes],
         options: NSFWParams = None,
     ) -> NSFWResponse:
+        path = "/validate/nsfw"
+        options = options or {}
         if isinstance(
             blob, dict
         ):  # If params is provided as a dict, we assume it's the first argument
@@ -109,18 +111,14 @@ class Validate(ClientConfig):
                 verb="post",
             ).perform_with_content()
             return resp
-
-        options = options or {}
-        path = build_path(base_path="/validate/nsfw", params=options)
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-
+    
+        files = {"file": blob}
         resp = Request(
             config=self.config,
             path=path,
             params=options,
             data=blob,
-            headers=headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp
@@ -188,28 +186,26 @@ class AsyncValidate(ClientConfig):
         blob: Union[NSFWParams, bytes],
         options: NSFWParams = None,
     ) -> NSFWResponse:
+        path = "/validate/nsfw"
+        options = options or {}
         if isinstance(
             blob, dict
         ):  # If params is provided as a dict, we assume it's the first argument
             resp = await AsyncRequest(
                 config=self.config,
-                path="/validate/nsfw",
+                path=path,
                 params=cast(Dict[Any, Any], blob),
                 verb="post",
             ).perform_with_content()
             return resp
-
-        options = options or {}
-        path = build_path(base_path="/validate/nsfw", params=options)
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-
+        
+        files = {"file": blob}
         resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=options,
             data=blob,
-            headers=headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp
