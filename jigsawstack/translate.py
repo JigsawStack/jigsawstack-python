@@ -95,6 +95,8 @@ class Translate(ClientConfig):
         blob: Union[TranslateImageParams, bytes],
         options: TranslateImageParams = None,
     ) -> Union[TranslateImageResponse, bytes]:
+        path = "/ai/translate/image"
+        options = options or {}
         if isinstance(
             blob, dict
         ):  # If params is provided as a dict, we assume it's the first argument
@@ -106,17 +108,14 @@ class Translate(ClientConfig):
             ).perform_with_content()
             return resp
 
-        options = options or {}
-        path = build_path(base_path="/ai/translate/image", params=options)
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-
+        
+        files = {"file": blob}
         resp = Request(
             config=self.config,
             path=path,
             params=options,
             data=blob,
-            headers=headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp
@@ -159,6 +158,8 @@ class AsyncTranslate(ClientConfig):
         blob: Union[TranslateImageParams, bytes],
         options: TranslateImageParams = None,
     ) -> Union[TranslateImageResponse, bytes]:
+        path = "/ai/translate/image"
+        options = options or {}
         if isinstance(blob, dict):
             resp = await AsyncRequest(
                 config=self.config,
@@ -168,17 +169,13 @@ class AsyncTranslate(ClientConfig):
             ).perform_with_content()
             return resp
 
-        options = options or {}
-        path = build_path(base_path="/ai/translate/image", params=options)
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-
+        files = {"file": blob}
         resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=options,
             data=blob,
-            headers=headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp
