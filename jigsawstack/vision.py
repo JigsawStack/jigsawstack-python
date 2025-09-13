@@ -1,5 +1,4 @@
 from typing import Any, Dict, List, Optional, Union, cast, overload
-from wsgiref import headers
 
 from typing_extensions import Literal, NotRequired, TypedDict
 

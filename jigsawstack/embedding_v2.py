@@ -5,7 +5,6 @@ from typing_extensions import NotRequired, TypedDict
 from ._config import ClientConfig
 from .async_request import AsyncRequest
 from .embedding import Chunk
-from .helpers import build_path
 from .request import Request, RequestConfig
 
 

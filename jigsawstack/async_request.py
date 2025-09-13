@@ -1,6 +1,7 @@
 import json
-from typing import Any, AsyncGenerator, Dict, Generic, List, TypedDict, Union, cast
 from io import BytesIO
+from typing import Any, AsyncGenerator, Dict, Generic, List, TypedDict, Union, cast
+
 import aiohttp
 from typing_extensions import Literal, TypeVar
 

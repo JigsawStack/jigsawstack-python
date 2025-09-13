@@ -5,7 +5,6 @@ from typing_extensions import Literal, NotRequired, TypedDict
 from ._config import ClientConfig
 from ._types import BaseResponse
 from .async_request import AsyncRequest
-from .helpers import build_path
 from .request import Request, RequestConfig
 
 

@@ -1,4 +1,3 @@
-from importlib.metadata import files
 from typing import Any, Dict, List, Literal, Union, cast, overload
 
 from typing_extensions import NotRequired, TypedDict
@@ -6,7 +5,6 @@ from typing_extensions import NotRequired, TypedDict
 from ._config import ClientConfig
 from ._types import BaseResponse
 from .async_request import AsyncRequest
-from .helpers import build_path
 from .request import Request, RequestConfig
 
 
