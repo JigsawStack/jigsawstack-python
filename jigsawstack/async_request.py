@@ -184,11 +184,11 @@ class AsyncRequest(Generic[T]):
             h["x-jigsaw-no-request-log"] = "true"
 
         _headers = h.copy()
-        
-        #don't override Content-Type if using multipart
+
+        # don't override Content-Type if using multipart
         if self.files and "Content-Type" in self.headers:
             self.headers.pop("Content-Type")
-            
+
         _headers.update(self.headers)
 
         return _headers
@@ -251,38 +251,29 @@ class AsyncRequest(Generic[T]):
         _form_data = None
 
         if verb.lower() in ["get", "delete"]:
-            #convert params for URL encoding if needed
+            # convert params for URL encoding if needed
             _params = self.__convert_params(params)
         elif files:
             # for multipart requests - matches request.py behavior
             _form_data = aiohttp.FormData()
-            
+
             # add file(s) to form data
             for field_name, file_data in files.items():
                 if isinstance(file_data, bytes):
                     # just pass the blob without filename
                     _form_data.add_field(
-                        field_name,
-                        BytesIO(file_data),
-                        content_type="application/octet-stream"
+                        field_name, BytesIO(file_data), content_type="application/octet-stream"
                     )
                 elif isinstance(file_data, tuple):
                     # if tuple format (filename, data, content_type)
                     filename, content, content_type = file_data
                     _form_data.add_field(
-                        field_name,
-                        content,
-                        filename=filename,
-                        content_type=content_type
+                        field_name, content, filename=filename, content_type=content_type
                     )
-            
+
             # add params as 'body' field in multipart form (JSON stringified)
             if params and isinstance(params, dict):
-                _form_data.add_field(
-                    "body",
-                    json.dumps(params),
-                    content_type="application/json"
-                )
+                _form_data.add_field("body", json.dumps(params), content_type="application/json")
         elif data:
             # for binary data without multipart
             _data = data

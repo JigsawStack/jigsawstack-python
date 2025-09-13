@@ -158,7 +158,7 @@ class Request(Generic[T]):
             "Accept": "application/json",
             "x-api-key": f"{self.api_key}",
         }
-        
+
         # Only add Content-Type if not using multipart (files)
         if not self.files and not self.data:
             h["Content-Type"] = "application/json"
@@ -167,11 +167,11 @@ class Request(Generic[T]):
             h["x-jigsaw-no-request-log"] = "true"
 
         _headers = h.copy()
-        
+
         # Don't override Content-Type if using multipart
         if self.files and "Content-Type" in self.headers:
             self.headers.pop("Content-Type")
-            
+
         _headers.update(self.headers)
 
         return _headers

@@ -108,7 +108,6 @@ class Translate(ClientConfig):
             ).perform_with_content()
             return resp
 
-        
         files = {"file": blob}
         resp = Request(
             config=self.config,

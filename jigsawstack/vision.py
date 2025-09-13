@@ -160,7 +160,7 @@ class OCRResponse(BaseResponse):
     tags: List[str]
     has_text: bool
     sections: List[object]
-    total_pages: Optional[int] 
+    total_pages: Optional[int]
     page_range: Optional[
         List[int]
     ]  # Only available if page_range is set in the request parameters.
@@ -205,7 +205,7 @@ class Vision(ClientConfig):
             ).perform_with_content()
             return resp
 
-        files ={"file": blob}
+        files = {"file": blob}
         resp = Request(
             config=self.config,
             path=path,

@@ -111,7 +111,7 @@ class Validate(ClientConfig):
                 verb="post",
             ).perform_with_content()
             return resp
-    
+
         files = {"file": blob}
         resp = Request(
             config=self.config,
@@ -198,7 +198,7 @@ class AsyncValidate(ClientConfig):
                 verb="post",
             ).perform_with_content()
             return resp
-        
+
         files = {"file": blob}
         resp = await AsyncRequest(
             config=self.config,

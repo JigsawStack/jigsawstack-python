@@ -80,8 +80,8 @@ class Audio(ClientConfig):
     ) -> Union[SpeechToTextResponse, SpeechToTextWebhookResponse]:
         options = options or {}
         path = "/ai/transcribe"
-        params= options or {}
-        if isinstance(blob, dict): 
+        params = options or {}
+        if isinstance(blob, dict):
             # URL or file_store_key based request
             resp = Request(
                 config=self.config,
@@ -143,7 +143,7 @@ class AsyncAudio(ClientConfig):
                 verb="post",
             ).perform_with_content()
             return resp
-        
+
         files = {"file": blob}
         resp = await AsyncRequest(
             config=self.config,
