@@ -53,6 +53,7 @@ class EmbeddingV2(ClientConfig):
         options: EmbeddingV2Params = None,
     ) -> EmbeddingV2Response:
         path = "/embedding"
+        options = options or {}
         if isinstance(blob, dict):
             resp = Request(
                 config=self.config,
@@ -62,17 +63,13 @@ class EmbeddingV2(ClientConfig):
             ).perform_with_content()
             return resp
 
-        options = options or {}
-        path = build_path(base_path=path, params=options)
-        content_type = options.get("content_type", "application/octet-stream")
-        _headers = {"Content-Type": content_type}
-
+        files = {"file": blob}
         resp = Request(
             config=self.config,
             path=path,
             params=options,
             data=blob,
-            headers=_headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp
@@ -107,6 +104,7 @@ class AsyncEmbeddingV2(ClientConfig):
         options: EmbeddingV2Params = None,
     ) -> EmbeddingV2Response:
         path = "/embedding"
+        options = options or {}
         if isinstance(blob, dict):
             resp = await AsyncRequest(
                 config=self.config,
@@ -116,17 +114,13 @@ class AsyncEmbeddingV2(ClientConfig):
             ).perform_with_content()
             return resp
 
-        options = options or {}
-        path = build_path(base_path=path, params=options)
-        content_type = options.get("content_type", "application/octet-stream")
-        _headers = {"Content-Type": content_type}
-
+        files = {"file": blob}
         resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=options,
             data=blob,
-            headers=_headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp
