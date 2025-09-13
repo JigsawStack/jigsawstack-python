@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Optional, Union, cast, overload
+from wsgiref import headers
 
 from typing_extensions import Literal, NotRequired, TypedDict
 
@@ -159,10 +160,10 @@ class OCRResponse(BaseResponse):
     tags: List[str]
     has_text: bool
     sections: List[object]
-    total_pages: Optional[int]  # Only available for PDFs
-    page_ranges: Optional[
+    total_pages: Optional[int] 
+    page_range: Optional[
         List[int]
-    ]  # Only available if page_ranges is set in the request parameters.
+    ]  # Only available if page_range is set in the request parameters.
 
 
 class Vision(ClientConfig):
@@ -204,15 +205,13 @@ class Vision(ClientConfig):
             ).perform_with_content()
             return resp
 
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-
+        files ={"file": blob}
         resp = Request(
             config=self.config,
             path=path,
             params=options,
             data=blob,
-            headers=headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp
@@ -239,16 +238,13 @@ class Vision(ClientConfig):
                 verb="post",
             ).perform_with_content()
             return resp
-
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-
+        files = {"file": blob}
         resp = Request(
             config=self.config,
             path=path,
             params=options,
             data=blob,
-            headers=headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp
@@ -291,15 +287,13 @@ class AsyncVision(ClientConfig):
             ).perform_with_content()
             return resp
 
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-
+        files = {"file": blob}
         resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=options,
             data=blob,
-            headers=headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp
@@ -329,15 +323,13 @@ class AsyncVision(ClientConfig):
             ).perform_with_content()
             return resp
 
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-
+        files = {"file": blob}
         resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=options,
             data=blob,
-            headers=headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp
