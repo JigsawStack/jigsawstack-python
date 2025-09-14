@@ -13,8 +13,8 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-jigsaw = jigsawstack.JigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
-async_jigsaw = jigsawstack.AsyncJigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
+jigsaw = jigsawstack.JigsawStack(api_url="http://localhost:3000/api/",api_key=os.getenv("JIGSAWSTACK_API_KEY"))
+async_jigsaw = jigsawstack.AsyncJigsawStack(api_url="http://localhost:3000/api/", api_key=os.getenv("JIGSAWSTACK_API_KEY"))
 
 TEXT_FILE_CONTENT = b"This is a test file content for JigsawStack storage"
 JSON_FILE_CONTENT = b'{"test": "data", "key": "value"}'
@@ -88,15 +88,17 @@ class TestFileStoreSync:
     def test_file_get(self):
         """Test synchronous file retrieval"""
         # First upload a file to retrieve
-        test_key = f"test-get-{uuid.uuid4().hex[:8]}.txt"
         try:
             upload_result = jigsaw.store.upload(
-                TEXT_FILE_CONTENT, {"key": test_key, "content_type": "text/plain"}
+                TEXT_FILE_CONTENT, {"key": test_key, "overwrite": True}
             )
+
+            print(f"Uploaded file for get test: {upload_result}")
 
             # Now retrieve it
             file_content = jigsaw.store.get(upload_result["key"])
             assert file_content is not None
+            print(f"Retrieved file content: {file_content}")
             print(f"Retrieved file with key {upload_result['key']}")
 
             # Cleanup
@@ -142,7 +144,7 @@ class TestFileStoreAsync:
         test_key = f"test-async-get-{uuid.uuid4().hex[:8]}.txt"
         try:
             upload_result = await async_jigsaw.store.upload(
-                TEXT_FILE_CONTENT, {"key": test_key, "content_type": "text/plain"}
+                TEXT_FILE_CONTENT, {"key": test_key, "overwrite": True, "content_type": "text/plain"}
             )
 
             # Now retrieve it

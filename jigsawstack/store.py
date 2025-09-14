@@ -45,26 +45,23 @@ class Store(ClientConfig):
     def upload(
         self, file: bytes, options: Union[FileUploadParams, None] = None
     ) -> FileUploadResponse:
-        if options is None:
-            options = {}
+        options = options or {}
+        path = "/store/file"
 
-        path = build_path(base_path="/store/file", params=options)
-        content_type = options.get("content_type", "application/octet-stream")
-
-        _headers = {"Content-Type": content_type}
-
+        files = {"file": file}
         resp = Request(
             config=self.config,
-            params=options,  # Empty params since we're using them in the URL
+            params=options, 
             path=path,
-            data=file,
-            headers=_headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp
 
     def get(self, key: str) -> Any:
         path = f"/store/file/read/{key}"
+
+        print(f"Getting file with key: {path}")
         resp = Request(
             config=self.config,
             path=path,
@@ -103,18 +100,14 @@ class AsyncStore(ClientConfig):
     async def upload(
         self, file: bytes, options: Union[FileUploadParams, None] = None
     ) -> FileUploadResponse:
-        if options is None:
-            options = {}
-
-        path = build_path(base_path="/store/file", params=options)
-        content_type = options.get("content_type", "application/octet-stream")
-        _headers = {"Content-Type": content_type}
+        options = options or {}
+        path = "/store/file"
+        files = {"file": file}
         resp = await AsyncRequest(
             config=self.config,
-            params=options,  # Empty params since we're using them in the URL
+            params=options,
             path=path,
-            data=file,
-            headers=_headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp

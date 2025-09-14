@@ -86,14 +86,16 @@ class Request(Generic[T]):
 
     def perform_file(self) -> Union[T, None]:
         resp = self.make_request(url=f"{self.api_url}{self.path}")
-
+        print(f"File response: {resp.text}, Status Code: {resp.status_code}")
+        print(f"Response Headers: {resp.headers}")
         # delete calls do not return a body
         if resp.text == "" and resp.status_code == 200:
             return None
         # handle error in case there is a statusCode attr present
         # and status != 200 and response is a json.
 
-        if "application/json" not in resp.headers["content-type"] and resp.status_code != 200:
+        if "application/json" not in (resp.headers["content-type"] or resp.headers["Content-Type"]) and resp.status_code != 200:
+            print(resp.text)
             raise_for_code_and_type(
                 code=500,
                 message="Failed to parse JigsawStack API response. Please try again.",
@@ -110,7 +112,8 @@ class Request(Generic[T]):
 
         # for binary responses
         if resp.status_code == 200:
-            content_type = resp.headers.get("content-type", "")
+            content_type = resp.headers.get("content-type", None)
+            print(f"Content-Type: {content_type}")
             if "application/json" not in content_type:
                 resp = cast(T, resp.content)
         return resp
