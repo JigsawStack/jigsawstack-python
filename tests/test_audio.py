@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 jigsaw = jigsawstack.JigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
 async_jigsaw = jigsawstack.AsyncJigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
 
-# Sample audio URLs for testing
 AUDIO_URL = AUDIO_URL_LONG = "https://jigsawstack.com/preview/stt-example.wav"
 
 
@@ -98,7 +97,10 @@ TEST_CASES = [
 WEBHOOK_TEST_CASES = [
     {
         "name": "with_webhook_url",
-        "params": {"url": AUDIO_URL, "webhook_url": "https://webhook.site/test-webhook"},
+        "params": {
+            "url": AUDIO_URL,
+            "webhook_url": "https://webhook.site/test-webhook",
+        },
         "blob": None,
         "options": None,
     },
@@ -106,7 +108,10 @@ WEBHOOK_TEST_CASES = [
         "name": "with_blob_and_webhook",
         "params": None,
         "blob": AUDIO_URL,
-        "options": {"webhook_url": "https://webhook.site/test-webhook", "language": "en"},
+        "options": {
+            "webhook_url": "https://webhook.site/test-webhook",
+            "language": "en",
+        },
     },
 ]
 
