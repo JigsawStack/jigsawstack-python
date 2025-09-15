@@ -28,7 +28,7 @@ class Request(Generic[T]):
         headers: Dict[str, str] = None,
         data: Union[bytes, None] = None,
         stream: Union[bool, None] = False,
-        files: Union[Dict[str, Any], None] = None,  # Change from 'file' to 'files'
+        files: Union[Dict[str, Any], None] = None,
     ):
         self.path = path
         self.params = params
@@ -39,7 +39,7 @@ class Request(Generic[T]):
         self.headers = headers or {"Content-Type": "application/json"}
         self.disable_request_logging = config.get("disable_request_logging")
         self.stream = stream
-        self.files = files  # Change from 'file' to 'files'
+        self.files = files
 
     def perform(self) -> Union[T, None]:
         """Is the main function that makes the HTTP request
@@ -93,7 +93,10 @@ class Request(Generic[T]):
         # handle error in case there is a statusCode attr present
         # and status != 200 and response is a json.
 
-        if "application/json" not in resp.headers["content-type"] and resp.status_code != 200:
+        if (
+            "application/json" not in resp.headers["content-type"]
+            and resp.status_code != 200
+        ):
             raise_for_code_and_type(
                 code=500,
                 message="Failed to parse JigsawStack API response. Please try again.",
@@ -253,7 +256,7 @@ class Request(Generic[T]):
         params = self.params
         verb = self.verb
         data = self.data
-        files = self.files  # Change from 'file' to 'files'
+        files = self.files
 
         _requestParams = None
         _json = None
@@ -262,23 +265,14 @@ class Request(Generic[T]):
 
         if verb.lower() in ["get", "delete"]:
             _requestParams = params
-        elif files:
-            # For multipart requests
+        elif files:  # multipart request
             _files = files
-            # Add params as 'body' field in multipart form (JSON stringified)
             if params and isinstance(params, dict):
-                # Convert params to JSON string and add as 'body' field
                 _data = {"body": json.dumps(params)}
-        elif data:
-            # For binary data without multipart
-            _data = data
-            # Pass params as query parameters for binary uploads
-            if params and isinstance(params, dict):
-                _requestParams = params
-        else:
-            # For JSON requests
-            _json = params
+            headers.pop("Content-Type", None)  # let requests set it for multipart
 
+        else:  # pure JSON request
+            _json = params
         try:
             return requests.request(
                 verb,

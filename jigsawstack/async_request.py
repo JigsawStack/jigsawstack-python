@@ -243,7 +243,6 @@ class AsyncRequest(Generic[T]):
         headers = self.__get_headers()
         params = self.params
         verb = self.verb
-        data = self.data
         files = self.files
 
         _params = None
@@ -252,64 +251,27 @@ class AsyncRequest(Generic[T]):
         _form_data = None
 
         if verb.lower() in ["get", "delete"]:
-            # convert params for URL encoding if needed
             _params = self.__convert_params(params)
         elif files:
-            # for multipart requests - matches request.py behavior
             _form_data = aiohttp.FormData()
-
-            # add file(s) to form data
-            for field_name, file_data in files.items():
-                if isinstance(file_data, bytes):
-                    # just pass the blob without filename
-                    _form_data.add_field(
-                        field_name, BytesIO(file_data), content_type="application/octet-stream"
-                    )
-                elif isinstance(file_data, tuple):
-                    # if tuple format (filename, data, content_type)
-                    filename, content, content_type = file_data
-                    _form_data.add_field(
-                        field_name, content, filename=filename, content_type=content_type
-                    )
-
-            # add params as 'body' field in multipart form (JSON stringified)
+            _form_data.add_field("file", BytesIO(files["file"]), filename="upload")
             if params and isinstance(params, dict):
-                _form_data.add_field("body", json.dumps(params), content_type="application/json")
-        elif data:
-            # for binary data without multipart
-            _data = data
-            # pass params as query parameters for binary uploads
-            if params and isinstance(params, dict):
-                _params = self.__convert_params(params)
-        else:
-            # for JSON requests
+                _form_data.add_field(
+                    "body", json.dumps(params), content_type="application/json"
+                )
+
+            headers.pop("Content-Type", None)
+        else:  # pure JSON request
             _json = params
 
-        # m,ake the request based on the data type
-        if _form_data:
-            return await session.request(
-                verb,
-                url,
-                params=_params,
-                data=_form_data,
-                headers=headers,
-            )
-        elif _json is not None:
-            return await session.request(
-                verb,
-                url,
-                params=_params,
-                json=_json,
-                headers=headers,
-            )
-        else:
-            return await session.request(
-                verb,
-                url,
-                params=_params,
-                data=_data,
-                headers=headers,
-            )
+        return await session.request(
+            verb,
+            url,
+            params=_params,
+            json=_json,
+            data=_form_data or _data,
+            headers=headers,
+        )
 
     def __get_session(self) -> aiohttp.ClientSession:
         """

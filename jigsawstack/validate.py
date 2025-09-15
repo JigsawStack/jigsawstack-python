@@ -117,7 +117,6 @@ class Validate(ClientConfig):
             config=self.config,
             path=path,
             params=options,
-            data=blob,
             files=files,
             verb="post",
         ).perform_with_content()
@@ -204,7 +203,6 @@ class AsyncValidate(ClientConfig):
             config=self.config,
             path=path,
             params=options,
-            data=blob,
             files=files,
             verb="post",
         ).perform_with_content()

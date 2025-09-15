@@ -209,14 +209,15 @@ class Vision(ClientConfig):
             config=self.config,
             path=path,
             params=options,
-            data=blob,
             files=files,
             verb="post",
         ).perform_with_content()
         return resp
 
     @overload
-    def object_detection(self, params: ObjectDetectionParams) -> ObjectDetectionResponse: ...
+    def object_detection(
+        self, params: ObjectDetectionParams
+    ) -> ObjectDetectionResponse: ...
     @overload
     def object_detection(
         self, blob: bytes, options: ObjectDetectionParams = None
@@ -242,7 +243,6 @@ class Vision(ClientConfig):
             config=self.config,
             path=path,
             params=options,
-            data=blob,
             files=files,
             verb="post",
         ).perform_with_content()
@@ -291,14 +291,15 @@ class AsyncVision(ClientConfig):
             config=self.config,
             path=path,
             params=options,
-            data=blob,
             files=files,
             verb="post",
         ).perform_with_content()
         return resp
 
     @overload
-    async def object_detection(self, params: ObjectDetectionParams) -> ObjectDetectionResponse: ...
+    async def object_detection(
+        self, params: ObjectDetectionParams
+    ) -> ObjectDetectionResponse: ...
     @overload
     async def object_detection(
         self, blob: bytes, options: ObjectDetectionParams = None
@@ -327,7 +328,6 @@ class AsyncVision(ClientConfig):
             config=self.config,
             path=path,
             params=options,
-            data=blob,
             files=files,
             verb="post",
         ).perform_with_content()

@@ -46,7 +46,9 @@ class Embedding(ClientConfig):
     @overload
     def execute(self, params: EmbeddingParams) -> EmbeddingResponse: ...
     @overload
-    def execute(self, blob: bytes, options: EmbeddingParams = None) -> EmbeddingResponse: ...
+    def execute(
+        self, blob: bytes, options: EmbeddingParams = None
+    ) -> EmbeddingResponse: ...
 
     def execute(
         self,
@@ -69,7 +71,6 @@ class Embedding(ClientConfig):
             config=self.config,
             path=path,
             params=options,
-            data=blob,
             files=files,
             verb="post",
         ).perform_with_content()
@@ -95,7 +96,9 @@ class AsyncEmbedding(ClientConfig):
     @overload
     async def execute(self, params: EmbeddingParams) -> EmbeddingResponse: ...
     @overload
-    async def execute(self, blob: bytes, options: EmbeddingParams = None) -> EmbeddingResponse: ...
+    async def execute(
+        self, blob: bytes, options: EmbeddingParams = None
+    ) -> EmbeddingResponse: ...
 
     async def execute(
         self,
@@ -118,7 +121,6 @@ class AsyncEmbedding(ClientConfig):
             config=self.config,
             path=path,
             params=options,
-            data=blob,
             files=files,
             verb="post",
         ).perform_with_content()
