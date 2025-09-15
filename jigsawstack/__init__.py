@@ -21,24 +21,29 @@ from .web import AsyncWeb, Web
 
 
 class JigsawStack:
-    audio: Audio
-    vision: Vision
-    image_generation: ImageGeneration
-    file: Store
-    web: Web
-    search: Search
-    classification: Classification
-    prompt_engine: PromptEngine
     api_key: str
     api_url: str
     headers: Dict[str, str]
-    # disable_request_logging: bool
+    audio: Audio
+    classification: Classification
+    embedding: Embedding
+    embedding_v2: EmbeddingV2
+    store: Store
+    image_generation: ImageGeneration
+    prediction: Prediction
+    prompt_engine: PromptEngine
+    sentiment: Sentiment
+    summary: Summary
+    text_to_sql: SQL
+    translate: Translate
+    validate: Validate
+    vision: Vision
+    web: Web
 
     def __init__(
         self,
         api_key: Union[str, None] = None,
         api_url: Union[str, None] = None,
-        # disable_request_logging: Union[bool, None] = None,
         headers: Union[Dict[str, str], None] = None,
     ) -> None:
         if api_key is None:
@@ -66,16 +71,19 @@ class JigsawStack:
             api_url=api_url + "/v1",
             disable_request_logging=disable_request_logging,
         )
+
         self.web = Web(
             api_key=api_key,
             api_url=api_url + "/v1",
             disable_request_logging=disable_request_logging,
         )
+
         self.sentiment = Sentiment(
             api_key=api_key,
             api_url=api_url + "/v1",
             disable_request_logging=disable_request_logging,
         ).analyze
+
         self.validate = Validate(
             api_key=api_key,
             api_url=api_url + "/v1",
@@ -86,21 +94,25 @@ class JigsawStack:
             api_url=api_url + "/v1",
             disable_request_logging=disable_request_logging,
         ).summarize
+
         self.vision = Vision(
             api_key=api_key,
             api_url=api_url + "/v1",
             disable_request_logging=disable_request_logging,
         )
+
         self.prediction = Prediction(
             api_key=api_key,
             api_url=api_url + "/v1",
             disable_request_logging=disable_request_logging,
         ).predict
+
         self.text_to_sql = SQL(
             api_key=api_key,
             api_url=api_url + "/v1",
             disable_request_logging=disable_request_logging,
         ).text_to_sql
+
         self.store = Store(
             api_key=api_key,
             api_url=api_url + "/v1",
@@ -118,7 +130,7 @@ class JigsawStack:
             disable_request_logging=disable_request_logging,
         ).execute
 
-        self.embeddingV2 = EmbeddingV2(
+        self.embedding_v2 = EmbeddingV2(
             api_key=api_key,
             api_url=api_url + "/v2",
             disable_request_logging=disable_request_logging,
@@ -144,16 +156,24 @@ class JigsawStack:
 
 
 class AsyncJigsawStack:
-    validate: AsyncValidate
-    web: AsyncWeb
-    audio: AsyncAudio
-    vision: AsyncVision
-    image_generation: AsyncImageGeneration
-    store: AsyncStore
-    prompt_engine: AsyncPromptEngine
     api_key: str
     api_url: str
-    disable_request_logging: bool
+    headers: Dict[str, str]
+    audio: AsyncAudio
+    classification: AsyncClassification
+    embedding: AsyncEmbedding
+    embedding_v2: AsyncEmbeddingV2
+    image_generation: AsyncImageGeneration
+    prediction: AsyncPrediction
+    prompt_engine: AsyncPromptEngine
+    sentiment: AsyncSentiment
+    store: AsyncStore
+    summary: AsyncSummary
+    text_to_sql: AsyncSQL
+    translate: AsyncTranslate
+    validate: AsyncValidate
+    vision: AsyncVision
+    web: AsyncWeb
 
     def __init__(
         self,
@@ -176,6 +196,7 @@ class AsyncJigsawStack:
 
         self.api_key = api_key
         self.api_url = api_url
+        disable_request_logging = self.headers.get("x-jigsaw-no-request-log")
 
         self.web = AsyncWeb(
             api_key=api_key,
@@ -217,6 +238,7 @@ class AsyncJigsawStack:
             api_url=api_url + "/v1",
             disable_request_logging=disable_request_logging,
         ).predict
+
         self.text_to_sql = AsyncSQL(
             api_key=api_key,
             api_url=api_url + "/v1",
@@ -241,7 +263,7 @@ class AsyncJigsawStack:
             disable_request_logging=disable_request_logging,
         ).execute
 
-        self.embeddingV2 = AsyncEmbeddingV2(
+        self.embedding_v2 = AsyncEmbeddingV2(
             api_key=api_key,
             api_url=api_url + "/v2",
             disable_request_logging=disable_request_logging,
