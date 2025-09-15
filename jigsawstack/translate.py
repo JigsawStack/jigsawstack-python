@@ -83,9 +83,7 @@ class Translate(ClientConfig):
         return resp
 
     @overload
-    def image(
-        self, params: TranslateImageParams
-    ) -> Union[TranslateImageResponse, bytes]: ...
+    def image(self, params: TranslateImageParams) -> Union[TranslateImageResponse, bytes]: ...
     @overload
     def image(
         self, blob: bytes, options: TranslateImageParams = None
@@ -146,9 +144,7 @@ class AsyncTranslate(ClientConfig):
         return resp
 
     @overload
-    async def image(
-        self, params: TranslateImageParams
-    ) -> Union[TranslateImageResponse, bytes]: ...
+    async def image(self, params: TranslateImageParams) -> Union[TranslateImageResponse, bytes]: ...
     @overload
     async def image(
         self, blob: bytes, options: TranslateImageParams = None

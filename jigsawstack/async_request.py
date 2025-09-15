@@ -256,9 +256,7 @@ class AsyncRequest(Generic[T]):
             _form_data = aiohttp.FormData()
             _form_data.add_field("file", BytesIO(files["file"]), filename="upload")
             if params and isinstance(params, dict):
-                _form_data.add_field(
-                    "body", json.dumps(params), content_type="application/json"
-                )
+                _form_data.add_field("body", json.dumps(params), content_type="application/json")
 
             headers.pop("Content-Type", None)
         else:  # pure JSON request
