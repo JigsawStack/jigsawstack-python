@@ -252,7 +252,6 @@ class Request(Generic[T]):
         headers = self.__get_headers()
         params = self.params
         verb = self.verb
-        data = self.data
         files = self.files
 
         _requestParams = None
