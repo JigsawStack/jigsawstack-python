@@ -199,13 +199,13 @@ class Web(ClientConfig):
         self,
         api_key: str,
         api_url: str,
-        disable_request_logging: Union[bool, None] = False,
+        headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, disable_request_logging)
+        super().__init__(api_key, api_url, headers)
         self.config = RequestConfig(
             api_url=api_url,
             api_key=api_key,
-            disable_request_logging=disable_request_logging,
+            headers=headers,
         )
 
     def ai_scrape(self, params: AIScrapeParams) -> AIScrapeResponse:
@@ -248,27 +248,15 @@ class Web(ClientConfig):
             return cast(HTMLToAnyURLResponse, resp)
 
     def search(self, params: SearchParams) -> SearchResponse:
-        s = Search(
-            self.api_key,
-            self.api_url,
-            disable_request_logging=self.config.get("disable_request_logging"),
-        )
+        s = Search(self.api_key, self.api_url, self.headers)
         return s.search(params)
 
     def search_suggestions(self, params: SearchSuggestionsParams) -> SearchSuggestionsResponse:
-        s = Search(
-            self.api_key,
-            self.api_url,
-            disable_request_logging=self.config.get("disable_request_logging"),
-        )
+        s = Search(self.api_key, self.api_url, self.headers)
         return s.suggestions(params)
 
     def deep_research(self, params: DeepResearchParams) -> DeepResearchResponse:
-        s = Search(
-            self.api_key,
-            self.api_url,
-            disable_request_logging=self.config.get("disable_request_logging"),
-        )
+        s = Search(self.api_key, self.api_url, self.headers)
         return s.deep_research(params)
 
 
@@ -282,13 +270,13 @@ class AsyncWeb(ClientConfig):
         self,
         api_key: str,
         api_url: str,
-        disable_request_logging: Union[bool, None] = False,
+        headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, disable_request_logging)
+        super().__init__(api_key, api_url, headers)
         self.config = AsyncRequestConfig(
             api_url=api_url,
             api_key=api_key,
-            disable_request_logging=disable_request_logging,
+            headers=headers,
         )
 
     async def ai_scrape(self, params: AIScrapeParams) -> AIScrapeResponse:
@@ -331,27 +319,15 @@ class AsyncWeb(ClientConfig):
             return cast(HTMLToAnyURLResponse, resp)
 
     async def search(self, params: SearchParams) -> SearchResponse:
-        s = AsyncSearch(
-            self.api_key,
-            self.api_url,
-            disable_request_logging=self.config.get("disable_request_logging"),
-        )
+        s = AsyncSearch(self.api_key, self.api_url, self.headers)
         return await s.search(params)
 
     async def search_suggestions(
         self, params: SearchSuggestionsParams
     ) -> SearchSuggestionsResponse:
-        s = AsyncSearch(
-            self.api_key,
-            self.api_url,
-            disable_request_logging=self.config.get("disable_request_logging"),
-        )
+        s = AsyncSearch(self.api_key, self.api_url, self.headers)
         return await s.suggestions(params)
 
     async def deep_research(self, params: DeepResearchParams) -> DeepResearchResponse:
-        s = AsyncSearch(
-            self.api_key,
-            self.api_url,
-            disable_request_logging=self.config.get("disable_request_logging"),
-        )
+        s = AsyncSearch(self.api_key, self.api_url, self.headers)
         return await s.deep_research(params)

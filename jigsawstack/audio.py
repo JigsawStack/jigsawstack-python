@@ -55,14 +55,10 @@ class Audio(ClientConfig):
         self,
         api_key: str,
         api_url: str,
-        disable_request_logging: Union[bool, None] = False,
+        headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, disable_request_logging)
-        self.config = RequestConfig(
-            api_url=api_url,
-            api_key=api_key,
-            disable_request_logging=disable_request_logging,
-        )
+        super().__init__(api_key, api_url, headers)
+        self.config = RequestConfig(api_url=api_url, api_key=api_key, headers=headers)
 
     @overload
     def speech_to_text(
@@ -108,13 +104,13 @@ class AsyncAudio(ClientConfig):
         self,
         api_key: str,
         api_url: str,
-        disable_request_logging: Union[bool, None] = False,
+        headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, disable_request_logging)
+        super().__init__(api_key, api_url, headers)
         self.config = AsyncRequestConfig(
             api_url=api_url,
             api_key=api_key,
-            disable_request_logging=disable_request_logging,
+            headers=headers,
         )
 
     @overload

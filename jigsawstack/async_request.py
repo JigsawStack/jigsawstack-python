@@ -15,7 +15,7 @@ T = TypeVar("T")
 class AsyncRequestConfig(TypedDict):
     api_url: str
     api_key: str
-    disable_request_logging: Union[bool, None] = False
+    headers: Union[Dict[str, str], None]
 
 
 class AsyncRequest(Generic[T]):
@@ -179,9 +179,6 @@ class AsyncRequest(Generic[T]):
         # only add Content-Type if not using multipart (files)
         if not self.files and not self.data:
             h["Content-Type"] = "application/json"
-
-        if self.disable_request_logging:
-            h["x-jigsaw-no-request-log"] = "true"
 
         _headers = h.copy()
 

@@ -98,13 +98,13 @@ class PromptEngine(ClientConfig):
         self,
         api_key: str,
         api_url: str,
-        disable_request_logging: Union[bool, None] = False,
+        headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, disable_request_logging)
+        super().__init__(api_key, api_url, headers)
         self.config = RequestConfig(
             api_url=api_url,
             api_key=api_key,
-            disable_request_logging=disable_request_logging,
+            headers=headers,
         )
 
     def create(self, params: PromptEngineCreateParams) -> PromptEngineCreateResponse:

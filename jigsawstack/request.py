@@ -14,7 +14,7 @@ T = TypeVar("T")
 class RequestConfig(TypedDict):
     api_url: str
     api_key: str
-    disable_request_logging: Union[bool, None] = False
+    headers: Union[Dict[str, str], None]
 
 
 # This class wraps the HTTP request creation logic
@@ -37,7 +37,6 @@ class Request(Generic[T]):
         self.api_key = config.get("api_key")
         self.data = data
         self.headers = headers or {"Content-Type": "application/json"}
-        self.disable_request_logging = config.get("disable_request_logging")
         self.stream = stream
         self.files = files
 
@@ -161,9 +160,6 @@ class Request(Generic[T]):
         # Only add Content-Type if not using multipart (files)
         if not self.files and not self.data:
             h["Content-Type"] = "application/json"
-
-        if self.disable_request_logging:
-            h["x-jigsaw-no-request-log"] = "true"
 
         _headers = h.copy()
 
