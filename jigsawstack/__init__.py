@@ -142,7 +142,7 @@ class AsyncJigsawStack:
         self.web = AsyncWeb(api_key=api_key, base_url=base_url + "/v1")
 
         self.validate = AsyncValidate(api_key=api_key, base_url=base_url + "/v1")
-        
+
         self.audio = AsyncAudio(api_key=api_key, base_url=base_url + "/v1")
 
         self.vision = AsyncVision(api_key=api_key, base_url=base_url + "/v1")
