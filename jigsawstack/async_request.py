@@ -13,7 +13,7 @@ T = TypeVar("T")
 
 
 class AsyncRequestConfig(TypedDict):
-    api_url: str
+    base_url: str
     api_key: str
     headers: Union[Dict[str, str], None]
 
@@ -25,7 +25,6 @@ class AsyncRequest(Generic[T]):
         path: str,
         params: Union[Dict[Any, Any], List[Dict[Any, Any]]],
         verb: RequestVerb,
-        headers: Dict[str, str] = None,
         data: Union[bytes, None] = None,
         stream: Union[bool, None] = False,
         files: Union[Dict[str, Any], None] = None,  # Add files parameter
@@ -33,10 +32,10 @@ class AsyncRequest(Generic[T]):
         self.path = path
         self.params = params
         self.verb = verb
-        self.api_url = config.get("api_url")
+        self.base_url = config.get("base_url")
         self.api_key = config.get("api_key")
         self.data = data
-        self.headers = headers or {"Content-Type": "application/json"}
+        self.headers = config.get("headers", None) or {"Content-Type": "application/json"}
         self.stream = stream
         self.files = files  # Store files for multipart requests
 
@@ -68,7 +67,7 @@ class AsyncRequest(Generic[T]):
         Async method to make an HTTP request to the JigsawStack API.
         """
         async with self.__get_session() as session:
-            resp = await self.make_request(session, url=f"{self.api_url}{self.path}")
+            resp = await self.make_request(session, url=f"{self.base_url}{self.path}")
 
             # For binary responses
             if resp.status == 200:
@@ -109,7 +108,7 @@ class AsyncRequest(Generic[T]):
 
     async def perform_file(self) -> Union[T, None]:
         async with self.__get_session() as session:
-            resp = await self.make_request(session, url=f"{self.api_url}{self.path}")
+            resp = await self.make_request(session, url=f"{self.base_url}{self.path}")
 
             if resp.status != 200:
                 try:
@@ -198,7 +197,7 @@ class AsyncRequest(Generic[T]):
             AsyncGenerator[Union[T, str], None]: A generator of response chunks
         """
         async with self.__get_session() as session:
-            resp = await self.make_request(session, url=f"{self.api_url}{self.path}")
+            resp = await self.make_request(session, url=f"{self.base_url}{self.path}")
 
             # delete calls do not return a body
             if await resp.text() == "":

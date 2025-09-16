@@ -48,12 +48,12 @@ class Prediction(ClientConfig):
     def __init__(
         self,
         api_key: str,
-        api_url: str,
+        base_url: str,
         headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, headers)
+        super().__init__(api_key, base_url, headers)
         self.config = RequestConfig(
-            api_url=api_url,
+            base_url=base_url,
             api_key=api_key,
             headers=headers,
         )
@@ -75,12 +75,12 @@ class AsyncPrediction(ClientConfig):
     def __init__(
         self,
         api_key: str,
-        api_url: str,
+        base_url: str,
         headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, headers)
+        super().__init__(api_key, base_url, headers)
         self.config = RequestConfig(
-            api_url=api_url,
+            base_url=base_url,
             api_key=api_key,
             headers=headers,
         )

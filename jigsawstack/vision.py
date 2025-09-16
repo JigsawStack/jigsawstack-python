@@ -171,12 +171,12 @@ class Vision(ClientConfig):
     def __init__(
         self,
         api_key: str,
-        api_url: str,
+        base_url: str,
         headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, headers)
+        super().__init__(api_key, base_url, headers)
         self.config = RequestConfig(
-            api_url=api_url,
+            base_url=base_url,
             api_key=api_key,
             headers=headers,
         )
@@ -253,12 +253,12 @@ class AsyncVision(ClientConfig):
     def __init__(
         self,
         api_key: str,
-        api_url: str,
+        base_url: str,
         headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, headers)
+        super().__init__(api_key, base_url, headers)
         self.config = AsyncRequestConfig(
-            api_url=api_url,
+            base_url=base_url,
             api_key=api_key,
             headers=headers,
         )
@@ -277,7 +277,6 @@ class AsyncVision(ClientConfig):
         options = options or {}
         if isinstance(blob, dict):
             resp = await AsyncRequest(
-                headers=self.headers,
                 config=self.config,
                 path=path,
                 params=cast(Dict[Any, Any], blob),
@@ -287,7 +286,6 @@ class AsyncVision(ClientConfig):
 
         files = {"file": blob}
         resp = await AsyncRequest(
-            headers=self.headers,
             config=self.config,
             path=path,
             params=options,
@@ -314,7 +312,6 @@ class AsyncVision(ClientConfig):
             blob, dict
         ):  # If params is provided as a dict, we assume it's the first argument
             resp = await AsyncRequest(
-                headers=self.headers,
                 config=self.config,
                 path=path,
                 params=cast(Dict[Any, Any], blob),

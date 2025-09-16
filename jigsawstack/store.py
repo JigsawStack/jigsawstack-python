@@ -32,12 +32,12 @@ class Store(ClientConfig):
     def __init__(
         self,
         api_key: str,
-        api_url: str,
+        base_url: str,
         headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, headers)
+        super().__init__(api_key, base_url, headers)
         self.config = RequestConfig(
-            api_url=api_url,
+            base_url=base_url,
             api_key=api_key,
             headers=headers,
         )
@@ -51,14 +51,16 @@ class Store(ClientConfig):
         path = build_path(base_path="/store/file", params=options)
         content_type = options.get("content_type", "application/octet-stream")
 
-        _headers = {"Content-Type": content_type}
+        config_with_headers = self.config.copy()
+        if config_with_headers.get("headers") is None:
+            config_with_headers["headers"] = {}
+        config_with_headers["headers"]["Content-Type"] = content_type
 
         resp = Request(
-            config=self.config,
-            params=options,  # Empty params since we're using them in the URL
+            config=config_with_headers,
+            params={},
             path=path,
             data=file,
-            headers=_headers,
             verb="post",
         ).perform_with_content()
         return resp
@@ -90,12 +92,12 @@ class AsyncStore(ClientConfig):
     def __init__(
         self,
         api_key: str,
-        api_url: str,
+        base_url: str,
         headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, headers)
+        super().__init__(api_key, base_url, headers)
         self.config = AsyncRequestConfig(
-            api_url=api_url,
+            base_url=base_url,
             api_key=api_key,
             headers=headers,
         )
@@ -108,13 +110,17 @@ class AsyncStore(ClientConfig):
 
         path = build_path(base_path="/store/file", params=options)
         content_type = options.get("content_type", "application/octet-stream")
-        _headers = {"Content-Type": content_type}
+
+        config_with_headers = self.config.copy()
+        if config_with_headers.get("headers") is None:
+            config_with_headers["headers"] = {}
+        config_with_headers["headers"]["Content-Type"] = content_type
+
         resp = await AsyncRequest(
-            config=self.config,
-            params=options,  # Empty params since we're using them in the URL
+            config=config_with_headers,
+            params={},
             path=path,
             data=file,
-            headers=_headers,
             verb="post",
         ).perform_with_content()
         return resp

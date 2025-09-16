@@ -1,17 +1,17 @@
-from typing import Union
+from typing import Dict, Union
 
 
 class ClientConfig:
     base_url: str
     api_key: str
-    disable_request_logging: Union[bool, None] = None
+    headers: Union[Dict[str, str], None]
 
     def __init__(
         self,
         api_key: str,
-        api_url: str,
-        disable_request_logging: Union[bool, None] = None,
+        base_url: str,
+        headers: Union[Dict[str, str], None] = None,
     ):
         self.api_key = api_key
-        self.api_url = api_url
-        self.disable_request_logging = disable_request_logging
+        self.base_url = base_url
+        self.headers = headers

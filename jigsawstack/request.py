@@ -12,7 +12,7 @@ T = TypeVar("T")
 
 
 class RequestConfig(TypedDict):
-    api_url: str
+    base_url: str
     api_key: str
     headers: Union[Dict[str, str], None]
 
@@ -25,7 +25,6 @@ class Request(Generic[T]):
         path: str,
         params: Union[Dict[Any, Any], List[Dict[Any, Any]]],
         verb: RequestVerb,
-        headers: Dict[str, str] = None,
         data: Union[bytes, None] = None,
         stream: Union[bool, None] = False,
         files: Union[Dict[str, Any], None] = None,
@@ -33,10 +32,10 @@ class Request(Generic[T]):
         self.path = path
         self.params = params
         self.verb = verb
-        self.api_url = config.get("api_url")
+        self.base_url = config.get("base_url")
         self.api_key = config.get("api_key")
         self.data = data
-        self.headers = headers or {"Content-Type": "application/json"}
+        self.headers = config.get("headers", None) or {"Content-Type": "application/json"}
         self.stream = stream
         self.files = files
 
@@ -51,7 +50,7 @@ class Request(Generic[T]):
         Raises:
             requests.HTTPError: If the request fails
         """
-        resp = self.make_request(url=f"{self.api_url}{self.path}")
+        resp = self.make_request(url=f"{self.base_url}{self.path}")
 
         # for binary responses
         if resp.status_code == 200:
@@ -84,7 +83,7 @@ class Request(Generic[T]):
             return cast(T, resp)
 
     def perform_file(self) -> Union[T, None]:
-        resp = self.make_request(url=f"{self.api_url}{self.path}")
+        resp = self.make_request(url=f"{self.base_url}{self.path}")
 
         # delete calls do not return a body
         if resp.text == "" and resp.status_code == 200:
@@ -182,7 +181,7 @@ class Request(Generic[T]):
         Raises:
             requests.HTTPError: If the request fails
         """
-        resp = self.make_request(url=f"{self.api_url}{self.path}")
+        resp = self.make_request(url=f"{self.base_url}{self.path}")
 
         # delete calls do not return a body
         if resp.text == "":
