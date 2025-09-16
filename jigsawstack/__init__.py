@@ -55,7 +55,7 @@ class JigsawStack:
             )
 
         if base_url is None:
-            base_url = os.environ.get("JIGSAWSTACK_base_url")
+            base_url = os.environ.get("JIGSAWSTACK_API_URL")
         if base_url is None:
             base_url = "https://api.jigsawstack.com/"
 
@@ -80,6 +80,7 @@ class JigsawStack:
         self.text_to_sql = SQL(api_key=api_key, base_url=base_url + "/v1").text_to_sql
 
         self.store = Store(api_key=api_key, base_url=base_url + "/v1")
+
         self.translate = Translate(api_key=api_key, base_url=base_url + "/v1")
 
         self.embedding = Embedding(api_key=api_key, base_url=base_url + "/v1").execute
@@ -130,7 +131,7 @@ class AsyncJigsawStack:
             )
 
         if base_url is None:
-            base_url = os.environ.get("JIGSAWSTACK_base_url")
+            base_url = os.environ.get("JIGSAWSTACK_API_URL")
         if base_url is None:
             base_url = "https://api.jigsawstack.com/"
 
@@ -141,6 +142,7 @@ class AsyncJigsawStack:
         self.web = AsyncWeb(api_key=api_key, base_url=base_url + "/v1")
 
         self.validate = AsyncValidate(api_key=api_key, base_url=base_url + "/v1")
+        
         self.audio = AsyncAudio(api_key=api_key, base_url=base_url + "/v1")
 
         self.vision = AsyncVision(api_key=api_key, base_url=base_url + "/v1")
