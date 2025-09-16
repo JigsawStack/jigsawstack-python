@@ -64,36 +64,36 @@ class JigsawStack:
 
         self.headers = headers or {"Content-Type": "application/json"}
 
-        self.audio = Audio(api_key=api_key, base_url=base_url + "/v1")
+        self.audio = Audio(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
-        self.web = Web(api_key=api_key, base_url=base_url + "/v1")
+        self.web = Web(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
-        self.sentiment = Sentiment(api_key=api_key, base_url=base_url + "/v1").analyze
+        self.sentiment = Sentiment(api_key=api_key, base_url=base_url + "/v1", headers=headers).analyze
 
-        self.validate = Validate(api_key=api_key, base_url=base_url + "/v1")
-        self.summary = Summary(api_key=api_key, base_url=base_url + "/v1").summarize
+        self.validate = Validate(api_key=api_key, base_url=base_url + "/v1", headers=headers)
+        self.summary = Summary(api_key=api_key, base_url=base_url + "/v1", headers=headers).summarize
 
-        self.vision = Vision(api_key=api_key, base_url=base_url + "/v1")
+        self.vision = Vision(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
-        self.prediction = Prediction(api_key=api_key, base_url=base_url + "/v1").predict
+        self.prediction = Prediction(api_key=api_key, base_url=base_url + "/v1", headers=headers).predict
 
-        self.text_to_sql = SQL(api_key=api_key, base_url=base_url + "/v1").text_to_sql
+        self.text_to_sql = SQL(api_key=api_key, base_url=base_url + "/v1", headers=headers).text_to_sql
 
-        self.store = Store(api_key=api_key, base_url=base_url + "/v1")
+        self.store = Store(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
-        self.translate = Translate(api_key=api_key, base_url=base_url + "/v1")
+        self.translate = Translate(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
-        self.embedding = Embedding(api_key=api_key, base_url=base_url + "/v1").execute
+        self.embedding = Embedding(api_key=api_key, base_url=base_url + "/v1", headers=headers).execute
 
-        self.embedding_v2 = EmbeddingV2(api_key=api_key, base_url=base_url + "/v2").execute
+        self.embedding_v2 = EmbeddingV2(api_key=api_key, base_url=base_url + "/v2", headers=headers).execute
 
         self.image_generation = ImageGeneration(
-            api_key=api_key, base_url=base_url + "/v1"
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         ).image_generation
 
-        self.classification = Classification(api_key=api_key, base_url=base_url + "/v1").classify
+        self.classification = Classification(api_key=api_key, base_url=base_url + "/v1", headers=headers).classify
 
-        self.prompt_engine = PromptEngine(api_key=api_key, base_url=base_url + "/v1")
+        self.prompt_engine = PromptEngine(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
 
 class AsyncJigsawStack:
@@ -139,39 +139,39 @@ class AsyncJigsawStack:
         self.base_url = base_url
         self.headers = headers or {"Content-Type": "application/json"}
 
-        self.web = AsyncWeb(api_key=api_key, base_url=base_url + "/v1")
+        self.web = AsyncWeb(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
-        self.validate = AsyncValidate(api_key=api_key, base_url=base_url + "/v1")
+        self.validate = AsyncValidate(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
-        self.audio = AsyncAudio(api_key=api_key, base_url=base_url + "/v1")
+        self.audio = AsyncAudio(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
-        self.vision = AsyncVision(api_key=api_key, base_url=base_url + "/v1")
+        self.vision = AsyncVision(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
-        self.store = AsyncStore(api_key=api_key, base_url=base_url + "/v1")
+        self.store = AsyncStore(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
-        self.summary = AsyncSummary(api_key=api_key, base_url=base_url + "/v1").summarize
+        self.summary = AsyncSummary(api_key=api_key, base_url=base_url + "/v1", headers=headers).summarize
 
         self.prediction = AsyncPrediction(api_key=api_key, base_url=base_url + "/v1").predict
 
-        self.text_to_sql = AsyncSQL(api_key=api_key, base_url=base_url + "/v1").text_to_sql
+        self.text_to_sql = AsyncSQL(api_key=api_key, base_url=base_url + "/v1", headers=headers).text_to_sql
 
-        self.sentiment = AsyncSentiment(api_key=api_key, base_url=base_url + "/v1").analyze
+        self.sentiment = AsyncSentiment(api_key=api_key, base_url=base_url + "/v1", headers=headers).analyze
 
-        self.translate = AsyncTranslate(api_key=api_key, base_url=base_url + "/v1")
+        self.translate = AsyncTranslate(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
-        self.embedding = AsyncEmbedding(api_key=api_key, base_url=base_url + "/v1").execute
+        self.embedding = AsyncEmbedding(api_key=api_key, base_url=base_url + "/v1", headers=headers).execute
 
-        self.embedding_v2 = AsyncEmbeddingV2(api_key=api_key, base_url=base_url + "/v2").execute
+        self.embedding_v2 = AsyncEmbeddingV2(api_key=api_key, base_url=base_url + "/v2", headers=headers).execute
 
         self.image_generation = AsyncImageGeneration(
-            api_key=api_key, base_url=base_url + "/v1"
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         ).image_generation
 
         self.classification = AsyncClassification(
-            api_key=api_key, base_url=base_url + "/v1"
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         ).classify
 
-        self.prompt_engine = AsyncPromptEngine(api_key=api_key, base_url=base_url + "/v1")
+        self.prompt_engine = AsyncPromptEngine(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
 
 # Create a global instance of the Web class
