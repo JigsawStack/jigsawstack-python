@@ -53,14 +53,14 @@ class Summary(ClientConfig):
     def __init__(
         self,
         api_key: str,
-        api_url: str,
-        disable_request_logging: Union[bool, None] = False,
+        base_url: str,
+        headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, disable_request_logging)
+        super().__init__(api_key, base_url, headers)
         self.config = RequestConfig(
-            api_url=api_url,
+            base_url=base_url,
             api_key=api_key,
-            disable_request_logging=disable_request_logging,
+            headers=headers,
         )
 
     def summarize(self, params: SummaryParams) -> SummaryResponse:
@@ -80,14 +80,14 @@ class AsyncSummary(ClientConfig):
     def __init__(
         self,
         api_key: str,
-        api_url: str,
-        disable_request_logging: Union[bool, None] = False,
+        base_url: str,
+        headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, disable_request_logging)
+        super().__init__(api_key, base_url, headers)
         self.config = RequestConfig(
-            api_url=api_url,
+            base_url=base_url,
             api_key=api_key,
-            disable_request_logging=disable_request_logging,
+            headers=headers,
         )
 
     async def summarize(self, params: SummaryParams) -> SummaryResponse:

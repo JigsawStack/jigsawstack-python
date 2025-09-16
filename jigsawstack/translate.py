@@ -5,7 +5,6 @@ from typing_extensions import Literal, NotRequired, TypedDict
 from ._config import ClientConfig
 from ._types import BaseResponse
 from .async_request import AsyncRequest
-from .helpers import build_path
 from .request import Request, RequestConfig
 
 
@@ -64,14 +63,14 @@ class Translate(ClientConfig):
     def __init__(
         self,
         api_key: str,
-        api_url: str,
-        disable_request_logging: Union[bool, None] = False,
+        base_url: str,
+        headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, disable_request_logging)
+        super().__init__(api_key, base_url, headers)
         self.config = RequestConfig(
-            api_url=api_url,
+            base_url=base_url,
             api_key=api_key,
-            disable_request_logging=disable_request_logging,
+            headers=headers,
         )
 
     def text(self, params: TranslateParams) -> TranslateResponse:
@@ -95,6 +94,8 @@ class Translate(ClientConfig):
         blob: Union[TranslateImageParams, bytes],
         options: TranslateImageParams = None,
     ) -> Union[TranslateImageResponse, bytes]:
+        path = "/ai/translate/image"
+        options = options or {}
         if isinstance(
             blob, dict
         ):  # If params is provided as a dict, we assume it's the first argument
@@ -106,17 +107,12 @@ class Translate(ClientConfig):
             ).perform_with_content()
             return resp
 
-        options = options or {}
-        path = build_path(base_path="/ai/translate/image", params=options)
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-
+        files = {"file": blob}
         resp = Request(
             config=self.config,
             path=path,
             params=options,
-            data=blob,
-            headers=headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp
@@ -128,14 +124,14 @@ class AsyncTranslate(ClientConfig):
     def __init__(
         self,
         api_key: str,
-        api_url: str,
-        disable_request_logging: Union[bool, None] = False,
+        base_url: str,
+        headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, disable_request_logging)
+        super().__init__(api_key, base_url, headers)
         self.config = RequestConfig(
-            api_url=api_url,
+            base_url=base_url,
             api_key=api_key,
-            disable_request_logging=disable_request_logging,
+            headers=headers,
         )
 
     async def text(self, params: TranslateParams) -> TranslateResponse:
@@ -159,6 +155,8 @@ class AsyncTranslate(ClientConfig):
         blob: Union[TranslateImageParams, bytes],
         options: TranslateImageParams = None,
     ) -> Union[TranslateImageResponse, bytes]:
+        path = "/ai/translate/image"
+        options = options or {}
         if isinstance(blob, dict):
             resp = await AsyncRequest(
                 config=self.config,
@@ -168,17 +166,12 @@ class AsyncTranslate(ClientConfig):
             ).perform_with_content()
             return resp
 
-        options = options or {}
-        path = build_path(base_path="/ai/translate/image", params=options)
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-
+        files = {"file": blob}
         resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=options,
-            data=blob,
-            headers=headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp

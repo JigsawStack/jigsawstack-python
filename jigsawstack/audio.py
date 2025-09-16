@@ -54,15 +54,11 @@ class Audio(ClientConfig):
     def __init__(
         self,
         api_key: str,
-        api_url: str,
-        disable_request_logging: Union[bool, None] = False,
+        base_url: str,
+        headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, disable_request_logging)
-        self.config = RequestConfig(
-            api_url=api_url,
-            api_key=api_key,
-            disable_request_logging=disable_request_logging,
-        )
+        super().__init__(api_key, base_url, headers)
+        self.config = RequestConfig(base_url=base_url, api_key=api_key, headers=headers)
 
     @overload
     def speech_to_text(
@@ -80,11 +76,8 @@ class Audio(ClientConfig):
     ) -> Union[SpeechToTextResponse, SpeechToTextWebhookResponse]:
         options = options or {}
         path = "/ai/transcribe"
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-        if isinstance(
-            blob, dict
-        ):  # If params is provided as a dict, we assume it's the first argument
+        if isinstance(blob, dict):
+            # URL or file_store_key based request
             resp = Request(
                 config=self.config,
                 path=path,
@@ -93,13 +86,13 @@ class Audio(ClientConfig):
             ).perform_with_content()
             return resp
 
+        files = {"file": blob}
         resp = Request(
             config=self.config,
             path=path,
             params=options,
-            data=blob,
-            headers=headers,
             verb="post",
+            files=files,
         ).perform_with_content()
         return resp
 
@@ -110,14 +103,14 @@ class AsyncAudio(ClientConfig):
     def __init__(
         self,
         api_key: str,
-        api_url: str,
-        disable_request_logging: Union[bool, None] = False,
+        base_url: str,
+        headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, disable_request_logging)
+        super().__init__(api_key, base_url, headers)
         self.config = AsyncRequestConfig(
-            api_url=api_url,
+            base_url=base_url,
             api_key=api_key,
-            disable_request_logging=disable_request_logging,
+            headers=headers,
         )
 
     @overload
@@ -136,8 +129,6 @@ class AsyncAudio(ClientConfig):
     ) -> Union[SpeechToTextResponse, SpeechToTextWebhookResponse]:
         options = options or {}
         path = "/ai/transcribe"
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
         if isinstance(blob, dict):
             resp = await AsyncRequest(
                 config=self.config,
@@ -147,12 +138,12 @@ class AsyncAudio(ClientConfig):
             ).perform_with_content()
             return resp
 
+        files = {"file": blob}
         resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=options,
-            data=blob,
-            headers=headers,
             verb="post",
+            files=files,
         ).perform_with_content()
         return resp

@@ -21,24 +21,29 @@ from .web import AsyncWeb, Web
 
 
 class JigsawStack:
-    audio: Audio
-    vision: Vision
-    image_generation: ImageGeneration
-    file: Store
-    web: Web
-    search: Search
-    classification: Classification
-    prompt_engine: PromptEngine
     api_key: str
-    api_url: str
+    base_url: str
     headers: Dict[str, str]
-    # disable_request_logging: bool
+    audio: Audio
+    classification: Classification
+    embedding: Embedding
+    embedding_v2: EmbeddingV2
+    store: Store
+    image_generation: ImageGeneration
+    prediction: Prediction
+    prompt_engine: PromptEngine
+    sentiment: Sentiment
+    summary: Summary
+    text_to_sql: SQL
+    translate: Translate
+    validate: Validate
+    vision: Vision
+    web: Web
 
     def __init__(
         self,
         api_key: Union[str, None] = None,
-        api_url: Union[str, None] = None,
-        # disable_request_logging: Union[bool, None] = None,
+        base_url: Union[str, None] = None,
         headers: Union[Dict[str, str], None] = None,
     ) -> None:
         if api_key is None:
@@ -49,117 +54,89 @@ class JigsawStack:
                 "The api_key client option must be set either by passing api_key to the client or by setting the JIGSAWSTACK_API_KEY environment variable"
             )
 
-        if api_url is None:
-            api_url = os.environ.get("JIGSAWSTACK_API_URL")
-        if api_url is None:
-            api_url = "https://api.jigsawstack.com/"
+        if base_url is None:
+            base_url = os.environ.get("JIGSAWSTACK_API_URL")
+        if base_url is None:
+            base_url = "https://api.jigsawstack.com/"
 
         self.api_key = api_key
-        self.api_url = api_url
+        self.base_url = base_url
 
-        self.headers = headers or {}
+        self.headers = headers or {"Content-Type": "application/json"}
 
-        disable_request_logging = self.headers.get("x-jigsaw-no-request-log")
+        self.audio = Audio(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
-        self.audio = Audio(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
-        )
-        self.web = Web(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
-        )
+        self.web = Web(api_key=api_key, base_url=base_url + "/v1", headers=headers)
+
         self.sentiment = Sentiment(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         ).analyze
-        self.validate = Validate(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
-        )
+
+        self.validate = Validate(api_key=api_key, base_url=base_url + "/v1", headers=headers)
         self.summary = Summary(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         ).summarize
-        self.vision = Vision(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
-        )
+
+        self.vision = Vision(api_key=api_key, base_url=base_url + "/v1", headers=headers)
+
         self.prediction = Prediction(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         ).predict
+
         self.text_to_sql = SQL(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         ).text_to_sql
-        self.store = Store(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
-        )
-        self.translate = Translate(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
-        )
+
+        self.store = Store(api_key=api_key, base_url=base_url + "/v1", headers=headers)
+
+        self.translate = Translate(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
         self.embedding = Embedding(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         ).execute
 
-        self.embeddingV2 = EmbeddingV2(
-            api_key=api_key,
-            api_url=api_url + "/v2",
-            disable_request_logging=disable_request_logging,
+        self.embedding_v2 = EmbeddingV2(
+            api_key=api_key, base_url=base_url + "/v2", headers=headers
         ).execute
 
         self.image_generation = ImageGeneration(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         ).image_generation
 
         self.classification = Classification(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         ).classify
 
         self.prompt_engine = PromptEngine(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         )
 
 
 class AsyncJigsawStack:
-    validate: AsyncValidate
-    web: AsyncWeb
-    audio: AsyncAudio
-    vision: AsyncVision
-    image_generation: AsyncImageGeneration
-    store: AsyncStore
-    prompt_engine: AsyncPromptEngine
     api_key: str
-    api_url: str
-    disable_request_logging: bool
+    base_url: str
+    headers: Dict[str, str]
+    audio: AsyncAudio
+    classification: AsyncClassification
+    embedding: AsyncEmbedding
+    embedding_v2: AsyncEmbeddingV2
+    image_generation: AsyncImageGeneration
+    prediction: AsyncPrediction
+    prompt_engine: AsyncPromptEngine
+    sentiment: AsyncSentiment
+    store: AsyncStore
+    summary: AsyncSummary
+    text_to_sql: AsyncSQL
+    translate: AsyncTranslate
+    validate: AsyncValidate
+    vision: AsyncVision
+    web: AsyncWeb
 
     def __init__(
         self,
         api_key: Union[str, None] = None,
-        api_url: Union[str, None] = None,
-        disable_request_logging: Union[bool, None] = None,
+        base_url: Union[str, None] = None,
+        headers: Union[Dict[str, str], None] = None,
     ) -> None:
         if api_key is None:
             api_key = os.environ.get("JIGSAWSTACK_API_KEY")
@@ -169,100 +146,59 @@ class AsyncJigsawStack:
                 "The api_key client option must be set either by passing api_key to the client or by setting the JIGSAWSTACK_API_KEY environment variable"
             )
 
-        if api_url is None:
-            api_url = os.environ.get("JIGSAWSTACK_API_URL")
-        if api_url is None:
-            api_url = "https://api.jigsawstack.com/"
+        if base_url is None:
+            base_url = os.environ.get("JIGSAWSTACK_API_URL")
+        if base_url is None:
+            base_url = "https://api.jigsawstack.com/"
 
         self.api_key = api_key
-        self.api_url = api_url
+        self.base_url = base_url
+        self.headers = headers or {"Content-Type": "application/json"}
 
-        self.web = AsyncWeb(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
-        )
+        self.web = AsyncWeb(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
-        self.validate = AsyncValidate(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
-        )
-        self.audio = AsyncAudio(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
-        )
+        self.validate = AsyncValidate(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
-        self.vision = AsyncVision(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
-        )
+        self.audio = AsyncAudio(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
-        self.store = AsyncStore(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
-        )
+        self.vision = AsyncVision(api_key=api_key, base_url=base_url + "/v1", headers=headers)
+
+        self.store = AsyncStore(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
         self.summary = AsyncSummary(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         ).summarize
 
-        self.prediction = AsyncPrediction(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
-        ).predict
+        self.prediction = AsyncPrediction(api_key=api_key, base_url=base_url + "/v1").predict
+
         self.text_to_sql = AsyncSQL(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         ).text_to_sql
 
         self.sentiment = AsyncSentiment(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         ).analyze
 
-        self.translate = AsyncTranslate(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
-        )
+        self.translate = AsyncTranslate(api_key=api_key, base_url=base_url + "/v1", headers=headers)
 
         self.embedding = AsyncEmbedding(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         ).execute
 
-        self.embeddingV2 = AsyncEmbeddingV2(
-            api_key=api_key,
-            api_url=api_url + "/v2",
-            disable_request_logging=disable_request_logging,
+        self.embedding_v2 = AsyncEmbeddingV2(
+            api_key=api_key, base_url=base_url + "/v2", headers=headers
         ).execute
 
         self.image_generation = AsyncImageGeneration(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         ).image_generation
 
         self.classification = AsyncClassification(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         ).classify
 
         self.prompt_engine = AsyncPromptEngine(
-            api_key=api_key,
-            api_url=api_url + "/v1",
-            disable_request_logging=disable_request_logging,
+            api_key=api_key, base_url=base_url + "/v1", headers=headers
         )
 
 

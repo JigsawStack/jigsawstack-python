@@ -6,7 +6,7 @@ install_requires = open("requirements.txt").readlines()
 
 setup(
     name="jigsawstack",
-    version="0.3.3",
+    version="0.3.4",
     description="JigsawStack - The AI SDK for Python",
     long_description=open("README.md", encoding="utf8").read(),
     long_description_content_type="text/markdown",
@@ -19,7 +19,7 @@ setup(
     python_requires=">=3.7",
     keywords=["AI", "AI Tooling"],
     setup_requires=["pytest-runner"],
-    tests_require=["pytest"],
+    tests_require=["pytest", "pytest-asyncio"],
     test_suite="tests",
     classifiers=[
         "Development Status :: 4 - Beta",

@@ -159,10 +159,10 @@ class OCRResponse(BaseResponse):
     tags: List[str]
     has_text: bool
     sections: List[object]
-    total_pages: Optional[int]  # Only available for PDFs
-    page_ranges: Optional[
+    total_pages: Optional[int]
+    page_range: Optional[
         List[int]
-    ]  # Only available if page_ranges is set in the request parameters.
+    ]  # Only available if page_range is set in the request parameters.
 
 
 class Vision(ClientConfig):
@@ -171,14 +171,14 @@ class Vision(ClientConfig):
     def __init__(
         self,
         api_key: str,
-        api_url: str,
-        disable_request_logging: Union[bool, None] = False,
+        base_url: str,
+        headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, disable_request_logging)
+        super().__init__(api_key, base_url, headers)
         self.config = RequestConfig(
-            api_url=api_url,
+            base_url=base_url,
             api_key=api_key,
-            disable_request_logging=disable_request_logging,
+            headers=headers,
         )
 
     @overload
@@ -204,15 +204,12 @@ class Vision(ClientConfig):
             ).perform_with_content()
             return resp
 
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-
+        files = {"file": blob}
         resp = Request(
             config=self.config,
             path=path,
             params=options,
-            data=blob,
-            headers=headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp
@@ -239,16 +236,12 @@ class Vision(ClientConfig):
                 verb="post",
             ).perform_with_content()
             return resp
-
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-
+        files = {"file": blob}
         resp = Request(
             config=self.config,
             path=path,
             params=options,
-            data=blob,
-            headers=headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp
@@ -260,14 +253,14 @@ class AsyncVision(ClientConfig):
     def __init__(
         self,
         api_key: str,
-        api_url: str,
-        disable_request_logging: Union[bool, None] = False,
+        base_url: str,
+        headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, api_url, disable_request_logging)
+        super().__init__(api_key, base_url, headers)
         self.config = AsyncRequestConfig(
-            api_url=api_url,
+            base_url=base_url,
             api_key=api_key,
-            disable_request_logging=disable_request_logging,
+            headers=headers,
         )
 
     @overload
@@ -291,15 +284,12 @@ class AsyncVision(ClientConfig):
             ).perform_with_content()
             return resp
 
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-
+        files = {"file": blob}
         resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=options,
-            data=blob,
-            headers=headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp
@@ -329,15 +319,12 @@ class AsyncVision(ClientConfig):
             ).perform_with_content()
             return resp
 
-        content_type = options.get("content_type", "application/octet-stream")
-        headers = {"Content-Type": content_type}
-
+        files = {"file": blob}
         resp = await AsyncRequest(
             config=self.config,
             path=path,
             params=options,
-            data=blob,
-            headers=headers,
+            files=files,
             verb="post",
         ).perform_with_content()
         return resp
