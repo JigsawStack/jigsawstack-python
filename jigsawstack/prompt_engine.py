@@ -204,13 +204,13 @@ class AsyncPromptEngine(ClientConfig):
         self,
         api_key: str,
         base_url: str,
-        disable_request_logging: Union[bool, None] = False,
+        headers: Union[Dict[str, str], None] = None,
     ):
-        super().__init__(api_key, base_url, disable_request_logging)
+        super().__init__(api_key, base_url, headers)
         self.config = RequestConfig(
             base_url=base_url,
             api_key=api_key,
-            disable_request_logging=disable_request_logging,
+            headers=headers,
         )
 
     async def create(self, params: PromptEngineCreateParams) -> PromptEngineCreateResponse:
