@@ -37,7 +37,6 @@ class AsyncRequest(Generic[T]):
         self.api_key = config.get("api_key")
         self.data = data
         self.headers = headers or {"Content-Type": "application/json"}
-        self.disable_request_logging = config.get("disable_request_logging")
         self.stream = stream
         self.files = files  # Store files for multipart requests
 

@@ -246,7 +246,7 @@ class TestEmbeddingV2Sync:
     def test_embedding_v2(self, test_case):
         """Test synchronous embedding v2 with various inputs"""
         try:
-            result = jigsaw.embeddingV2(test_case["params"])
+            result = jigsaw.embedding_v2(test_case["params"])
             assert result["success"]
             assert "embeddings" in result
             assert isinstance(result["embeddings"], list)
@@ -271,7 +271,7 @@ class TestEmbeddingV2Sync:
         try:
             # Download blob content
             blob_content = requests.get(test_case["blob_url"]).content
-            result = jigsaw.embeddingV2(blob_content, test_case["options"])
+            result = jigsaw.embedding_v2(blob_content, test_case["options"])
             assert result["success"]
             assert "embeddings" in result
             assert isinstance(result["embeddings"], list)
@@ -291,7 +291,7 @@ class TestEmbeddingV2Async:
     async def test_embedding_v2_async(self, test_case):
         """Test asynchronous embedding v2 with various inputs"""
         try:
-            result = await async_jigsaw.embeddingV2(test_case["params"])
+            result = await async_jigsaw.embedding_v2(test_case["params"])
             assert result["success"]
             assert "embeddings" in result
             assert isinstance(result["embeddings"], list)
@@ -317,7 +317,7 @@ class TestEmbeddingV2Async:
         try:
             # Download blob content
             blob_content = requests.get(test_case["blob_url"]).content
-            result = await async_jigsaw.embeddingV2(blob_content, test_case["options"])
+            result = await async_jigsaw.embedding_v2(blob_content, test_case["options"])
             assert result["success"]
             assert "embeddings" in result
             assert isinstance(result["embeddings"], list)
