@@ -247,6 +247,7 @@ class Request(Generic[T]):
         headers = self.__get_headers()
         params = self.params
         verb = self.verb
+        data = self.data
         files = self.files
 
         _requestParams = None
@@ -261,7 +262,8 @@ class Request(Generic[T]):
             if params and isinstance(params, dict):
                 _data = {"body": json.dumps(params)}
             headers.pop("Content-Type", None)  # let requests set it for multipart
-
+        elif data:  # raw data request
+            _data = data
         else:  # pure JSON request
             _json = params
         try:

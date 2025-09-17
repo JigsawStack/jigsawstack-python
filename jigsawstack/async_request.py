@@ -238,6 +238,7 @@ class AsyncRequest(Generic[T]):
         headers = self.__get_headers()
         params = self.params
         verb = self.verb
+        data = self.data
         files = self.files
 
         _params = None
@@ -254,6 +255,8 @@ class AsyncRequest(Generic[T]):
                 _form_data.add_field("body", json.dumps(params), content_type="application/json")
 
             headers.pop("Content-Type", None)
+        elif data:  # raw data request
+            _data = data
         else:  # pure JSON request
             _json = params
 
