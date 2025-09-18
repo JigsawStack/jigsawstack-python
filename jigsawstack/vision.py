@@ -102,9 +102,9 @@ class ObjectDetectionParams(TypedDict):
     List of prompts for object detection
     """
 
-    features: NotRequired[List[Literal["object_detection", "gui"]]]
+    features: NotRequired[List[Literal["object", "gui"]]]
     """
-    List of features to enable: object_detection, gui
+    List of features to enable: object, gui
     """
 
     annotated_image: NotRequired[bool]
@@ -215,7 +215,9 @@ class Vision(ClientConfig):
         return resp
 
     @overload
-    def object_detection(self, params: ObjectDetectionParams) -> ObjectDetectionResponse: ...
+    def object_detection(
+        self, params: ObjectDetectionParams
+    ) -> ObjectDetectionResponse: ...
     @overload
     def object_detection(
         self, blob: bytes, options: ObjectDetectionParams = None
@@ -295,7 +297,9 @@ class AsyncVision(ClientConfig):
         return resp
 
     @overload
-    async def object_detection(self, params: ObjectDetectionParams) -> ObjectDetectionResponse: ...
+    async def object_detection(
+        self, params: ObjectDetectionParams
+    ) -> ObjectDetectionResponse: ...
     @overload
     async def object_detection(
         self, blob: bytes, options: ObjectDetectionParams = None
