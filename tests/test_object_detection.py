@@ -18,9 +18,7 @@ logger = logging.getLogger(__name__)
 jigsaw = jigsawstack.JigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
 async_jigsaw = jigsawstack.AsyncJigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
 
-IMAGE_URL = (
-    "https://rogilvkqloanxtvjfrkm.supabase.co/storage/v1/object/public/demo/Collabo%201080x842.jpg"
-)
+IMAGE_URL = "https://rogilvkqloanxtvjfrkm.supabase.co/storage/v1/object/public/demo/Collabo%201080x842.jpg"
 
 TEST_CASES = [
     {
@@ -49,7 +47,7 @@ TEST_CASES = [
         "name": "with_blob_both_features",
         "blob": IMAGE_URL,
         "options": {
-            "features": ["object_detection", "gui"],
+            "features": ["object", "gui"],
             "annotated_image": True,
             "return_type": "url",
         },
@@ -63,7 +61,7 @@ TEST_CASES = [
         "name": "with_blob_object_detection_features",
         "blob": IMAGE_URL,
         "options": {
-            "features": ["object_detection"],
+            "features": ["object"],
             "annotated_image": True,
             "return_type": "base64",
         },
@@ -80,7 +78,7 @@ TEST_CASES = [
         "name": "with_all_options",
         "blob": IMAGE_URL,
         "options": {
-            "features": ["object_detection", "gui"],
+            "features": ["object", "gui"],
             "prompts": ["car", "road", "tree"],
             "annotated_image": True,
             "return_type": "base64",
@@ -104,7 +102,9 @@ class TestObjectDetectionSync:
             if test_case.get("blob"):
                 # Download blob content
                 blob_content = requests.get(test_case["blob"]).content
-                result = jigsaw.vision.object_detection(blob_content, test_case.get("options", {}))
+                result = jigsaw.vision.object_detection(
+                    blob_content, test_case.get("options", {})
+                )
             else:
                 # Use params directly
                 result = jigsaw.vision.object_detection(test_case["params"])
