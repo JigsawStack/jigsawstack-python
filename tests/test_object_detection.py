@@ -49,7 +49,7 @@ TEST_CASES = [
         "name": "with_blob_both_features",
         "blob": IMAGE_URL,
         "options": {
-            "features": ["object_detection", "gui"],
+            "features": ["object", "gui"],
             "annotated_image": True,
             "return_type": "url",
         },
@@ -63,7 +63,7 @@ TEST_CASES = [
         "name": "with_blob_object_detection_features",
         "blob": IMAGE_URL,
         "options": {
-            "features": ["object_detection"],
+            "features": ["object"],
             "annotated_image": True,
             "return_type": "base64",
         },
@@ -80,7 +80,7 @@ TEST_CASES = [
         "name": "with_all_options",
         "blob": IMAGE_URL,
         "options": {
-            "features": ["object_detection", "gui"],
+            "features": ["object", "gui"],
             "prompts": ["car", "road", "tree"],
             "annotated_image": True,
             "return_type": "base64",

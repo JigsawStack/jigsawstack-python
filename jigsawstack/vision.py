@@ -102,9 +102,9 @@ class ObjectDetectionParams(TypedDict):
     List of prompts for object detection
     """
 
-    features: NotRequired[List[Literal["object_detection", "gui"]]]
+    features: NotRequired[List[Literal["object", "gui"]]]
     """
-    List of features to enable: object_detection, gui
+    List of features to enable: object, gui
     """
 
     annotated_image: NotRequired[bool]
