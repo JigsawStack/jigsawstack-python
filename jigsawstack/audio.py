@@ -34,6 +34,8 @@ class SpeechToTextResponse(BaseResponse):
     text: str
     chunks: List[ChunkParams]
     speakers: Optional[List[BySpeakerParams]]
+    language_detected: Optional[str]
+    confidence: Optional[float]
 
 
 class SpeechToTextWebhookResponse(BaseResponse):
