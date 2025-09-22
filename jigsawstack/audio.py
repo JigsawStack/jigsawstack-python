@@ -46,7 +46,7 @@ class SpeechToTextParams(TypedDict):
 
     chunk_duration: NotRequired[int]
     """
-    the duration of each chunk in seconds, defaults to 30
+    the duration of each chunk in seconds, maximum value is 15, defaults to 3
     """
 
 
