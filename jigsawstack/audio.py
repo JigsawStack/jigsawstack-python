@@ -84,7 +84,7 @@ class SpeechToTextResponse(BaseResponse):
 
     confidence: Optional[float]
     """
-    the confidence of the transcription language detection, available if language is set to auto
+    the confidence of the transcription language detection, available if language is set to auto.
     """
 
 
