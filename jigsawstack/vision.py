@@ -152,13 +152,31 @@ class VOCRParams(TypedDict):
     page_range: NotRequired[List[int]]
 
 
+class Word(TypedDict):
+    text: str
+    bounds: BoundingBox
+    confidence: float
+
+
+class Line(TypedDict):
+    text: str
+    bounds: BoundingBox
+    average_confidence: float
+    words: List[Word]
+
+
+class Section(TypedDict):
+    text: str
+    lines: List[Line]
+
+
 class OCRResponse(BaseResponse):
     context: str
     width: int
     height: int
     tags: List[str]
     has_text: bool
-    sections: List[object]
+    sections: List[Section]
     total_pages: Optional[int]
     page_range: Optional[
         List[int]
@@ -215,7 +233,9 @@ class Vision(ClientConfig):
         return resp
 
     @overload
-    def object_detection(self, params: ObjectDetectionParams) -> ObjectDetectionResponse: ...
+    def object_detection(
+        self, params: ObjectDetectionParams
+    ) -> ObjectDetectionResponse: ...
     @overload
     def object_detection(
         self, blob: bytes, options: ObjectDetectionParams = None
@@ -295,7 +315,9 @@ class AsyncVision(ClientConfig):
         return resp
 
     @overload
-    async def object_detection(self, params: ObjectDetectionParams) -> ObjectDetectionResponse: ...
+    async def object_detection(
+        self, params: ObjectDetectionParams
+    ) -> ObjectDetectionResponse: ...
     @overload
     async def object_detection(
         self, blob: bytes, options: ObjectDetectionParams = None
