@@ -12,8 +12,20 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-jigsaw = jigsawstack.JigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
-async_jigsaw = jigsawstack.AsyncJigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
+jigsaw = jigsawstack.JigsawStack(
+    api_key=os.getenv("JIGSAWSTACK_API_KEY"),
+    base_url=os.getenv("JIGSAWSTACK_BASE_URL") + "/api"
+    if os.getenv("JIGSAWSTACK_BASE_URL")
+    else "https://api.jigsawstack.com",
+    headers={"x-jigsaw-skip-cache": "true"},
+)
+async_jigsaw = jigsawstack.AsyncJigsawStack(
+    api_key=os.getenv("JIGSAWSTACK_API_KEY"),
+    base_url=os.getenv("JIGSAWSTACK_BASE_URL") + "/api"
+    if os.getenv("JIGSAWSTACK_BASE_URL")
+    else "https://api.jigsawstack.com",
+    headers={"x-jigsaw-skip-cache": "true"},
+)
 
 TEST_CASES = [
     {
@@ -30,7 +42,9 @@ TEST_CASES = [
     },
     {
         "name": "neutral_sentiment_factual",
-        "params": {"text": "The meeting is scheduled for 3 PM tomorrow in conference room B."},
+        "params": {
+            "text": "The meeting is scheduled for 3 PM tomorrow in conference room B."
+        },
     },
     {
         "name": "mixed_sentiment_paragraph",
@@ -66,7 +80,9 @@ TEST_CASES = [
     },
     {
         "name": "question_sentiment",
-        "params": {"text": "Why is this product so amazing? I can't believe how well it works!"},
+        "params": {
+            "text": "Why is this product so amazing? I can't believe how well it works!"
+        },
     },
 ]
 

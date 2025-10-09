@@ -13,8 +13,20 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-jigsaw = jigsawstack.JigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
-async_jigsaw = jigsawstack.AsyncJigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
+jigsaw = jigsawstack.JigsawStack(
+    api_key=os.getenv("JIGSAWSTACK_API_KEY"),
+    base_url=os.getenv("JIGSAWSTACK_BASE_URL") + "/api"
+    if os.getenv("JIGSAWSTACK_BASE_URL")
+    else "https://api.jigsawstack.com",
+    headers={"x-jigsaw-skip-cache": "true"},
+)
+async_jigsaw = jigsawstack.AsyncJigsawStack(
+    api_key=os.getenv("JIGSAWSTACK_API_KEY"),
+    base_url=os.getenv("JIGSAWSTACK_BASE_URL") + "/api"
+    if os.getenv("JIGSAWSTACK_BASE_URL")
+    else "https://api.jigsawstack.com",
+    headers={"x-jigsaw-skip-cache": "true"},
+)
 
 
 def generate_dates(start_date, num_days):
@@ -47,7 +59,9 @@ TEST_CASES = [
     {
         "name": "seasonal_pattern",
         "params": {
-            "dataset": [{"date": dates[i], "value": 100 + (50 * (i % 7))} for i in range(21)],
+            "dataset": [
+                {"date": dates[i], "value": 100 + (50 * (i % 7))} for i in range(21)
+            ],
             "steps": 7,
         },
     },
@@ -61,7 +75,9 @@ TEST_CASES = [
     {
         "name": "large_dataset_prediction",
         "params": {
-            "dataset": [{"date": dates[i], "value": 1000 + (i * 20)} for i in range(30)],
+            "dataset": [
+                {"date": dates[i], "value": 1000 + (i * 20)} for i in range(30)
+            ],
             "steps": 10,
         },
     },

@@ -12,8 +12,20 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-jigsaw = jigsawstack.JigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
-async_jigsaw = jigsawstack.AsyncJigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
+jigsaw = jigsawstack.JigsawStack(
+    api_key=os.getenv("JIGSAWSTACK_API_KEY"),
+    base_url=os.getenv("JIGSAWSTACK_BASE_URL") + "/api"
+    if os.getenv("JIGSAWSTACK_BASE_URL")
+    else "https://api.jigsawstack.com",
+    headers={"x-jigsaw-skip-cache": "true"},
+)
+async_jigsaw = jigsawstack.AsyncJigsawStack(
+    api_key=os.getenv("JIGSAWSTACK_API_KEY"),
+    base_url=os.getenv("JIGSAWSTACK_BASE_URL") + "/api"
+    if os.getenv("JIGSAWSTACK_BASE_URL")
+    else "https://api.jigsawstack.com",
+    headers={"x-jigsaw-skip-cache": "true"},
+)
 
 LONG_TEXT = """
 Artificial Intelligence (AI) has become one of the most transformative technologies of the 21st century.
@@ -147,7 +159,9 @@ class TestSummarySync:
             else:
                 assert isinstance(result["summary"], str)
                 if "max_characters" in test_case["params"]:
-                    assert len(result["summary"]) <= test_case["params"]["max_characters"]
+                    assert (
+                        len(result["summary"]) <= test_case["params"]["max_characters"]
+                    )
 
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
@@ -177,7 +191,9 @@ class TestSummaryAsync:
             else:
                 assert isinstance(result["summary"], str)
                 if "max_characters" in test_case["params"]:
-                    assert len(result["summary"]) <= test_case["params"]["max_characters"]
+                    assert (
+                        len(result["summary"]) <= test_case["params"]["max_characters"]
+                    )
 
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
