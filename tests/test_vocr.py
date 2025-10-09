@@ -13,8 +13,20 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-jigsaw = jigsawstack.JigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
-async_jigsaw = jigsawstack.AsyncJigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
+jigsaw = jigsawstack.JigsawStack(
+    api_key=os.getenv("JIGSAWSTACK_API_KEY"),
+    base_url=os.getenv("JIGSAWSTACK_BASE_URL") + "/api"
+    if os.getenv("JIGSAWSTACK_BASE_URL")
+    else "https://api.jigsawstack.com",
+    headers={"x-jigsaw-skip-cache": "true"},
+)
+async_jigsaw = jigsawstack.AsyncJigsawStack(
+    api_key=os.getenv("JIGSAWSTACK_API_KEY"),
+    base_url=os.getenv("JIGSAWSTACK_BASE_URL") + "/api"
+    if os.getenv("JIGSAWSTACK_BASE_URL")
+    else "https://api.jigsawstack.com",
+    headers={"x-jigsaw-skip-cache": "true"},
+)
 
 IMAGE_URL = "https://jigsawstack.com/preview/vocr-example.jpg"
 
@@ -69,7 +81,10 @@ TEST_CASES = [
     },
     {
         "name": "url_with_list_prompt",
-        "params": {"url": IMAGE_URL, "prompt": ["Extract headers", "Extract body text"]},
+        "params": {
+            "url": IMAGE_URL,
+            "prompt": ["Extract headers", "Extract body text"],
+        },
         "blob": None,
         "options": None,
     },
@@ -79,13 +94,21 @@ TEST_CASES = [
 PDF_TEST_CASES = [
     {
         "name": "pdf_with_page_range",
-        "params": {"url": PDF_URL, "page_range": [1, 3], "prompt": "Extract text from these pages"},
+        "params": {
+            "url": PDF_URL,
+            "page_range": [1, 3],
+            "prompt": "Extract text from these pages",
+        },
         "blob": None,
         "options": None,
     },
     {
         "name": "pdf_single_page",
-        "params": {"url": PDF_URL, "page_range": [1, 1], "prompt": "What is on the first page?"},
+        "params": {
+            "url": PDF_URL,
+            "page_range": [1, 1],
+            "prompt": "What is on the first page?",
+        },
         "blob": None,
         "options": None,
     },
@@ -134,7 +157,9 @@ class TestVOCRSync:
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
 
-    @pytest.mark.parametrize("test_case", pdf_test_cases, ids=[tc["name"] for tc in pdf_test_cases])
+    @pytest.mark.parametrize(
+        "test_case", pdf_test_cases, ids=[tc["name"] for tc in pdf_test_cases]
+    )
     def test_vocr_pdf(self, test_case):
         """Test synchronous VOCR with PDF inputs"""
         try:
@@ -152,13 +177,15 @@ class TestVOCRSync:
                 assert "context" in result
             assert "total_pages" in result
 
-            if test_case.get("params", {}).get("page_range") or test_case.get("options", {}).get(
-                "page_range"
-            ):
+            if test_case.get("params", {}).get("page_range") or test_case.get(
+                "options", {}
+            ).get("page_range"):
                 assert "page_range" in result
                 assert isinstance(result["page_range"], list)
 
-            logger.info(f"Test {test_case['name']}: total_pages={result.get('total_pages')}")
+            logger.info(
+                f"Test {test_case['name']}: total_pages={result.get('total_pages')}"
+            )
 
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
@@ -180,7 +207,9 @@ class TestVOCRAsync:
             if test_case.get("blob"):
                 # Download blob content
                 blob_content = requests.get(test_case["blob"]).content
-                result = await async_jigsaw.vision.vocr(blob_content, test_case.get("options", {}))
+                result = await async_jigsaw.vision.vocr(
+                    blob_content, test_case.get("options", {})
+                )
             else:
                 # Use params directly
                 result = await async_jigsaw.vision.vocr(test_case["params"])
@@ -207,7 +236,9 @@ class TestVOCRAsync:
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
 
-    @pytest.mark.parametrize("test_case", pdf_test_cases, ids=[tc["name"] for tc in pdf_test_cases])
+    @pytest.mark.parametrize(
+        "test_case", pdf_test_cases, ids=[tc["name"] for tc in pdf_test_cases]
+    )
     @pytest.mark.asyncio
     async def test_vocr_pdf_async(self, test_case):
         """Test asynchronous VOCR with PDF inputs"""
@@ -215,7 +246,9 @@ class TestVOCRAsync:
             if test_case.get("blob"):
                 # Download blob content
                 blob_content = requests.get(test_case["blob"]).content
-                result = await async_jigsaw.vision.vocr(blob_content, test_case.get("options", {}))
+                result = await async_jigsaw.vision.vocr(
+                    blob_content, test_case.get("options", {})
+                )
             else:
                 # Use params directly
                 result = await async_jigsaw.vision.vocr(test_case["params"])
@@ -229,13 +262,15 @@ class TestVOCRAsync:
             assert "total_pages" in result  # PDF specific
 
             # Check if page_range is in response when requested
-            if test_case.get("params", {}).get("page_range") or test_case.get("options", {}).get(
-                "page_range"
-            ):
+            if test_case.get("params", {}).get("page_range") or test_case.get(
+                "options", {}
+            ).get("page_range"):
                 assert "page_range" in result
                 assert isinstance(result["page_range"], list)
 
-            logger.info(f"Test {test_case['name']}: total_pages={result.get('total_pages')}")
+            logger.info(
+                f"Test {test_case['name']}: total_pages={result.get('total_pages')}"
+            )
 
         except JigsawStackError as e:
             pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")

@@ -13,8 +13,20 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-jigsaw = jigsawstack.JigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
-async_jigsaw = jigsawstack.AsyncJigsawStack(api_key=os.getenv("JIGSAWSTACK_API_KEY"))
+jigsaw = jigsawstack.JigsawStack(
+    api_key=os.getenv("JIGSAWSTACK_API_KEY"),
+    base_url=os.getenv("JIGSAWSTACK_BASE_URL") + "/api"
+    if os.getenv("JIGSAWSTACK_BASE_URL")
+    else "https://api.jigsawstack.com",
+    headers={"x-jigsaw-skip-cache": "true"},
+)
+async_jigsaw = jigsawstack.AsyncJigsawStack(
+    api_key=os.getenv("JIGSAWSTACK_API_KEY"),
+    base_url=os.getenv("JIGSAWSTACK_BASE_URL") + "/api"
+    if os.getenv("JIGSAWSTACK_BASE_URL")
+    else "https://api.jigsawstack.com",
+    headers={"x-jigsaw-skip-cache": "true"},
+)
 
 # Sample image URL for translation tests
 IMAGE_URL = "https://images.unsplash.com/photo-1580679137870-86ef9f9a03d6?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -144,7 +156,9 @@ class TestTranslateTextSync:
             # Check if the response structure matches the input
             if isinstance(test_case["params"]["text"], list):
                 assert isinstance(result["translated_text"], list)
-                assert len(result["translated_text"]) == len(test_case["params"]["text"])
+                assert len(result["translated_text"]) == len(
+                    test_case["params"]["text"]
+                )
             else:
                 assert isinstance(result["translated_text"], str)
 
@@ -171,7 +185,9 @@ class TestTranslateTextAsync:
             # Check if the response structure matches the input
             if isinstance(test_case["params"]["text"], list):
                 assert isinstance(result["translated_text"], list)
-                assert len(result["translated_text"]) == len(test_case["params"]["text"])
+                assert len(result["translated_text"]) == len(
+                    test_case["params"]["text"]
+                )
             else:
                 assert isinstance(result["translated_text"], str)
 
@@ -193,7 +209,9 @@ class TestTranslateImageSync:
             if test_case.get("blob"):
                 # Download blob content
                 blob_content = requests.get(test_case["blob"]).content
-                result = jigsaw.translate.image(blob_content, test_case.get("options", {}))
+                result = jigsaw.translate.image(
+                    blob_content, test_case.get("options", {})
+                )
             else:
                 # Use params directly
                 result = jigsaw.translate.image(test_case["params"])
