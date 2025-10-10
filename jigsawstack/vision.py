@@ -152,13 +152,31 @@ class VOCRParams(TypedDict):
     page_range: NotRequired[List[int]]
 
 
+class Word(TypedDict):
+    text: str
+    bounds: BoundingBox
+    confidence: float
+
+
+class Line(TypedDict):
+    text: str
+    bounds: BoundingBox
+    average_confidence: float
+    words: List[Word]
+
+
+class Section(TypedDict):
+    text: str
+    lines: List[Line]
+
+
 class OCRResponse(BaseResponse):
     context: str
     width: int
     height: int
     tags: List[str]
     has_text: bool
-    sections: List[object]
+    sections: List[Section]
     total_pages: Optional[int]
     page_range: Optional[
         List[int]
