@@ -3,7 +3,7 @@ from typing import Any, Dict, Union, cast
 from typing_extensions import Literal, NotRequired, Required, TypedDict
 
 from ._config import ClientConfig
-from .async_request import AsyncRequest
+from .async_request import AsyncRequest, AsyncRequestConfig
 from .request import Request, RequestConfig
 
 
@@ -103,6 +103,7 @@ class ImageGeneration(ClientConfig):
         self, params: ImageGenerationParams
     ) -> Union[ImageGenerationResponse, bytes]:
         path = "/ai/image_generation"
+
         resp = Request(
             config=self.config,
             path=path,
@@ -113,7 +114,7 @@ class ImageGeneration(ClientConfig):
 
 
 class AsyncImageGeneration(ClientConfig):
-    config: RequestConfig
+    config: AsyncRequestConfig
 
     def __init__(
         self,
@@ -122,7 +123,7 @@ class AsyncImageGeneration(ClientConfig):
         headers: Union[Dict[str, str], None] = None,
     ):
         super().__init__(api_key, base_url, headers)
-        self.config = RequestConfig(
+        self.config = AsyncRequestConfig(
             base_url=base_url,
             api_key=api_key,
             headers=headers,

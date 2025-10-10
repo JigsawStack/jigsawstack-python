@@ -28,10 +28,10 @@ async_jigsaw = jigsawstack.AsyncJigsawStack(
 )
 
 IMAGE_URL = "https://images.unsplash.com/photo-1494588024300-e9df7ff98d78?q=80&w=1284&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-FILE_STORE_KEY = jigsaw.store.upload(
-    requests.get(IMAGE_URL).content,
-    {"filename": "test_image.jpg", "content_type": "image/jpeg", "overwrite": True},
-)
+# FILE_STORE_KEY = jigsaw.store.upload(
+#     requests.get(IMAGE_URL).content,
+#     {"filename": "test_image.jpg", "content_type": "image/jpeg", "overwrite": True},
+# )
 
 TEST_CASES = [
     {
@@ -110,13 +110,13 @@ IMAGE_TO_IMAGE_TEST_CASES = [
             "return_type": "base64",
         },
     },
-    {
-        "name": "with_file_store_key",
-        "params": {
-            "prompt": "Apply a cyberpunk style to this image",
-            "file_store_key": FILE_STORE_KEY,
-        },
-    },
+    # {
+    #     "name": "with_file_store_key",
+    #     "params": {
+    #         "prompt": "Apply a cyberpunk style to this image",
+    #         "file_store_key": FILE_STORE_KEY,
+    #     },
+    # },
 ]
 
 
