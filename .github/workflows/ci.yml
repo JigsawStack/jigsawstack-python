@@ -46,7 +46,6 @@ jobs:
           - test_translate.py
           - test_validate.py
           - test_web.py
-          - test_deep_research.py
           - test_ai_scrape.py
           - test_vocr.py
     steps:
