@@ -60,7 +60,8 @@ class SearchResponse(BaseResponse):
     ai_overview: Optional[str]
     """
     AI-generated overview/summary of the search results
-    or deep research results if enabled
+    or deep research results if enabled.
+    Returns None when ai_overview is disabled or unavailable.
     """
 
     results: List[Result]
@@ -205,7 +206,7 @@ class SearchParams(TypedDict):
 
     ai_overview: NotRequired[bool]
     """
-    Whether to generate an AI-powered overview of the search results. Defaults to True.
+    Whether to generate an AI-powered overview of the search results. Defaults to False.
     """
 
     byo_urls: NotRequired[List[str]]
