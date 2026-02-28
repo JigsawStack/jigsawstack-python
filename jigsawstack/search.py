@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Literal, Optional, Union, cast
+from typing import Any, Dict, List, Literal, Union, cast
 
 from typing_extensions import NotRequired, TypedDict
 
@@ -57,11 +57,10 @@ class SearchResponse(BaseResponse):
     The search query that was used
     """
 
-    ai_overview: Optional[str]
+    ai_overview: NotRequired[str]
     """
     AI-generated overview/summary of the search results
-    or deep research results if enabled.
-    Returns None when ai_overview is disabled or unavailable.
+    or deep research results if enabled
     """
 
     results: List[Result]
@@ -206,7 +205,7 @@ class SearchParams(TypedDict):
 
     ai_overview: NotRequired[bool]
     """
-    Whether to generate an AI-powered overview of the search results. Defaults to False.
+    Whether to generate an AI-powered overview of the search results. Defaults to True.
     """
 
     byo_urls: NotRequired[List[str]]
