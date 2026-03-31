@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Literal, Optional, Union, cast
+from typing import Any, Dict, List, Literal, Union, cast
 
 from typing_extensions import NotRequired, TypedDict
 
@@ -57,7 +57,7 @@ class SearchResponse(BaseResponse):
     The search query that was used
     """
 
-    ai_overview: Optional[str]
+    ai_overview: NotRequired[str]
     """
     AI-generated overview/summary of the search results
     or deep research results if enabled
@@ -242,7 +242,7 @@ class Search(ClientConfig):
 
     def search(self, params: SearchParams) -> SearchResponse:
         query = params["query"]
-        ai_overview = params.get("ai_overview", "True")
+        ai_overview = params.get("ai_overview", "False")
         safe_search = params.get("safe_search", "moderate")
         spell_check = params.get("spell_check", "True")
 
@@ -314,7 +314,7 @@ class AsyncSearch(ClientConfig):
     async def search(self, params: SearchParams) -> SearchResponse:
         path = "/web/search"
         query = params["query"]
-        ai_overview = params.get("ai_overview", "True")
+        ai_overview = params.get("ai_overview", "False")
         safe_search = params.get("safe_search", "moderate")
         spell_check = params.get("spell_check", "True")
 
@@ -343,7 +343,9 @@ class AsyncSearch(ClientConfig):
         ).perform_with_content()
         return resp
 
-    async def suggestions(self, params: SearchSuggestionsParams) -> SearchSuggestionsResponse:
+    async def suggestions(
+        self, params: SearchSuggestionsParams
+    ) -> SearchSuggestionsResponse:
         query = params["query"]
         path = f"/web/search/suggest?query={query}"
         resp = await AsyncRequest(
