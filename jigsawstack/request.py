@@ -35,7 +35,10 @@ class Request(Generic[T]):
         self.base_url = config.get("base_url")
         self.api_key = config.get("api_key")
         self.data = data
-        self.headers = config.get("headers", None) or {"Content-Type": "application/json"}
+        # Copy the headers dict so mutations inside this instance never affect
+        # the original config dict passed in by the caller.
+        raw_headers = config.get("headers", None) or {"Content-Type": "application/json"}
+        self.headers: Dict[str, str] = dict(raw_headers)
         self.stream = stream
         self.files = files
 
@@ -144,31 +147,38 @@ class Request(Generic[T]):
         return resp
 
     def __get_headers(self) -> Dict[Any, Any]:
-        """get_headers returns the HTTP headers that will be
-        used for every req.
+        """get_headers returns the HTTP headers that will be used for every req.
+
+        Builds a fresh header dict on every call so that:
+        - The caller's original headers dict is never mutated.
+        - Multipart requests (file uploads) never accidentally carry a
+          Content-Type header that would break the multipart boundary.
 
         Returns:
             Dict: configured HTTP Headers
         """
-
-        h = {
+        h: Dict[str, str] = {
             "Accept": "application/json",
             "x-api-key": f"{self.api_key}",
         }
 
-        # Only add Content-Type if not using multipart (files)
+        # Only set Content-Type for plain JSON requests. Multipart and raw-data
+        # requests either let requests set the boundary automatically or rely on
+        # the Content-Type explicitly set on the config.
         if not self.files and not self.data:
             h["Content-Type"] = "application/json"
 
-        _headers = h.copy()
+        # Merge caller-supplied headers. Work on a copy of self.headers so we
+        # never permanently remove keys from the shared config dict.
+        caller_headers = dict(self.headers)
 
-        # Don't override Content-Type if using multipart
-        if self.files and "Content-Type" in self.headers:
-            self.headers.pop("Content-Type")
+        # Strip Content-Type from the caller overrides for multipart requests
+        # so that the requests library can insert the correct boundary.
+        if self.files:
+            caller_headers.pop("Content-Type", None)
 
-        _headers.update(self.headers)
-
-        return _headers
+        h.update(caller_headers)
+        return h
 
     def perform_streaming(self) -> Generator[Union[T, str], None, None]:
         """Is the main function that makes the HTTP request

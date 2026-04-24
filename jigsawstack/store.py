@@ -76,11 +76,13 @@ class Store(ClientConfig):
         return resp
 
     def delete(self, key: str) -> FileDeleteResponse:
+        # The file key is already encoded in the URL path; passing it again as
+        # `params` would corrupt the DELETE request body. Use an empty dict.
         path = f"/store/file/read/{key}"
         resp = Request(
             config=self.config,
             path=path,
-            params=key,
+            params={},
             verb="delete",
         ).perform_with_content()
         return resp
@@ -136,11 +138,13 @@ class AsyncStore(ClientConfig):
         return resp
 
     async def delete(self, key: str) -> FileDeleteResponse:
+        # The file key is already encoded in the URL path; passing it again as
+        # `params` would corrupt the DELETE request body. Use an empty dict.
         path = f"/store/file/read/{key}"
         resp = await AsyncRequest(
             config=self.config,
             path=path,
-            params=key,
+            params={},
             verb="delete",
         ).perform_with_content()
         return resp
