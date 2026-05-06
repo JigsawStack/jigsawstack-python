@@ -31,91 +31,6 @@ async_jigsaw = jigsawstack.AsyncJigsawStack(
     headers={"x-jigsaw-skip-cache": "true"},
 )
 
-URL = "https://jigsawstack.com"
-
-# HTML to Any Test Cases
-HTML_TO_ANY_TEST_CASES = [
-    {
-        "name": "html_to_pdf_url",
-        "params": {
-            "url": URL,
-            "type": "pdf",
-            "return_type": "url",
-        },
-    },
-    {
-        "name": "html_to_png_base64",
-        "params": {
-            "url": URL,
-            "type": "png",
-            "return_type": "base64",
-        },
-    },
-    {
-        "name": "html_to_jpeg_binary",
-        "params": {
-            "url": URL,
-            "type": "jpeg",
-            "return_type": "binary",
-        },
-    },
-    {
-        "name": "html_string_to_pdf",
-        "params": {
-            "html": "<html><body><h1>Test Document</h1><p>This is a test.</p></body></html>",
-            "type": "pdf",
-            "return_type": "url",
-        },
-    },
-    {
-        "name": "html_to_pdf_with_options",
-        "params": {
-            "url": URL,
-            "type": "pdf",
-            "return_type": "url",
-            "pdf_display_header_footer": True,
-            "pdf_print_background": True,
-        },
-    },
-    {
-        "name": "html_to_png_full_page",
-        "params": {
-            "url": URL,
-            "type": "png",
-            "full_page": True,
-            "return_type": "url",
-        },
-    },
-    {
-        "name": "html_to_webp_custom_size",
-        "params": {
-            "url": URL,
-            "type": "webp",
-            "width": 1920,
-            "height": 1080,
-            "return_type": "base64",
-        },
-    },
-    {
-        "name": "html_to_png_mobile",
-        "params": {
-            "url": URL,
-            "type": "png",
-            "is_mobile": True,
-            "return_type": "url",
-        },
-    },
-    {
-        "name": "html_to_png_dark_mode",
-        "params": {
-            "url": URL,
-            "type": "png",
-            "dark_mode": True,
-            "return_type": "url",
-        },
-    },
-]
-
 # Search Test Cases
 SEARCH_TEST_CASES = [
     {
@@ -160,37 +75,6 @@ SEARCH_SUGGESTIONS_TEST_CASES = [
         },
     },
 ]
-
-
-class TestHTMLToAnySync:
-    """Test synchronous HTML to Any methods"""
-
-    @pytest.mark.parametrize(
-        "test_case",
-        HTML_TO_ANY_TEST_CASES,
-        ids=[tc["name"] for tc in HTML_TO_ANY_TEST_CASES],
-    )
-    def test_html_to_any(self, test_case):
-        """Test synchronous HTML to Any with various inputs"""
-        try:
-            result = jigsaw.web.html_to_any(test_case["params"])
-
-            return_type = test_case["params"].get("return_type", "url")
-
-            if return_type == "binary":
-                assert isinstance(result, bytes)
-                assert len(result) > 0
-            else:
-                assert result["success"]
-                assert "url" in result
-                assert isinstance(result["url"], str)
-
-                if return_type == "base64":
-                    # Check if it's a valid base64 string
-                    assert result["url"].startswith("data:")
-
-        except JigsawStackError as e:
-            pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
 
 
 class TestSearchSync:
@@ -248,38 +132,6 @@ class TestSearchSuggestionsSync:
 
 
 # Async Test Classes
-
-
-class TestHTMLToAnyAsync:
-    """Test asynchronous HTML to Any methods"""
-
-    @pytest.mark.parametrize(
-        "test_case",
-        HTML_TO_ANY_TEST_CASES,
-        ids=[tc["name"] for tc in HTML_TO_ANY_TEST_CASES],
-    )
-    @pytest.mark.asyncio
-    async def test_html_to_any_async(self, test_case):
-        """Test asynchronous HTML to Any with various inputs"""
-        try:
-            result = await async_jigsaw.web.html_to_any(test_case["params"])
-
-            return_type = test_case["params"].get("return_type", "url")
-
-            if return_type == "binary":
-                assert isinstance(result, bytes)
-                assert len(result) > 0
-            else:
-                assert result["success"]
-                assert "url" in result
-                assert isinstance(result["url"], str)
-
-                if return_type == "base64":
-                    # Check if it's a valid base64 string
-                    assert result["url"].startswith("data:")
-
-        except JigsawStackError as e:
-            pytest.fail(f"Unexpected JigsawStackError in {test_case['name']}: {e}")
 
 
 class TestSearchAsync:

@@ -49,6 +49,11 @@ class SpeechToTextParams(TypedDict):
     the duration of each chunk in seconds, maximum value is 15, defaults to 3
     """
 
+    word_timestamps: NotRequired[bool]
+    """
+    When set to true, returns each word as its own entry in the chunks array with its own start and end timestamp. Useful for caption alignment and word-accurate search. Cannot be combined with stream=true.
+    """
+
 
 class ChunkResponse(TypedDict):
     text: str
