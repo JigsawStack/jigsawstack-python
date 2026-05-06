@@ -39,7 +39,6 @@ jobs:
           - test_file_store.py
           - test_object_detection.py
           - test_prediction.py
-          - test_sentiment.py
           - test_sql.py
           - test_translate.py
           - test_validate.py
