@@ -94,9 +94,7 @@ class TestTranslateTextSync:
             # Check if the response structure matches the input
             if isinstance(test_case["params"]["text"], list):
                 assert isinstance(result["translated_text"], list)
-                assert len(result["translated_text"]) == len(
-                    test_case["params"]["text"]
-                )
+                assert len(result["translated_text"]) == len(test_case["params"]["text"])
             else:
                 assert isinstance(result["translated_text"], str)
 
@@ -123,9 +121,7 @@ class TestTranslateTextAsync:
             # Check if the response structure matches the input
             if isinstance(test_case["params"]["text"], list):
                 assert isinstance(result["translated_text"], list)
-                assert len(result["translated_text"]) == len(
-                    test_case["params"]["text"]
-                )
+                assert len(result["translated_text"]) == len(test_case["params"]["text"])
             else:
                 assert isinstance(result["translated_text"], str)
 
