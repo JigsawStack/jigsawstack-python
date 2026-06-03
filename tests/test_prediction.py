@@ -59,9 +59,7 @@ TEST_CASES = [
     {
         "name": "seasonal_pattern",
         "params": {
-            "dataset": [
-                {"date": dates[i], "value": 100 + (50 * (i % 7))} for i in range(21)
-            ],
+            "dataset": [{"date": dates[i], "value": 100 + (50 * (i % 7))} for i in range(21)],
             "steps": 7,
         },
     },
@@ -75,9 +73,7 @@ TEST_CASES = [
     {
         "name": "large_dataset_prediction",
         "params": {
-            "dataset": [
-                {"date": dates[i], "value": 1000 + (i * 20)} for i in range(30)
-            ],
+            "dataset": [{"date": dates[i], "value": 1000 + (i * 20)} for i in range(30)],
             "steps": 10,
         },
     },

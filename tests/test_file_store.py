@@ -130,9 +130,7 @@ class TestFileStoreAsync:
     async def test_file_upload_async(self, test_case):
         """Test asynchronous file upload with various options"""
         try:
-            result = await async_jigsaw.store.upload(
-                test_case["file"], test_case["options"]
-            )
+            result = await async_jigsaw.store.upload(test_case["file"], test_case["options"])
 
             print(f"Async upload test {test_case['name']}: {result}")
             assert result.get("key") is not None
@@ -147,9 +145,7 @@ class TestFileStoreAsync:
             self.uploaded_keys.append(result["key"])
 
         except JigsawStackError as e:
-            pytest.fail(
-                f"Unexpected JigsawStackError in async {test_case['name']}: {e}"
-            )
+            pytest.fail(f"Unexpected JigsawStackError in async {test_case['name']}: {e}")
 
     @pytest.mark.asyncio
     async def test_file_get_async(self):

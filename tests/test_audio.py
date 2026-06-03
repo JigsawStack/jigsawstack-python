@@ -131,26 +131,20 @@ WEBHOOK_TEST_CASES = [
 class TestAudioSync:
     """Test synchronous audio speech-to-text methods"""
 
-    @pytest.mark.parametrize(
-        "test_case", TEST_CASES, ids=[tc["name"] for tc in TEST_CASES]
-    )
+    @pytest.mark.parametrize("test_case", TEST_CASES, ids=[tc["name"] for tc in TEST_CASES])
     def test_speech_to_text(self, test_case):
         """Test synchronous speech-to-text with various inputs"""
         try:
             if test_case.get("blob"):
                 # Download audio content
                 blob_content = requests.get(test_case["blob"]).content
-                result = jigsaw.audio.speech_to_text(
-                    blob_content, test_case.get("options", {})
-                )
+                result = jigsaw.audio.speech_to_text(blob_content, test_case.get("options", {}))
             else:
                 # Use params directly
                 result = jigsaw.audio.speech_to_text(test_case["params"])
             # Verify response structure
             assert result["success"]
-            assert result.get("text", None) is not None and isinstance(
-                result["text"], str
-            )
+            assert result.get("text", None) is not None and isinstance(result["text"], str)
 
             # Check for chunks
             if result.get("chunks", None):
@@ -172,9 +166,7 @@ class TestAudioSync:
             if test_case.get("blob"):
                 # Download audio content
                 blob_content = requests.get(test_case["blob"]).content
-                result = jigsaw.audio.speech_to_text(
-                    blob_content, test_case.get("options", {})
-                )
+                result = jigsaw.audio.speech_to_text(blob_content, test_case.get("options", {}))
             else:
                 # Use params directly
                 result = jigsaw.audio.speech_to_text(test_case["params"])
@@ -189,9 +181,7 @@ class TestAudioSync:
 class TestAudioAsync:
     """Test asynchronous audio speech-to-text methods"""
 
-    @pytest.mark.parametrize(
-        "test_case", TEST_CASES, ids=[tc["name"] for tc in TEST_CASES]
-    )
+    @pytest.mark.parametrize("test_case", TEST_CASES, ids=[tc["name"] for tc in TEST_CASES])
     @pytest.mark.asyncio
     async def test_speech_to_text_async(self, test_case):
         """Test asynchronous speech-to-text with various inputs"""
@@ -208,9 +198,7 @@ class TestAudioAsync:
 
             # Verify response structure
             assert result["success"]
-            assert result.get("text", None) is not None and isinstance(
-                result["text"], str
-            )
+            assert result.get("text", None) is not None and isinstance(result["text"], str)
 
             # Check for chunks
             if result.get("chunks", None):
@@ -220,9 +208,7 @@ class TestAudioAsync:
             if result.get("speakers", None):
                 assert isinstance(result["speakers"], list)
         except JigsawStackError as e:
-            pytest.fail(
-                f"Unexpected JigsawStackError in async {test_case['name']}: {e}"
-            )
+            pytest.fail(f"Unexpected JigsawStackError in async {test_case['name']}: {e}")
 
     @pytest.mark.parametrize(
         "test_case", WEBHOOK_TEST_CASES, ids=[tc["name"] for tc in WEBHOOK_TEST_CASES]
@@ -248,6 +234,4 @@ class TestAudioAsync:
 
         except JigsawStackError as e:
             # Webhook URLs might fail if invalid
-            print(
-                f"Expected possible error for async webhook test {test_case['name']}: {e}"
-            )
+            print(f"Expected possible error for async webhook test {test_case['name']}: {e}")
