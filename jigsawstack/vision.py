@@ -162,13 +162,13 @@ class VOCRParams(TypedDict):
 
 class Word(TypedDict):
     text: str
-    bounds: BoundingBox
+    bounds: NotRequired[BoundingBox]  # omitted when return_bounds is false
     confidence: float
 
 
 class Line(TypedDict):
     text: str
-    bounds: BoundingBox
+    bounds: NotRequired[BoundingBox]  # omitted when return_bounds is false
     average_confidence: float
     words: List[Word]
 
