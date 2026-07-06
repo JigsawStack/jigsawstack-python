@@ -127,6 +127,11 @@ class ObjectDetectionParams(TypedDict):
     Whether to return masks for the detected objects
     """
 
+    return_tags: NotRequired[bool]
+    """
+    Whether to return tags detected in the image
+    """
+
 
 class ObjectDetectionResponse(BaseResponse):
     annotated_image: NotRequired[str]
