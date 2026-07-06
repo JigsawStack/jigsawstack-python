@@ -102,6 +102,11 @@ class ObjectDetectionParams(TypedDict):
     List of prompts for object detection
     """
 
+    enhance_prompts: NotRequired[bool]
+    """
+    Whether to use enhanced prompts for better detection results
+    """
+
     features: NotRequired[List[Literal["object", "gui"]]]
     """
     List of features to enable: object, gui
@@ -120,6 +125,11 @@ class ObjectDetectionParams(TypedDict):
     return_masks: NotRequired[bool]
     """
     Whether to return masks for the detected objects
+    """
+
+    return_tags: NotRequired[bool]
+    """
+    Whether to return tags detected in the image
     """
 
 
