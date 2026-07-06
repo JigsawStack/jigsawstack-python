@@ -102,6 +102,11 @@ class ObjectDetectionParams(TypedDict):
     List of prompts for object detection
     """
 
+    enhance_prompts: NotRequired[bool]
+    """
+    Whether to use enhanced prompts for better detection results
+    """
+
     features: NotRequired[List[Literal["object", "gui"]]]
     """
     List of features to enable: object, gui
