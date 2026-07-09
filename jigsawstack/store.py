@@ -80,7 +80,7 @@ class Store(ClientConfig):
         resp = Request(
             config=self.config,
             path=path,
-            params=key,
+            params={},
             verb="delete",
         ).perform_with_content()
         return resp
@@ -140,7 +140,7 @@ class AsyncStore(ClientConfig):
         resp = await AsyncRequest(
             config=self.config,
             path=path,
-            params=key,
+            params={},
             verb="delete",
         ).perform_with_content()
         return resp

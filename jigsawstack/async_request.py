@@ -1,9 +1,9 @@
 import json
 from io import BytesIO
-from typing import Any, AsyncGenerator, Dict, Generic, List, TypedDict, Union, cast
+from typing import Any, AsyncGenerator, Dict, Generic, List, Optional, TypedDict, Union, cast
 
 import aiohttp
-from typing_extensions import Literal, TypeVar
+from typing_extensions import Literal, NotRequired, TypeVar
 
 from .exceptions import NoContentError, raise_for_code_and_type
 
@@ -16,6 +16,23 @@ class AsyncRequestConfig(TypedDict):
     base_url: str
     api_key: str
     headers: Union[Dict[str, str], None]
+    session: NotRequired[aiohttp.ClientSession]
+
+
+class _SessionContext:
+    """Async context manager that wraps an existing ClientSession without closing it.
+    Used when a shared session is injected from the client (AsyncJigsawStack).
+    """
+    __slots__ = ("_session",)
+
+    def __init__(self, session: aiohttp.ClientSession) -> None:
+        self._session = session
+
+    async def __aenter__(self) -> aiohttp.ClientSession:
+        return self._session
+
+    async def __aexit__(self, *_: object) -> None:
+        pass  # session lifetime is managed by the caller
 
 
 class AsyncRequest(Generic[T]):
@@ -38,6 +55,8 @@ class AsyncRequest(Generic[T]):
         self.headers = config.get("headers", None) or {"Content-Type": "application/json"}
         self.stream = stream
         self.files = files  # Store files for multipart requests
+        # Optional shared session injected by AsyncJigsawStack.
+        self._shared_session: Optional[aiohttp.ClientSession] = config.get("session", None)
 
     def __convert_params(
         self, params: Union[Dict[Any, Any], List[Dict[Any, Any]]]
@@ -269,13 +288,14 @@ class AsyncRequest(Generic[T]):
             headers=headers,
         )
 
-    def __get_session(self) -> aiohttp.ClientSession:
+    def __get_session(self) -> Union["_SessionContext", aiohttp.ClientSession]:
         """
-        Create and return an async client session.
-
-        Returns:
-            aiohttp.ClientSession: An async client session
+        Return an async context manager that provides a ClientSession.
+        If a shared session was injected via config, reuse it without closing.
+        Otherwise open a fresh session for this request only.
         """
+        if self._shared_session is not None:
+            return _SessionContext(self._shared_session)
         return aiohttp.ClientSession()
 
     @staticmethod

@@ -1,6 +1,9 @@
 import os
-from typing import Dict, Union
+from typing import Dict, List, Optional, Union
 
+import aiohttp
+
+from ._config import ClientConfig
 from .audio import AsyncAudio, Audio
 from .classification import AsyncClassification, Classification
 from .embedding import AsyncEmbedding, Embedding
@@ -155,51 +158,70 @@ class AsyncJigsawStack:
         self.base_url = base_url
         self.headers = headers or {"Content-Type": "application/json"}
 
-        self.web = AsyncWeb(api_key=api_key, base_url=base_url + "/v1", headers=headers)
+        # _async_services holds every async service instance so that
+        # __aenter__ / aclose() can inject / remove the shared session.
+        self._async_services: List[ClientConfig] = []
+        self._session: Optional[aiohttp.ClientSession] = None
 
-        self.validate = AsyncValidate(api_key=api_key, base_url=base_url + "/v1", headers=headers)
+        def _reg(svc: ClientConfig) -> ClientConfig:
+            self._async_services.append(svc)
+            return svc
 
-        self.audio = AsyncAudio(api_key=api_key, base_url=base_url + "/v1", headers=headers)
+        self.web = _reg(AsyncWeb(api_key=api_key, base_url=base_url + "/v1", headers=headers))
 
-        self.vision = AsyncVision(api_key=api_key, base_url=base_url + "/v1", headers=headers)
+        self.validate = _reg(AsyncValidate(api_key=api_key, base_url=base_url + "/v1", headers=headers))
 
-        self.store = AsyncStore(api_key=api_key, base_url=base_url + "/v1", headers=headers)
+        self.audio = _reg(AsyncAudio(api_key=api_key, base_url=base_url + "/v1", headers=headers))
 
-        self.summary = AsyncSummary(
-            api_key=api_key, base_url=base_url + "/v1", headers=headers
-        ).summarize
+        self.vision = _reg(AsyncVision(api_key=api_key, base_url=base_url + "/v1", headers=headers))
 
-        self.prediction = AsyncPrediction(api_key=api_key, base_url=base_url + "/v1").predict
+        self.store = _reg(AsyncStore(api_key=api_key, base_url=base_url + "/v1", headers=headers))
 
-        self.text_to_sql = AsyncSQL(
-            api_key=api_key, base_url=base_url + "/v1", headers=headers
-        ).text_to_sql
+        _summary = _reg(AsyncSummary(api_key=api_key, base_url=base_url + "/v1", headers=headers))
+        self.summary = _summary.summarize
 
-        self.sentiment = AsyncSentiment(
-            api_key=api_key, base_url=base_url + "/v1", headers=headers
-        ).analyze
+        _prediction = _reg(AsyncPrediction(api_key=api_key, base_url=base_url + "/v1", headers=headers))
+        self.prediction = _prediction.predict
 
-        self.translate = AsyncTranslate(api_key=api_key, base_url=base_url + "/v1", headers=headers)
+        _sql = _reg(AsyncSQL(api_key=api_key, base_url=base_url + "/v1", headers=headers))
+        self.text_to_sql = _sql.text_to_sql
 
-        self.embedding = AsyncEmbedding(
-            api_key=api_key, base_url=base_url + "/v1", headers=headers
-        ).execute
+        _sentiment = _reg(AsyncSentiment(api_key=api_key, base_url=base_url + "/v1", headers=headers))
+        self.sentiment = _sentiment.analyze
 
-        self.embedding_v2 = AsyncEmbeddingV2(
-            api_key=api_key, base_url=base_url + "/v2", headers=headers
-        ).execute
+        self.translate = _reg(AsyncTranslate(api_key=api_key, base_url=base_url + "/v1", headers=headers))
 
-        self.image_generation = AsyncImageGeneration(
-            api_key=api_key, base_url=base_url + "/v1", headers=headers
-        ).image_generation
+        _embedding = _reg(AsyncEmbedding(api_key=api_key, base_url=base_url + "/v1", headers=headers))
+        self.embedding = _embedding.execute
 
-        self.classification = AsyncClassification(
-            api_key=api_key, base_url=base_url + "/v1", headers=headers
-        ).classify
+        _embedding_v2 = _reg(AsyncEmbeddingV2(api_key=api_key, base_url=base_url + "/v2", headers=headers))
+        self.embedding_v2 = _embedding_v2.execute
 
-        self.prompt_engine = AsyncPromptEngine(
-            api_key=api_key, base_url=base_url + "/v1", headers=headers
-        )
+        _image_gen = _reg(AsyncImageGeneration(api_key=api_key, base_url=base_url + "/v1", headers=headers))
+        self.image_generation = _image_gen.image_generation
+
+        _classification = _reg(AsyncClassification(api_key=api_key, base_url=base_url + "/v1", headers=headers))
+        self.classification = _classification.classify
+
+        self.prompt_engine = _reg(AsyncPromptEngine(api_key=api_key, base_url=base_url + "/v1", headers=headers))
+
+    async def __aenter__(self) -> "AsyncJigsawStack":
+        """Open a shared aiohttp.ClientSession reused across all requests."""
+        self._session = aiohttp.ClientSession()
+        for svc in self._async_services:
+            svc.config["session"] = self._session
+        return self
+
+    async def aclose(self) -> None:
+        """Close the shared session and clear it from all service configs."""
+        if self._session is not None:
+            for svc in self._async_services:
+                svc.config.pop("session", None)
+            await self._session.close()
+            self._session = None
+
+    async def __aexit__(self, exc_type: object, exc_val: object, exc_tb: object) -> None:
+        await self.aclose()
 
 
 # Create a global instance of the Web class
