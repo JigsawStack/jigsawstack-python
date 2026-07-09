@@ -35,9 +35,13 @@ class AsyncRequest(Generic[T]):
         self.base_url = config.get("base_url")
         self.api_key = config.get("api_key")
         self.data = data
-        self.headers = config.get("headers", None) or {"Content-Type": "application/json"}
+        # Defensive copy: we must not mutate the caller's config dict. Without
+        # this, __get_headers() could permanently strip keys (e.g. Content-Type)
+        # from the shared config that all service-class methods reuse.
+        raw_headers = config.get("headers", None) or {"Content-Type": "application/json"}
+        self.headers: Dict[str, str] = dict(raw_headers)
         self.stream = stream
-        self.files = files  # Store files for multipart requests
+        self.files = files
 
     def __convert_params(
         self, params: Union[Dict[Any, Any], List[Dict[Any, Any]]]
@@ -175,19 +179,22 @@ class AsyncRequest(Generic[T]):
             "x-api-key": f"{self.api_key}",
         }
 
-        # only add Content-Type if not using multipart (files)
+        # Only add Content-Type if not using multipart (files)
         if not self.files and not self.data:
             h["Content-Type"] = "application/json"
 
-        _headers = h.copy()
+        # Work on a local copy so we never mutate self.headers (which itself is
+        # already a copy of the original config dict — see __init__).
+        caller_headers = dict(self.headers)
 
-        # don't override Content-Type if using multipart
-        if self.files and "Content-Type" in self.headers:
-            self.headers.pop("Content-Type")
+        # Strip Content-Type for multipart requests so that aiohttp can set
+        # the correct multipart/form-data boundary itself.
+        if self.files:
+            caller_headers.pop("Content-Type", None)
 
-        _headers.update(self.headers)
+        h.update(caller_headers)
 
-        return _headers
+        return h
 
     async def perform_streaming(self) -> AsyncGenerator[Union[T, str], None]:
         """
@@ -253,8 +260,6 @@ class AsyncRequest(Generic[T]):
             _form_data.add_field("file", BytesIO(files["file"]), filename="upload")
             if params and isinstance(params, dict):
                 _form_data.add_field("body", json.dumps(params), content_type="application/json")
-
-            headers.pop("Content-Type", None)
         elif data:  # raw data request
             _data = data
         else:  # pure JSON request

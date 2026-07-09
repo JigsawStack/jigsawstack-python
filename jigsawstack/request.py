@@ -35,7 +35,11 @@ class Request(Generic[T]):
         self.base_url = config.get("base_url")
         self.api_key = config.get("api_key")
         self.data = data
-        self.headers = config.get("headers", None) or {"Content-Type": "application/json"}
+        # Defensive copy: we must not mutate the caller's config dict. Without
+        # this, __get_headers() could permanently strip keys (e.g. Content-Type)
+        # from the shared config that all service-class methods reuse.
+        raw_headers = config.get("headers", None) or {"Content-Type": "application/json"}
+        self.headers: Dict[str, str] = dict(raw_headers)
         self.stream = stream
         self.files = files
 
@@ -160,15 +164,18 @@ class Request(Generic[T]):
         if not self.files and not self.data:
             h["Content-Type"] = "application/json"
 
-        _headers = h.copy()
+        # Work on a local copy so we never mutate self.headers (which itself is
+        # already a copy of the original config dict — see __init__).
+        caller_headers = dict(self.headers)
 
-        # Don't override Content-Type if using multipart
-        if self.files and "Content-Type" in self.headers:
-            self.headers.pop("Content-Type")
+        # Strip Content-Type for multipart requests so that the requests
+        # library can set the correct multipart/form-data boundary itself.
+        if self.files:
+            caller_headers.pop("Content-Type", None)
 
-        _headers.update(self.headers)
+        h.update(caller_headers)
 
-        return _headers
+        return h
 
     def perform_streaming(self) -> Generator[Union[T, str], None, None]:
         """Is the main function that makes the HTTP request
@@ -261,7 +268,6 @@ class Request(Generic[T]):
             _files = files
             if params and isinstance(params, dict):
                 _data = {"body": json.dumps(params)}
-            headers.pop("Content-Type", None)  # let requests set it for multipart
         elif data:  # raw data request
             _data = data
         else:  # pure JSON request
